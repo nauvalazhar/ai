@@ -1,6 +1,6 @@
 # ai-kit
 
-React components for building AI chat surfaces. Messages, streaming, prompt, reasoning blocks, tool calls, citations, and the rest of the pieces a modern AI app needs.
+React components for building AI chat interfaces. Messages, streaming, prompt, reasoning blocks, tool calls, citations, and the rest of the pieces a modern AI app needs.
 
 Each component is a thin, themeable wrapper you own. Drop the source into your project, restyle with tokens or Tailwind, and compose freely.
 
