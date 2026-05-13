@@ -9,7 +9,8 @@
     "dev": "vite dev --port 3300",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -51,7 +52,8 @@
     "jsdom": "^28.1.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "wrangler": "^4.90.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

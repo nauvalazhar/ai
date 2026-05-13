@@ -27,7 +27,15 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    nitro({
+      preset: 'cloudflare_module',
+      compatibilityDate: '2024-09-19',
+      cloudflare: {
+        deployConfig: true,
+        nodeCompat: true,
+      },
+      rollupConfig: { external: [/^@sentry\//] },
+    }),
     tailwindcss(),
     { enforce: 'pre', ...mdxPlugin },
     tanstackStart(),
