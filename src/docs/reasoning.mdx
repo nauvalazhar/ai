@@ -1,0 +1,67 @@
+---
+parts:
+  - name: Reasoning
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+  - name: ReasoningTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: ReasoningContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+---
+
+A collapsible block for the model's thinking.
+
+## Anatomy
+
+Use it to show reasoning while the model streams, then tuck it away once the answer arrives. A skip affordance is optional: drop any button in the header column and it docks to the right, with the chevron trigger on the left.
+
+```tsx
+<Reasoning defaultOpen>
+  <ReasoningTrigger>Thinking</ReasoningTrigger>
+  <Button variant="ghost">Skip thinking</Button>
+  <ReasoningContent>
+    The user is asking about list vs tuple in Python...
+  </ReasoningContent>
+</Reasoning>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Reasoning
+
+Root collapsible. The header lays out as a row where the trigger takes the left and any sibling button docks to the right. When no extra button is rendered, the trigger fills the row on its own.
+
+<Props name="Reasoning" />
+
+### ReasoningTrigger
+
+Clickable summary. Renders a chevron that rotates from right to down when opened. Children render inline next to the chevron, so wrap them in a `Loader` for a shimmering streaming label.
+
+```tsx
+<ReasoningTrigger>
+  <Loader variant="shimmer" dots>
+    Thinking
+  </Loader>
+</ReasoningTrigger>
+```
+
+<Props name="ReasoningTrigger" />
+
+### ReasoningContent
+
+Expanding panel. Animates height open and close. Indented to align with the trigger label so the chevron acts as a visual gutter.
+
+<Props name="ReasoningContent" />

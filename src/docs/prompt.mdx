@@ -1,0 +1,194 @@
+---
+parts:
+  - name: Prompt
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: defaultValues
+        type: Record<string, string>
+        description: Pre-seeds the answer state. Each key matches a step name, each value matches an option value on that step. Pre-answered steps are not skipped; the user still sees them with the value pre-highlighted.
+      - name: submitOnClick
+        type: boolean
+        default: "false"
+        description: When true, clicking a row picks and submits in one gesture, matching keyboard Enter. When false, clicking only highlights the row, leaving submission to the Enter key or the submit button. The write-in row is unaffected; clicking it always focuses the input rather than submitting.
+      - name: onAnswer
+        type: (value, ctx) => void
+        description: Fires every time a step is answered. `ctx` carries `{ name, stepIndex, totalSteps, partial, isOther }`. `isOther` is true when the answer came from the write-in row, in which case `value` is the typed string.
+      - name: onComplete
+        type: (answers) => void
+        description: Fires once when the last step is answered. `answers` is the full `Record<name, value>`. Internal state resets after firing.
+      - name: onDismiss
+        type: () => void
+        description: Fires on ESC. Internal state resets after firing.
+  - name: PromptStep
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: name
+        type: string
+        description: Identifier for this step. Becomes the key under which the answer is stored in the final `answers` record.
+      - name: defaultValue
+        type: string
+        description: Initial highlight for this step. Falls back to the matching entry in `defaultValues` on the root, then to the first option.
+  - name: PromptQuestion
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PromptOption
+    passThrough:
+      type: React.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: value
+        type: string
+        description: The value passed to `onAnswer` and `onComplete` when this option is the active row at submit time.
+  - name: PromptOptionOther
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: placeholder
+        type: string
+        description: Placeholder text for the inline input. Defaults to `Type your answer`.
+  - name: PromptFooter
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PromptHint
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: keys
+        type: string
+        description: Label rendered as a small key cap next to the hint text. Free-form, so authors mix shortcuts like `ESC`, `Shift+Tab`, or `1-9` without a fixed vocabulary.
+  - name: PromptSubmit
+    passThrough:
+      type: Button.Props
+      to: Button
+---
+
+A keyboard-driven picker for a single question or a chain of follow-ups, with a write-in row for free-text answers.
+
+## Anatomy
+
+A root holds the active step, a footer, and the answer state. Each step carries a question and a list of option rows. A write-in row is a separate part so its focus and submit behavior stay distinct from the regular rows.
+
+```tsx
+<Prompt onComplete={({ history }) => …}>
+  <PromptStep name="history" defaultValue="top-5">
+    <PromptQuestion>What kind of history?</PromptQuestion>
+    <PromptOption value="top-5">Top 5 scores (Recommended)</PromptOption>
+    <PromptOption value="recent">Recent 5 games</PromptOption>
+    <PromptOption value="top-10">Top 10 scores</PromptOption>
+    <PromptOptionOther placeholder="No, and tell me what to do differently" />
+  </PromptStep>
+  <PromptFooter>
+    <PromptHint keys="ESC">Dismiss</PromptHint>
+    <PromptSubmit />
+  </PromptFooter>
+</Prompt>
+```
+
+For a chain of follow-ups, stack more steps. The same footer covers the whole flow. The root advances through steps in JSX order and fires `onComplete` once at the end with every answer keyed by step name.
+
+```tsx
+<Prompt onComplete={(answers) => …}>
+  <PromptStep name="history">…</PromptStep>
+  <PromptStep name="range">…</PromptStep>
+  <PromptStep name="confirm">
+    <PromptQuestion>Run with these settings?</PromptQuestion>
+    <PromptOption value="yes">Yes, run it</PromptOption>
+    <PromptOptionOther placeholder="No, tell me what to change" />
+  </PromptStep>
+  <PromptFooter>
+    <PromptHint keys="Shift+Tab">Back</PromptHint>
+    <PromptHint keys="ESC">Dismiss</PromptHint>
+    <PromptSubmit />
+  </PromptFooter>
+</Prompt>
+```
+
+## Keyboard
+
+- `↑` `↓` move the highlight, clamping at the ends.
+- `1` to `9` jump to that numbered row.
+- `Enter` submits the highlighted row. An empty write-in is a no-op.
+- `Esc` dismisses the picker.
+- `Shift+Tab` or `←` goes back one step. The left arrow is ignored while typing in a write-in row so the caret can move inside the text.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Prompt
+
+The root. Renders only the active step at a time, holds the answer state, and owns the keyboard handler. Auto-focuses on mount so the picker is ready for keys without a click. Resets its internal state after `onComplete` or `onDismiss` fires; to force a reset mid-flow, change the `key` prop.
+
+For a single question, render one `<PromptStep>`. `onAnswer` and `onComplete` both fire on the only submit, in that order. `answers` always arrives as a `Record<name, value>`, so consumers read the value from the step name.
+
+<Props name="Prompt" />
+
+### PromptStep
+
+One step in the flow. Declares its name and an optional default highlight. Only the active step renders, so any expensive children inside an inactive step are skipped. The first step is active on mount.
+
+<Props name="PromptStep" />
+
+### PromptQuestion
+
+The question text at the top of a step. Plain styled text, no behavior. Each step renders its own.
+
+<Props name="PromptQuestion" />
+
+### PromptOption
+
+A single predefined answer row. Carries a `value` that ends up in the answers record when the row is submitted. The number prefix is computed from the row's position in the step, so reordering options just works.
+
+Hover highlights the row, click submits it. The behavior matches a keyboard pick so the mouse and the keyboard agree on what a row press means.
+
+<Props name="PromptOption" />
+
+### PromptOptionOther
+
+The write-in row. Renders an inline input that takes focus as soon as the row is highlighted, so the user can move down with the arrow and start typing in the same gesture. Submitting passes the typed string as `value`, with `isOther: true` in the `onAnswer` context so consumers can distinguish a free-text answer from a predefined one.
+
+Empty submissions are ignored, so the user does not accidentally finalize a blank write-in by pressing Enter.
+
+<Props name="PromptOptionOther" />
+
+### PromptFooter
+
+The footer below the active step. Outside `<PromptStep>` so it stays visible across step changes. A flex row aligned to the end; place hints first and the submit button last.
+
+<Props name="PromptFooter" />
+
+### PromptHint
+
+A small label paired with a key cap. Free-form `keys` so authors mix shortcuts without a fixed vocabulary. Pure visual hint, no behavior.
+
+<Props name="PromptHint" />
+
+### PromptSubmit
+
+Headless submit control rendered as the kit's `Button`. Wires the root's submit action onto the click. Pass children to override the label; the corner-arrow icon is added after the label.
+
+<Props name="PromptSubmit" />
+
+### usePrompt
+
+Hook for reading the active step and triggering navigation from a custom part. Returns `{ currentStep, stepIndex, totalSteps, partial, submit, back, dismiss, canBack }`. Useful for a step indicator inside the footer or a custom back button.
+
+```tsx
+function StepIndicator() {
+  const { stepIndex, totalSteps } = usePrompt();
+  if (totalSteps <= 1) return null;
+  return (
+    <span>
+      {stepIndex + 1} / {totalSteps}
+    </span>
+  );
+}
+```

@@ -1,0 +1,194 @@
+---
+parts:
+  - name: Confirmation
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: state
+        type: '"pending" | "approved" | "rejected"'
+        description: Controlled state. Pair with onStateChange. When set, the kit no longer flips state from clicks. The caller decides when to move past pending.
+      - name: defaultState
+        type: '"pending" | "approved" | "rejected"'
+        default: '"pending"'
+        description: Initial state when uncontrolled.
+      - name: onStateChange
+        type: "(state) => void"
+        description: Fires when the state changes, from either an internal accept/reject click or an external setter. In controlled mode it is the only place the caller learns of an intent to move.
+      - name: tone
+        type: '"default" | "danger"'
+        default: '"default"'
+        description: Visual register. Default keeps the standard border. Danger tints the ring and icon to flag destructive actions.
+  - name: ConfirmationHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ConfirmationTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationDescription
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationPending
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationApproved
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationRejected
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConfirmationAccept
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the auto state flip, for flows that wait on a server before moving.
+  - name: ConfirmationReject
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the auto state flip.
+  - name: ConfirmationStatus
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A small framed card that asks for go-ahead before something runs, and morphs into a status line once a choice is made.
+
+## Anatomy
+
+Reach for it when a tool, send, or write should not happen without a deliberate yes. Three states live in the same card: pending shows the ask and the buttons, approved and rejected swap in for a short confirmation line so the layout does not jump or vanish.
+
+The card has no opinions about message shape. State is a three-value enum the caller owns. Wire it controlled when a server round-trip decides the outcome, or leave it uncontrolled to let the buttons flip state on click for lighter flows.
+
+`ConfirmationAccept` and `ConfirmationReject` are headless triggers. Pass any button via `render`. The trigger merges the caller's `onClick` with an internal state setter, runs the caller's handler first, and skips the flip if it called `event.preventDefault()`.
+
+```tsx
+<Confirmation defaultState="pending">
+  <ConfirmationHeader>
+    <ConfirmationIcon><ShieldCheckIcon /></ConfirmationIcon>
+    <ConfirmationTitle>Send the draft to Alex?</ConfirmationTitle>
+  </ConfirmationHeader>
+  <ConfirmationDescription>
+    The reply will be sent from your work address.
+  </ConfirmationDescription>
+
+  <ConfirmationPending>
+    <ConfirmationAction>
+      <ConfirmationReject render={<Button variant="ghost">Cancel</Button>} />
+      <ConfirmationAccept render={<Button>Send</Button>} />
+    </ConfirmationAction>
+  </ConfirmationPending>
+
+  <ConfirmationApproved>
+    <ConfirmationStatus><CheckIcon /> Sent to Alex.</ConfirmationStatus>
+  </ConfirmationApproved>
+  <ConfirmationRejected>
+    <ConfirmationStatus><XIcon /> Cancelled.</ConfirmationStatus>
+  </ConfirmationRejected>
+</Confirmation>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Confirmation
+
+Root card. Holds the three-value state and exposes it as `data-state` so descendants can show or hide off it. Accepts `state` for controlled use, `defaultState` for uncontrolled, and `onStateChange` to mirror the value. The `tone` variant switches the ring and icon color for destructive flows.
+
+<Props name="Confirmation" />
+
+### ConfirmationHeader
+
+The top row. Pairs an icon and a title in a flex row, with the title taking the leading space.
+
+<Props name="ConfirmationHeader" />
+
+### ConfirmationIcon
+
+The leading mark in the header. Reads `data-tone` from the card so it tints when the tone is danger. Pass any icon as children.
+
+<Props name="ConfirmationIcon" />
+
+### ConfirmationTitle
+
+The question being asked. Renders as a div so the caller can choose the heading level or pass richer content.
+
+<Props name="ConfirmationTitle" />
+
+### ConfirmationDescription
+
+Secondary text under the title. Use it to spell out what will happen, who it affects, or why a choice is irreversible.
+
+<Props name="ConfirmationDescription" />
+
+### ConfirmationContent
+
+Optional payload slot below the description. Holds a `Spec`, a code preview, a diff, or any block that helps the user decide. Skip it when the title and description are enough.
+
+<Props name="ConfirmationContent" />
+
+### ConfirmationPending, ConfirmationApproved, ConfirmationRejected
+
+State-gated wrappers. Each one renders only when the card's `data-state` matches. The card keeps a single rendered branch at a time so the resolved state replaces the action row in place. The caller writes the copy for each state.
+
+<Props name="ConfirmationPending" />
+
+<Props name="ConfirmationApproved" />
+
+<Props name="ConfirmationRejected" />
+
+### ConfirmationAction
+
+The button row inside `ConfirmationPending`. Right-aligned with a small gap. Drop in any combination of `ConfirmationAccept`, `ConfirmationReject`, and other buttons.
+
+<Props name="ConfirmationAction" />
+
+### ConfirmationAccept
+
+Headless trigger that flips the card to approved. Pass the visual button via `render`. The trigger calls the caller's `onClick` first, then sets state to approved. Call `event.preventDefault()` inside the handler to keep the card pending while async work runs, then update `state` from outside when the work resolves.
+
+<Props name="ConfirmationAccept" />
+
+### ConfirmationReject
+
+Headless trigger that flips the card to rejected. Same merge rules as `ConfirmationAccept`.
+
+<Props name="ConfirmationReject" />
+
+### ConfirmationStatus
+
+A small row for the resolved state, sized to sit where the action row used to be. Pass a leading icon and a short line of text. Use it inside `ConfirmationApproved` or `ConfirmationRejected`.
+
+<Props name="ConfirmationStatus" />

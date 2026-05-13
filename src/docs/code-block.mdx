@@ -1,0 +1,91 @@
+---
+parts:
+  - name: CodeBlock
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CodeBlockHeader
+    passThrough:
+      type: React.ComponentProps<"header">
+      to: <header>
+  - name: CodeBlockTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CodeBlockAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CodeBlockContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A framed container for displaying source code.
+
+## Anatomy
+
+The header is optional. Bring your own syntax highlighter and drop the rendered output into `CodeBlockContent`.
+
+```tsx
+<CodeBlock>
+  <CodeBlockHeader>
+    <CodeBlockTitle>TSX</CodeBlockTitle>
+    <CodeBlockAction>
+      <button aria-label="Copy">
+        <CopyIcon />
+      </button>
+    </CodeBlockAction>
+  </CodeBlockHeader>
+  <CodeBlockContent>
+    <pre>{code}</pre>
+  </CodeBlockContent>
+</CodeBlock>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### CodeBlock
+
+Root container. A padded, ringed surface that stacks its children vertically. No layout concerns beyond the outer frame. The header and content render as independent rows.
+
+<Props name="CodeBlock" />
+
+### CodeBlockHeader
+
+Optional. Top row of the block. Lays out children horizontally and centers them vertically. Typically holds a `CodeBlockTitle` on the left and a `CodeBlockAction` on the right.
+
+<Props name="CodeBlockHeader" />
+
+### CodeBlockTitle
+
+Small muted label for the header. Use it for the language tag (`TSX`, `BASH`), a filename, or a short description.
+
+<Props name="CodeBlockTitle" />
+
+### CodeBlockAction
+
+Right-aligned slot for header controls like copy, expand, or open in editor. Applies sensible sizing to nested buttons and icons so plain HTML works out of the box. Drop in a project-specific button when the defaults do not fit.
+
+```tsx
+<CodeBlockAction>
+  <CopyCodeButton text={code} />
+</CodeBlockAction>
+```
+
+<Props name="CodeBlockAction" />
+
+### CodeBlockContent
+
+The code surface. An inset, framed panel sized for monospaced text. Render a `<pre>` directly or the output of a syntax highlighter. Nested `pre` elements inherit a small text size so highlighted output blends in.
+
+```tsx
+<CodeBlockContent>
+  <Syntax language="tsx">{code}</Syntax>
+</CodeBlockContent>
+```
+
+<Props name="CodeBlockContent" />

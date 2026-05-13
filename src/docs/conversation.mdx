@@ -1,0 +1,89 @@
+---
+parts:
+  - name: Conversation
+    passThrough:
+      type: ScrollArea.Root.Props
+      docsUrl:
+        label: Base UI ScrollArea.Root
+        href: https://base-ui.com/react/components/scroll-area#root
+  - name: ConversationContent
+    passThrough:
+      type: ScrollArea.Viewport.Props
+      docsUrl:
+        label: Base UI ScrollArea.Viewport
+        href: https://base-ui.com/react/components/scroll-area#viewport
+  - name: ConversationScrollButton
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling. The element receives a `data-at-bottom` attribute so the caller can fade or hide it based on the scroll state.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a down-arrow icon. There is no default icon, so pass one explicitly.
+---
+
+A scrollable container for a thread of messages.
+
+## Anatomy
+
+Wraps a scroll area and adds stick-to-bottom behavior so streamed content keeps the latest message in view. The container needs a constrained height for scrolling to be meaningful, so wrap it in any sized parent.
+
+```tsx
+<Conversation>
+  <ConversationContent>
+    <Message type="outgoing">…</Message>
+    <Message type="incoming">…</Message>
+  </ConversationContent>
+  <ConversationScrollButton
+    render={
+      <Button
+        iconOnly
+        variant="outline"
+        className="absolute bottom-4 right-1/2 -translate-x-1/2 z-10 size-9 rounded-full bg-surface-elevated shadow-md transition-all data-[at-bottom=true]:pointer-events-none data-[at-bottom=true]:translate-y-1 data-[at-bottom=true]:opacity-0"
+      />
+    }
+  >
+    <ArrowDownIcon />
+  </ConversationScrollButton>
+</Conversation>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Conversation
+
+The root. Holds the stick-to-bottom context and renders the vertical scrollbar internally so the chrome stays consistent. When new content arrives, the viewport scrolls to the bottom only if the user was already there. Once the user scrolls up, auto-scroll pauses and the scroll button reveals itself. The current state is exposed as `data-at-bottom` on the root, on `ConversationContent`, and on the button. Use it to fade gradients, dim siblings, or swap icons without owning the scroll math.
+
+<Props name="Conversation" />
+
+### ConversationContent
+
+The scrollable viewport. Owns the column layout for messages and the resize observer that keeps the latest content in view. Pass children as you would inside a flex column. Override the spacing via `className` per instance.
+
+<Props name="ConversationContent" />
+
+### ConversationScrollButton
+
+Headless trigger that jumps back to the latest message and resumes auto-scroll. Optional. Wires the click handler and forwards `data-at-bottom` so the caller can fade or hide the button based on scroll state. Pass `render` to provide the styled button and `children` for the icon. There is no default styling, position, or icon, so the caller owns the placement and look.
+
+<Props name="ConversationScrollButton" />
+
+### useConversation
+
+Hook for wiring a fully custom button (or any other reactive surface) to the same scroll state. Returns `{ isAtBottom, scrollToBottom }`. Must be called inside `<Conversation>`. `scrollToBottom` accepts an optional `ScrollBehavior` (`"smooth"` by default).
+
+```tsx
+function JumpToLatest() {
+  const { isAtBottom, scrollToBottom } = useConversation();
+  return (
+    <Button data-at-bottom={isAtBottom} onClick={() => scrollToBottom()}>
+      Jump to latest
+    </Button>
+  );
+}
+```

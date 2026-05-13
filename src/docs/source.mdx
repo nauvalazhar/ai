@@ -1,0 +1,88 @@
+---
+parts:
+  - name: Source
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: variant
+        type: '"default" | "plain"'
+        default: '"default"'
+        description: '`default` gives each card a raised surface and a border. `plain` removes the surface and adds a hover background instead, for a quieter list that lives directly on the page.'
+      - name: render
+        type: ReactElement
+        description: Render the card as another element, like an anchor or a framework Link. Defaults to a plain div, so the whole card is not clickable on its own. To make the card a link, pass `render={<a href="..." />}` (or a Link component).
+  - name: SourceName
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SourceTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SourceDescription
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A card that credits a single web source behind a claim.
+
+## Anatomy
+
+Use it for the result list of a search or the inline list of pages an answer drew from. The kit only ships the card, so the author owns the layout around it and can stack many cards in a column, lay them in a grid, or scroll them in a row. A card holds a credit row, the page title, and a short trailing line for a date or snippet. Each part is independent, so the order is up to the author. Pass an anchor through `render` on `Source` to make the whole card a link.
+
+```tsx
+<Source render={<a href="..." />}>
+  <SourceName>
+    <img src="..." />
+    The Guardian
+  </SourceName>
+  <SourceTitle>...</SourceTitle>
+  <SourceDescription>May 8, 2026</SourceDescription>
+</Source>
+```
+
+A thumbnail is optional. Bring any image component, a plain `<img>`, an optimized image from a framework, or a project-specific image. Tag it with `data-slot="source-thumbnail"` and the parent card sizes it to fill the card width at a steady aspect ratio, so the cards line up cleanly even when the source images do not.
+
+```tsx
+<Source render={<a href="..." />}>
+  <img data-slot="source-thumbnail" src="..." alt="" />
+  <SourceName>
+    <img src="..." />
+    The Guardian
+  </SourceName>
+  <SourceTitle>...</SourceTitle>
+  <SourceDescription>May 8, 2026</SourceDescription>
+</Source>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Source
+
+The card itself. Defaults to a plain div so the whole card is not clickable. For web sources, pass `render={<a href="..." />}` (or a framework Link) to make the entire card a single link target. The `variant` prop switches between a raised surface for a card grid and a quieter look for a stacked list.
+
+Sets `data-variant` on the element so descendants can react. Enforces a fixed shape on any descendant tagged `data-slot="source-thumbnail"`, so the author can drop in any image component without restyling it.
+
+<Props name="Source" />
+
+### SourceName
+
+The credit line for the source, holding a small site icon and the publisher name on a single inline row. Place it above the title to credit first, or under the description for a footer credit.
+
+<Props name="SourceName" />
+
+### SourceTitle
+
+The page or article title. Sized larger than the name and description so the eye lands on it first.
+
+<Props name="SourceTitle" />
+
+### SourceDescription
+
+A short trailing line under the title. Use it for a date, a one-line snippet, or a short caption.
+
+<Props name="SourceDescription" />

@@ -1,0 +1,126 @@
+---
+parts:
+  - name: Spec
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: cols
+        type: string
+        default: '"grid-cols-2"'
+        description: Tailwind `grid-cols` utility shared with descendants. Use arbitrary values for custom widths, e.g. `grid-cols-[35%_65%]` or `grid-cols-[1fr_2fr_auto]`.
+  - name: SpecHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SpecItem
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+  - name: SpecTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: SpecContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+  - name: SpecField
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SpecFieldLabel
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SpecFieldValue
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A row-per-entry primitive for fields that collapse to a summary and expand to detail.
+
+## Anatomy
+
+Use it for props, params, fields, or schema attributes. Anything that fits a row-per-entry shape. The `cols` prop on `Spec` defines a shared grid template that the header, each item's trigger, and any inner `SpecField` rows align to.
+
+```tsx
+<Spec cols="grid-cols-[35%_65%]">
+  <SpecHeader>
+    <span>Prop</span>
+    <span>Type</span>
+  </SpecHeader>
+  <SpecItem>
+    <SpecTrigger>
+      <span>name</span>
+      <span>string</span>
+    </SpecTrigger>
+    <SpecContent>
+      <p>The display name.</p>
+      <SpecField>
+        <SpecFieldLabel>Type</SpecFieldLabel>
+        <SpecFieldValue><code>string</code></SpecFieldValue>
+      </SpecField>
+    </SpecContent>
+  </SpecItem>
+</Spec>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Spec
+
+Root container. The `cols` prop sets a shared grid template so the header, each item's trigger, and each field row align to the same columns.
+
+<Props name="Spec" />
+
+### SpecHeader
+
+Column-label row at the top. Inherits the grid layout from `Spec` so header cells line up with each item's trigger cells. Reserves a trailing chevron-sized spacer to keep alignment with rows below.
+
+<Props name="SpecHeader" />
+
+### SpecItem
+
+A single collapsible entry. Exposes a `data-open` attribute that drives a highlighted background and border in the open state.
+
+<Props name="SpecItem" />
+
+### SpecTrigger
+
+Clickable summary row that toggles the item. Lays out children using the shared grid, and shows a chevron that rotates when open.
+
+<Props name="SpecTrigger" />
+
+### SpecContent
+
+Expanded panel. Animates open and close with a smooth height transition.
+
+<Props name="SpecContent" />
+
+### SpecField
+
+A label/value row inside `SpecContent`. Inherits the same grid template as the trigger so values align under the corresponding column. Reserves the trailing chevron-sized spacer so column 2 lines up exactly with the summary row above.
+
+<Props name="SpecField" />
+
+### SpecFieldLabel
+
+First-column label inside a `SpecField`. Muted by default. Override with `className`.
+
+<Props name="SpecFieldLabel" />
+
+### SpecFieldValue
+
+Value cell inside a `SpecField`. Spans grid columns 2 through the last column so it works regardless of how many columns `Spec` is configured with.
+
+<Props name="SpecFieldValue" />

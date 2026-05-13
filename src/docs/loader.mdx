@@ -1,0 +1,53 @@
+---
+parts:
+  - name: Loader
+    passThrough:
+      type: useRender.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: variant
+        type: '"pulse" | "shimmer"'
+        description: Text animation style. Omit for static text.
+      - name: dots
+        type: boolean
+        default: 'false'
+        description: Append three animated dots after the text.
+      - name: duration
+        type: number
+        description: Animation cycle length in seconds. Defaults to 1.4s for pulse and dots, 2.2s for shimmer.
+      - name: spread
+        type: number
+        description: Width of the shimmer's bright band as a percentage of the gradient. Default 40. Smaller is sharper, larger is softer. Ignored unless `variant="shimmer"`.
+---
+
+A text-based loading indicator. The label is the loader, animated.
+
+## Anatomy
+
+`variant` controls how the text itself moves, and `dots` toggles the trailing animated dots. Both are independent, so you can pick one or combine them.
+
+```tsx
+<Loader variant="shimmer" dots>Thinking</Loader>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Loader
+
+Self-contained inline status. Renders as a span by default, sets `role="status"`, and uses the text as `aria-label`. Pass `render` to swap the element, for example dropping the loader straight into a button:
+
+```tsx
+<Loader variant="shimmer" render={<button type="button" />}>
+  Reasoning
+</Loader>
+```
+
+Animation pieces:
+
+- `variant="pulse"`: the whole word fades in and out together. Calm, no direction.
+- `variant="shimmer"`: a brighter band sweeps left across the text via a gradient mask. Directional.
+- `dots`: three dots fade in after the text in sequence. Stack with any variant.
+
+<Props name="Loader" />

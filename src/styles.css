@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@import "./styles/tokens.css";
+@import "./styles/playground.css";
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-site-background);
+  color: var(--color-site-foreground);
+}

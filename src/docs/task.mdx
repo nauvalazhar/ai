@@ -1,0 +1,75 @@
+---
+parts:
+  - name: Task
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TaskItem
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TaskIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default filled circle. Pass any element to render in its place, like a spinner while a step is in progress or a check when it completes.
+  - name: TaskLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+---
+
+A flat list of activities.
+
+## Anatomy
+
+A column with one row per action, each anchored to a vertical rail. Use it to log tool calls, file edits, search hits, or any sequence of actions the model has taken. Each row pairs an icon, a label, and an optional `Chip` that names the target of the action. The rail joins the icons and stops at the last row. Rows do not expand, so for actions that need detail underneath, reach for `Action`. For reasoning steps with nested detail, reach for `ChainOfThought`.
+
+```tsx
+<Task>
+  <TaskItem>
+    <TaskIcon>
+      <LightbulbIcon />
+    </TaskIcon>
+    <TaskLabel>Thought for 9s</TaskLabel>
+  </TaskItem>
+  <TaskItem>
+    <TaskIcon>
+      <FilePenLineIcon />
+    </TaskIcon>
+    <TaskLabel>Edited</TaskLabel>
+    <Chip>src/styles.css</Chip>
+  </TaskItem>
+</Task>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Task
+
+Outer container for the activity list. A plain column with no interactive behavior of its own.
+
+<Props name="Task" />
+
+### TaskItem
+
+A single action in the list. Renders the icon, the label, and any target chip on one row, with a connector below that joins it to the next item. The connector hides automatically on the last row so the rail terminates at the final icon.
+
+<Props name="TaskItem" />
+
+### TaskIcon
+
+The leading mark on each row. Defaults to a small filled circle. Pass any element as children to swap it for a tool icon, a check when an action completes, or a pulsing dot while it runs. The icon container keeps a fixed width so swapping the inner element does not shift the rail's column. Size the inner element rather than the container, since the container defines where the rail sits.
+
+<Props name="TaskIcon" />
+
+### TaskLabel
+
+The action's name. Reads as the verb of the row, like Edited, Searched, or Ran.
+
+<Props name="TaskLabel" />

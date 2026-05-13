@@ -1,0 +1,88 @@
+---
+parts:
+  - name: Action
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+  - name: ActionTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: ActionIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default filled circle. Pass any element to render in its place, like a tool icon for the action being shown.
+  - name: ActionLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ActionContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+---
+
+A single collapsible row for one action.
+
+## Anatomy
+
+A header that names what the model did, with optional detail tucked behind a chevron. Reach for it when one action deserves its own block, like a single file read or a single command run. For a sequence of actions, use `Task`. For the model's thinking pass, use `Reasoning`.
+
+The header pairs an icon, a verb, and an optional `Chip` for the target. The body opens to anything from a one-line summary to a `CodeBlock` of the output.
+
+```tsx
+<Action>
+  <ActionTrigger>
+    <ActionIcon>
+      <FileTextIcon />
+    </ActionIcon>
+    <ActionLabel>Read</ActionLabel>
+    <Chip>src/styles.css</Chip>
+  </ActionTrigger>
+  <ActionContent>Read 38 lines from src/styles.css</ActionContent>
+</Action>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Action
+
+Root collapsible. Lays out as a column so the trigger and content stack.
+
+<Props name="Action" />
+
+### ActionTrigger
+
+Clickable header. Renders its children inline followed by a chevron that rotates from right to down when opened. Place the icon, label, and any target chip as children in that order.
+
+<Props name="ActionTrigger" />
+
+### ActionIcon
+
+The leading mark in the header. Defaults to a small filled circle. Pass a tool icon as children for any specific action, like a file icon for a read or a terminal icon for a command. The container keeps a fixed width so swapping the inner element does not shift the row.
+
+<Props name="ActionIcon" />
+
+### ActionLabel
+
+The action's name. Reads as the verb of the row, like Read, Ran, or Searched.
+
+<Props name="ActionLabel" />
+
+### ActionContent
+
+Expanding panel. Animates height open and close. Indented to align past the icon so the chevron acts as a visual gutter. Holds anything from short text to a full `CodeBlock`.
+
+<Props name="ActionContent" />

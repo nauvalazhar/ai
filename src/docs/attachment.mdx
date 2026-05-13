@@ -1,0 +1,208 @@
+---
+parts:
+  - name: Attachment
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: layout
+        type: '"row" | "card"'
+        default: '"row"'
+        description: '`row` is a horizontal strip with a small media slot, a stacked name and description, and a trailing action area. `card` is a square media tile with no text, sized for a compact grid of files or images.'
+      - name: state
+        type: '"default" | "error"'
+        default: '"default"'
+        description: Set to `error` after an upload fails or a file is rejected. Tints the frame, the media slot, and the description with the destructive color, so the author does not have to wire those colors on each part.
+      - name: progress
+        type: number
+        description: Upload progress between 0 and 100. Read by `AttachmentProgress` through context, so any progress part inside the tree reflects the same value. Leave it undefined for a static or finished attachment, or to render an indeterminate spinner.
+      - name: render
+        type: ReactElement
+        description: Render the root as another element, like a button or a list item.
+  - name: AttachmentMedia
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AttachmentIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: AttachmentContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AttachmentName
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AttachmentDescription
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AttachmentOverlay
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AttachmentProgress
+    passThrough:
+      type: React.ComponentProps<"svg">
+      to: <svg>
+  - name: AttachmentAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A file shown in a chat, a composer, or a list. The same parts cover a finished attachment and one that is still uploading.
+
+## Anatomy
+
+The component is agnostic about the file. It does not fetch, parse, or render the image, and it does not know whether the file is uploading or done. The author wires those in. The kit owns the shape, the spacing, and the upload affordances. Two layouts are available. `row` is the strip with a media slot on the left, a name and description in the middle, and a trailing action area. `card` is a square tile with no text, made for a grid of recently uploaded files or composer attachments.
+
+```tsx
+<Attachment>
+  <AttachmentMedia>
+    <AttachmentIcon><FileTextIcon /></AttachmentIcon>
+  </AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentName>report.pdf</AttachmentName>
+    <AttachmentDescription>2.0 KB</AttachmentDescription>
+  </AttachmentContent>
+  <AttachmentAction>
+    <Button
+      iconOnly
+      variant="ghost"
+      aria-label="Remove attachment"
+      className="size-7 text-muted-foreground hover:text-foreground"
+    >
+      <XIcon />
+    </Button>
+  </AttachmentAction>
+</Attachment>
+```
+
+A real image is optional. Bring any image component, a plain `<img>`, an optimized image from a framework, or a project-specific image. Tag it with `data-slot="attachment-media-img"` and the parent media slot sizes it to fill the slot at a steady aspect, so a row of attachments lines up cleanly even when the source images do not.
+
+```tsx
+<Attachment layout="card">
+  <AttachmentMedia>
+    <img data-slot="attachment-media-img" src="..." alt="" />
+  </AttachmentMedia>
+  <Button
+    iconOnly
+    variant="ghost"
+    aria-label="Remove attachment"
+    className="absolute top-1 right-1 size-4.5 rounded-full bg-foreground text-background hover:bg-foreground/85 hover:text-background [&>svg]:size-3"
+  >
+    <XIcon />
+  </Button>
+</Attachment>
+```
+
+For an upload, pass `progress` on the root and put `AttachmentProgress` inside `AttachmentOverlay`. The overlay sits over the media and dims it, and the progress part reads `progress` from context, so the same tree describes a finished file and a file in flight. Omit `progress` for an indeterminate spinner, useful for the brief moment before the first byte lands.
+
+```tsx
+<Attachment progress={42}>
+  <AttachmentMedia>
+    <img data-slot="attachment-media-img" src="..." alt="" />
+    <AttachmentOverlay>
+      <AttachmentProgress />
+    </AttachmentOverlay>
+  </AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentName>annual-report.pdf</AttachmentName>
+    <AttachmentDescription>42% of 4.2 MB</AttachmentDescription>
+  </AttachmentContent>
+  <AttachmentAction>
+    <Button
+      iconOnly
+      variant="ghost"
+      aria-label="Cancel upload"
+      className="size-7 text-muted-foreground hover:text-foreground"
+    >
+      <XIcon />
+    </Button>
+  </AttachmentAction>
+</Attachment>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Attachment
+
+The root. Sets `data-layout` and `data-state` on the element so descendants can react, and provides `progress` through context. Layout switches the entire frame at once, so the same children render either as a row or as a card without further changes. State paints an error tone across the media and the description, useful for a failed or rejected upload.
+
+Swap the element via `render` to make the whole attachment a link or a button. The kit picks up an anchor or a button rendering and adds a pointer cursor, a hover affordance, and a keyboard focus ring, with no extra props. Drop the trailing action area in this case, since a button inside a button or a button inside a link is not valid markup.
+
+```tsx
+<Attachment render={<a href="..." />}>...</Attachment>
+<Attachment render={<button type="button" onClick={...} />}>...</Attachment>
+```
+
+```tsx
+<Attachment state="error">
+  <AttachmentMedia>
+    <AttachmentIcon><AlertTriangleIcon /></AttachmentIcon>
+  </AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentName>video.mp4</AttachmentName>
+    <AttachmentDescription>Upload failed, file too large</AttachmentDescription>
+  </AttachmentContent>
+</Attachment>
+```
+
+<Props name="Attachment" />
+
+### AttachmentMedia
+
+The slot that holds the image, the fallback icon, and the upload overlay. Sized small in a row and full bleed in a card. Acts as the positioning context for `AttachmentOverlay`, so the overlay covers only the media in a row and the entire card in a card.
+
+Enforces a fixed shape on any descendant tagged `data-slot="attachment-media-img"`, so the author can drop in any image component without restyling it.
+
+<Props name="AttachmentMedia" />
+
+### AttachmentIcon
+
+A small icon shown inside the media slot when there is no real image. Use it for file type glyphs in a list of documents, or as a placeholder while a real image is still resolving.
+
+<Props name="AttachmentIcon" />
+
+### AttachmentContent
+
+Vertical stack for the name and description. Grows to fill the row, so the trailing action sits flush to the right edge regardless of the file name length.
+
+<Props name="AttachmentContent" />
+
+### AttachmentName
+
+The file name. Sized to read as the primary label and truncated when the row is narrow.
+
+<Props name="AttachmentName" />
+
+### AttachmentDescription
+
+A short trailing line under the name. Use it for a file size, a count, an upload progress label, or a status string like uploading or failed.
+
+<Props name="AttachmentDescription" />
+
+### AttachmentOverlay
+
+A dim layer placed over the media, used for upload state and any other temporary affordance like a hover preview. Holds an `AttachmentProgress`, a label, or both.
+
+<Props name="AttachmentOverlay" />
+
+### AttachmentProgress
+
+A circular progress arc. Reads `progress` from the root through context, so it does not need a value of its own. Renders a determinate arc when `progress` is set on the root, and an indeterminate spinner otherwise.
+
+<Props name="AttachmentProgress" />
+
+### AttachmentAction
+
+The trailing action area in a row. A simple inline group meant to hold any project-owned buttons, a download, a preview, a copy link, or a plain remove `Button`. Sits at the right end of the row.
+
+<Props name="AttachmentAction" />
+
+There is no dedicated remove part. Drop a `Button` here for the row layout, or drop a `Button` as a direct child of the root with absolute positioning for the floating card layout. The root sets `position: relative`, so a `top-1 right-1` child anchors to the corner.

@@ -1,0 +1,38 @@
+:root {
+  --color-site-foreground: oklch(0.22 0 0);
+  --color-canvas: oklch(0.92 0 0);
+  --color-panel: oklch(1 0 0);
+  --color-site-accent: oklch(0.55 0.2 260);
+  --color-site-border: oklch(0.92 0 0);
+  --shadow-panel: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  --color-site-foreground: oklch(0.982 0 0);
+  --color-site-background: oklch(0.1778 0.0022 259.23);
+  --color-site-muted: oklch(0.726 0 0);
+  --color-site-panel: oklch(0.1985 0.0022 259.23);
+  --color-site-accent: oklch(0.2912 0.022 259.23);
+  --color-site-border: oklch(0.2683 0.0022 259.23);
+  --shadow-site-panel: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-site-foreground: var(--color-site-foreground);
+  --color-site-background: var(--color-site-background);
+  --color-site-muted: var(--color-site-muted);
+  --color-site-panel: var(--color-site-panel);
+  --color-site-accent: var(--color-site-accent);
+  --color-site-border: var(--color-site-border);
+  --shadow-site-panel: var(--shadow-site-panel);
+}
+
+.dark .shiki {
+  background-color: var(--shiki-dark-bg) !important;
+}
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+}

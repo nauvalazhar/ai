@@ -1,0 +1,258 @@
+---
+parts:
+  - name: Citation
+    passThrough:
+      type: PreviewCard.Root.Props
+      docsUrl:
+        label: Base UI PreviewCard.Root
+        href: https://base-ui.com/react/components/preview-card#root
+  - name: CitationTrigger
+    passThrough:
+      type: PreviewCard.Trigger.Props
+      docsUrl:
+        label: Base UI PreviewCard.Trigger
+        href: https://base-ui.com/react/components/preview-card#trigger
+  - name: CitationPopup
+    passThrough:
+      type: PreviewCard.Popup.Props
+      docsUrl:
+        label: Base UI PreviewCard.Popup
+        href: https://base-ui.com/react/components/preview-card#popup
+  - name: CitationHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationNav
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationPrev
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a left chevron icon. There is no default icon, so pass one explicitly.
+  - name: CitationNext
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a right chevron icon. There is no default icon, so pass one explicitly.
+  - name: CitationIndicator
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default position label. Pass any node to render in its place.
+  - name: CitationList
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationItem
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: render
+        type: ReactElement
+        description: Render the item as another element, like an anchor or a framework Link. Defaults to a plain div, so the whole item is not clickable on its own. For web sources, pass `render={<a href="..." />}` (or a Link component) to make the card a link.
+  - name: CitationName
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationDescription
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: CitationAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A floating card that shows the source behind a claim.
+
+## Anatomy
+
+Render one item for a single citation, or many for a paginated set. A trigger pill opens a card on hover, anchored to it. Inside, a list shows one source at a time, with a nav row for prev, next, and a position indicator. The nav hides itself when there is only one item, so the same parts cover the single-source layout. The order of parts inside an item is up to the author. Put the name on top to credit the source first, or move it under the description for a footer credit. For an in-document excerpt, swap description for content and add an action below.
+
+```tsx
+<Citation>
+  <CitationTrigger>The Guardian +2</CitationTrigger>
+  <CitationPopup>
+    <CitationHeader>
+      <CitationNav>
+        <CitationPrev
+          aria-label="Previous source"
+          render={<Button iconOnly variant="ghost" />}
+        >
+          <ChevronLeftIcon />
+        </CitationPrev>
+        <CitationNext
+          aria-label="Next source"
+          render={<Button iconOnly variant="ghost" />}
+        >
+          <ChevronRightIcon />
+        </CitationNext>
+        <CitationIndicator />
+      </CitationNav>
+    </CitationHeader>
+    <CitationList>
+      <CitationItem render={<a href="..." />}>
+        <CitationName>
+          <img src="..." />
+          The Guardian
+        </CitationName>
+        <CitationTitle>...</CitationTitle>
+        <CitationDescription>...</CitationDescription>
+      </CitationItem>
+      <CitationItem render={<a href="..." />}>...</CitationItem>
+    </CitationList>
+  </CitationPopup>
+</Citation>
+```
+
+For an in-document excerpt the title sits in the header on the outer surface, and the elevated list holds only the body and footer action:
+
+```tsx
+<Citation>
+  <CitationTrigger>1 source</CitationTrigger>
+  <CitationPopup>
+    <CitationHeader>
+      <CitationTitle>The Design of Everyday Things.pdf</CitationTitle>
+    </CitationHeader>
+    <CitationList>
+      <CitationItem>
+        <CitationContent>
+          <p>...</p>
+          <p>...</p>
+        </CitationContent>
+        <CitationAction>
+          <a href="...">View source</a>
+        </CitationAction>
+      </CitationItem>
+    </CitationList>
+  </CitationPopup>
+</Citation>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Citation
+
+Root preview card. Provides the carousel state to every part and tracks the current index, the total number of items, and the direction of the last move so the active item can animate from the matching side.
+
+<Props name="Citation" />
+
+### CitationTrigger
+
+The pill that opens the card on hover or focus. Wraps the Base UI PreviewCard trigger, so the trigger renders as an anchor and inherits a short delay before opening and a slightly longer delay before closing. The hover gesture survives the user moving from the trigger across the gap into the card. Accepts any children, so the author can hand-write the visible label, including an extra count like "+2" when there are more sources behind the trigger.
+
+<Props name="CitationTrigger" />
+
+### CitationPopup
+
+The floating card. Wraps the card portal, positioner, and popup so the author drops it in without wiring the three together. Anchored to the trigger with a small offset, fades and lifts in, and lays its children out in a column.
+
+<Props name="CitationPopup" />
+
+### CitationHeader
+
+The padded zone above the elevated list, on the outer popup surface. Wrap a `CitationNav` here for the multi-source case, place a `CitationTitle` here for an in-document layout where the source name belongs above the body, or combine the two. Provides the inset that makes the elevated card feel like a card-in-card. Skip it entirely for the single-source web shape.
+
+<Props name="CitationHeader" />
+
+### CitationNav
+
+The row holding prev, next, and the indicator. Carries no padding of its own, so wrap it in a `CitationHeader` for the inset look. Reads the total from the surrounding context and hides itself when there is one item or fewer, so the same anatomy collapses cleanly to a single-source card.
+
+<Props name="CitationNav" />
+
+### CitationPrev
+
+Headless prev control. Wires the back step and the move direction onto a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The control has no default styling and no default icon, so it composes with whatever button family the call site already uses.
+
+<Props name="CitationPrev" />
+
+### CitationNext
+
+Headless next control. Wires the forward step and the move direction onto a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The control has no default styling and no default icon, so it composes with whatever button family the call site already uses.
+
+<Props name="CitationNext" />
+
+### CitationIndicator
+
+Reads the current index and total from the context and renders them as a position label. Default output reads the active position over the total. Pass children to swap the format, or build a custom indicator with the `useCitation` hook.
+
+```tsx
+function MyIndicator() {
+  const { index, total } = useCitation();
+  return <span>{index + 1} of {total}</span>;
+}
+```
+
+<Props name="CitationIndicator" />
+
+### CitationList
+
+The boundary that holds the items. Counts its children, registers the total with the surrounding context, and renders only the active child. Each item is keyed by index, so the active one remounts on every move and re-runs its enter animation.
+
+<Props name="CitationList" />
+
+### CitationItem
+
+A single citation card. Defaults to a plain div so the item itself is not clickable. For web sources, pass `render={<a href="..." />}` (or a framework Link) to make the whole card a link. Reads the move direction and applies a small slide-fade enter animation on each switch.
+
+<Props name="CitationItem" />
+
+### CitationName
+
+The credit line for the source, holding a small site icon and the publisher name on a single inline row. Place it above the title for a header layout, or under the description for a footer layout.
+
+<Props name="CitationName" />
+
+### CitationTitle
+
+The article, page, or document title. Sized larger than the name and description so the eye lands on it first.
+
+<Props name="CitationTitle" />
+
+### CitationDescription
+
+A short snippet for the source, often a date prefix followed by the lead. Clamps to three lines so the popup keeps a steady height across items. Use this for web previews where the body is a metadata summary.
+
+<Props name="CitationDescription" />
+
+### CitationContent
+
+The verbatim body from the source, used for in-document excerpts. Flows naturally with paragraph spacing and no clamp, so the popup grows to fit the text. For very long passages, pair with a `CitationAction` so the user can open the full source, or apply a `line-clamp-N` or `max-h-X overflow-y-auto` className for a fixed window.
+
+<Props name="CitationContent" />
+
+### CitationAction
+
+The footer slot below the body, separated by a thin top border. Drop a button or a link inside, like a "View source" affordance for in-document citations. The container colors its descendants with the primary token so plain links read as a call to action; override the className for a different tone.
+
+<Props name="CitationAction" />

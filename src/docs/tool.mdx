@@ -1,0 +1,138 @@
+---
+parts:
+  - name: Tool
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+    props:
+      - name: state
+        type: '"running" | "success" | "error"'
+        description: Lifecycle state for the call. Mirrored onto `data-state` so the icon, trigger color, and error slot can react. Leave it undefined for a neutral past call.
+  - name: ToolTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: ToolIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ToolName
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ToolLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ToolContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+  - name: ToolSubtitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ToolBlock
+    passThrough:
+      type: React.ComponentProps<"pre">
+      to: <pre>
+  - name: ToolError
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A status-aware collapsible row for a tool invocation. The kit owns the disclosure, the state visualization, and the section layout. The caller owns every detail that goes inside.
+
+## Anatomy
+
+A tool call is one trigger row plus an expandable body. The row shows a status icon, the tool name, and an optional one-line summary. The body holds any combination of labeled sections, raw blocks, code, markdown, or an error.
+
+The component has no view of the runtime. `state` is a three-value enum the caller passes in: `running` while args stream or the call executes, `success` when output arrives, `error` when it fails. The kit mirrors it onto `data-state`, which drives the icon, tints the trigger, and reveals `ToolError`.
+
+`ToolBlock` is a thin scrollable monospace container for raw text or JSON. Reach for `CodeBlock` instead when the body deserves a header and copy action.
+
+```tsx
+<Tool state="success" defaultOpen>
+  <ToolTrigger>
+    <ToolIcon />
+    <ToolName>get_weather</ToolName>
+    <ToolLabel>San Francisco</ToolLabel>
+  </ToolTrigger>
+  <ToolContent>
+    <ToolSubtitle>Input</ToolSubtitle>
+    <ToolBlock>{argsJson}</ToolBlock>
+
+    <ToolSubtitle>Output</ToolSubtitle>
+    <ToolBlock>{resultJson}</ToolBlock>
+
+    <ToolError>Network timeout after 30s</ToolError>
+  </ToolContent>
+</Tool>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Tool
+
+Root collapsible. Carries the named group `tool` and writes `state` to `data-state` so descendants can hang style off it. Accepts every `Collapsible.Root` prop, so `open`, `defaultOpen`, and `onOpenChange` work the usual way.
+
+<Props name="Tool" />
+
+### ToolTrigger
+
+The header row. The whole row is the button: status icon, name, summary, and a chevron that docks right and rotates on open. Goes destructive when the ancestor is in the error state, so the icon and text turn red without extra wiring.
+
+<Props name="ToolTrigger" />
+
+### ToolIcon
+
+The leading icon for the call. The caller passes a single SVG that represents the tool: a globe, a file, a database glyph. It inherits the trigger's color, so it turns destructive in the error state with no extra wiring.
+
+The kit owns one piece of state-aware behavior here: while the call is running, the user's icon is hidden and an animated spinner takes its place. As soon as the state moves to success or error, the user's icon comes back.
+
+<Props name="ToolIcon" />
+
+### ToolName
+
+The tool identifier. Monospace and medium weight so it reads as the headline of the row. Inherits destructive color from the trigger when the call failed.
+
+<Props name="ToolName" />
+
+### ToolLabel
+
+Optional inline summary next to the name. A short phrase that captures the input or the result at a glance: a city, a file path, a row count. Truncates when crowded.
+
+<Props name="ToolLabel" />
+
+### ToolContent
+
+Expanding panel. Animates height open and close, indents the body, and runs a vertical rail down the left so the detail reads as nested under the trigger.
+
+<Props name="ToolContent" />
+
+### ToolSubtitle
+
+A small uppercase label for sections inside the panel. Drop one before each block to mark what it is: input, output, sources, anything.
+
+<Props name="ToolSubtitle" />
+
+### ToolBlock
+
+A scrollable monospaced container for raw text or JSON. Capped at a reasonable height so a large payload does not push the rest of the thread off screen. Pre-wraps long lines. Use a `CodeBlock` instead when you want syntax highlighting or a header.
+
+<Props name="ToolBlock" />
+
+### ToolError
+
+Destructive-tinted slot for the failure message. Hidden unless the ancestor `Tool` is in the error state, so it is safe to leave in the tree at all times. The body is free-form: a single line, a paragraph, a retry button.
+
+<Props name="ToolError" />

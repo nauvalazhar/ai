@@ -1,0 +1,59 @@
+---
+parts:
+  - name: Button
+    passThrough:
+      type: React.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: variant
+        type: '"primary" | "secondary" | "ghost" | "outline"'
+        default: '"primary"'
+        description: Visual treatment. Primary for the main action, secondary for an alternate, ghost for toolbar actions, outline for a bordered alternative.
+      - name: iconOnly
+        type: boolean
+        default: "false"
+        description: Renders as a square button with no horizontal padding. Pair with an aria-label so the button still has an accessible name.
+      - name: loading
+        type: boolean
+        default: "false"
+        description: Hides the content and overlays a spinning indicator. Disables the button and sets aria-busy while active.
+---
+
+A compact action button tuned for chat toolbars and inline AI surfaces.
+
+## Anatomy
+
+A single element that triggers an action. Use it for send, regenerate, copy, and other one-shot operations that sit near a message or input. Pair an icon with a label for primary actions, or drop the label entirely for a tight icon-only control in dense toolbars.
+
+```tsx
+<Button>
+  <ArrowUpIcon />
+  Send
+</Button>
+```
+
+For an icon-only control, set `iconOnly` and provide an `aria-label`.
+
+```tsx
+<Button iconOnly aria-label="Send">
+  <ArrowUpIcon />
+</Button>
+```
+
+For a long-running action, flip loading on while the request is in flight. The label stays in place so the button keeps its width, with a spinner centered over the top.
+
+```tsx
+<Button loading={pending} onClick={send}>
+  Send
+</Button>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Button
+
+The button itself. Forwards all native button props. SVG children are auto-sized and laid out with a small gap from the label.
+
+<Props name="Button" />

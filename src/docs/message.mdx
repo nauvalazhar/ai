@@ -1,0 +1,100 @@
+---
+parts:
+  - name: Message
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: type
+        type: '"incoming" | "outgoing"'
+        default: '"outgoing"'
+        description: Direction of the message. `incoming` is left-aligned with avatar on the left, `outgoing` is right-aligned with avatar on the right.
+  - name: MessageAvatar
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: MessageContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: MessageText
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: variant
+        type: '"plain" | "bubble"'
+        default: '"plain"'
+        description: '`plain` keeps typography only, with no padding or background. `bubble` wraps the text in a chat bubble.'
+  - name: MessageAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A row in a chat thread.
+
+## Anatomy
+
+The `type` prop flips the row direction so outgoing messages stack to the right. A single `MessageContent` can hold multiple `MessageText` parts when a message arrives as several segments.
+
+```tsx
+<Message type="incoming">
+  <MessageAvatar>AI</MessageAvatar>
+  <MessageContent>
+    <MessageText variant="bubble">Hello!</MessageText>
+    <MessageAction>
+      <Button iconOnly variant="ghost" aria-label="Copy">
+        <CopyIcon />
+      </Button>
+    </MessageAction>
+  </MessageContent>
+</Message>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Message
+
+Root flex row. Sets `data-type` on the element so descendants can react. Reverses direction for `"outgoing"`.
+
+<Props name="Message" />
+
+### MessageAvatar
+
+Optional. A circular slot. Bring your own avatar: drop in initials, an icon, a plain image, an optimized image component, or any project-specific avatar component. A direct `<img>` child fills the slot, and anything else lays out centered.
+
+```tsx
+// initials
+<MessageAvatar>AI</MessageAvatar>
+
+// image
+<MessageAvatar>
+  <img src="/avatar.png" alt="Ada" />
+</MessageAvatar>
+```
+
+<Props name="MessageAvatar" />
+
+### MessageContent
+
+Plain column container that holds the message body and any actions. No padding or background. Typography lives on `MessageText`.
+
+<Props name="MessageContent" />
+
+### MessageText
+
+The component for displaying text. Use one per text segment, and repeat it as many times as the message has parts.
+
+- `plain` (default): typography only, no padding or background.
+- `bubble`: adds the chat-bubble look with a rounded background and padding. Override the color per-instance via `className`.
+
+<Props name="MessageText" />
+
+### MessageAction
+
+Horizontal container for action buttons (copy, regenerate, feedback). No styling beyond layout. Alignment follows the parent `MessageContent`. Drop a `Button` with `iconOnly` and the `ghost` variant inside for the standard look.
+
+<Props name="MessageAction" />

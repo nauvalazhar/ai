@@ -1,0 +1,123 @@
+---
+parts:
+  - name: Document
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: open
+        type: boolean
+        description: Controlled open state. Pair with onOpenChange.
+      - name: defaultOpen
+        type: boolean
+        default: "false"
+        description: Initial open state when uncontrolled.
+      - name: onOpenChange
+        type: "(open: boolean) => void"
+        description: Fires when the open state changes from either the built-in trigger or a controlled update.
+      - name: collapsedHeight
+        type: number
+        default: "200"
+        description: Height in pixels of the body when collapsed. The body always renders at this height as a peek.
+  - name: DocumentHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DocumentTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DocumentAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DocumentTrigger
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a chevron icon. The trigger has no default icon, so pass one explicitly.
+  - name: DocumentContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A framed container that shows a peek of its content and expands to the full body on demand.
+
+## Anatomy
+
+Reach for it when a region of generated content is long enough that it would push everything else off screen. The peek keeps the start of the content visible so the reader can decide whether to expand, with a fade at the bottom signalling that there is more.
+
+The body is dumb. Pass plain text, a `Markdown` render, a `CodeBlock`, or anything composed from the kit. The component owns the frame, the title row, the height transition, and the fade.
+
+A toggle can live in the action slot as `DocumentTrigger`, or anywhere outside the component by wiring up `open` and `onOpenChange`. Both can coexist if you want both a header chevron and a floating button.
+
+`DocumentTrigger` is headless. It wires the toggle behavior, `aria-expanded`, and `aria-controls`, but ships no styling. Pass `render` to provide the visual button (typically the kit's `Button`) and `children` for the icon. The trigger forwards an `data-open` attribute so the icon can rotate off the state.
+
+```tsx
+<Document collapsedHeight={220}>
+  <DocumentHeader>
+    <DocumentTitle>Plan</DocumentTitle>
+    <DocumentAction>
+      <Button iconOnly variant="ghost" aria-label="Copy">
+        <Copy />
+      </Button>
+      <DocumentTrigger
+        aria-label="Expand plan"
+        render={<Button iconOnly variant="ghost" />}
+      >
+        <ChevronDownIcon className="group-data-open/document:rotate-180" />
+      </DocumentTrigger>
+    </DocumentAction>
+  </DocumentHeader>
+  <DocumentContent>
+    <Markdown>{content}</Markdown>
+  </DocumentContent>
+</Document>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Document
+
+Root. Owns the open state and the collapsed height. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror state. Sets `data-open` when expanded so descendants can style off the parent.
+
+<Props name="Document" />
+
+### DocumentHeader
+
+The top row. Lays out as a flex row so the title takes the leading space and the action slot sits at the end. Stays fixed in place when the body expands or collapses.
+
+<Props name="DocumentHeader" />
+
+### DocumentTitle
+
+The label for the document. Renders as a div by default so the caller can choose the heading level or swap in a richer node.
+
+<Props name="DocumentTitle" />
+
+### DocumentAction
+
+The trailing slot in the header. Drop in icon buttons for copy, download, feedback, and so on. Pair it with `DocumentTrigger` when you want a header chevron.
+
+<Props name="DocumentAction" />
+
+### DocumentTrigger
+
+Headless toggle. Wires the open state, `aria-expanded`, and `aria-controls` to a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The trigger has no default styling and no default icon, so it composes with whatever button family the call site already uses. Place it inside `DocumentAction` for the standard header chevron, or anywhere inside the component.
+
+<Props name="DocumentTrigger" />
+
+### DocumentContent
+
+The body. Always renders, always visible at `collapsedHeight` when closed, and animates to its measured full height when open. A bottom fade fades out as the document opens. Inner padding is provided so children can be plain blocks.
+
+<Props name="DocumentContent" />

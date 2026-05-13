@@ -1,0 +1,42 @@
+---
+parts:
+  - name: Chip
+    passThrough:
+      type: useRender.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: size
+        type: '"default" | "sm"'
+        default: '"default"'
+        description: '`default` reads alongside body text. `sm` is the compact variant for dense rows of metadata or icon-led tags.'
+      - name: render
+        type: ReactElement
+        description: Render the root as another element, like a button or a link. The kit picks up the swap and adds a pointer cursor, a hover tone, and a keyboard focus ring.
+---
+
+A small inline chip for short metadata.
+
+## Anatomy
+
+A pill that names a value attached to nearby content. Use it for filenames, query strings, command names, or any short tag that needs to read as data rather than prose. Sits inline with text and other inline elements.
+
+```tsx
+<Chip>src/styles.css</Chip>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Chip
+
+The pill itself. Takes any inline content as children.
+
+Swap the element via `render` to make a chip a link or a button. The kit picks up an anchor or a button rendering and adds a pointer cursor, a hover tone, and a keyboard focus ring, with no extra props. Use it for a tag that points at a file in the repo, a saved query, or a command the user can run.
+
+```tsx
+<Chip render={<a href="..." />}>src/styles.css</Chip>
+<Chip render={<button type="button" onClick={...} />}>bun run typecheck</Chip>
+```
+
+<Props name="Chip" />

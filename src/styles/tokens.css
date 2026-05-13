@@ -1,0 +1,106 @@
+.dark {
+  --color-foreground: oklch(0.982 0 0);
+  --color-background: oklch(0.1985 0.0022 259.23);
+  --color-muted: oklch(0.22 0 0);
+  --color-muted-foreground: oklch(0.65 0 0);
+
+  --color-surface: oklch(0.2065 0.0022 259.23);
+  --color-card-foreground: oklch(0.18 0 0);
+  --color-surface-elevated: oklch(0.2364 0.0022 259.23);
+
+  --color-border: oklch(0.2867 0 0);
+
+  --color-primary: oklch(0.6 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.2972 0.0022 259.23);
+  --color-secondary-foreground: oklch(0.982 0 0);
+
+  --color-destructive: oklch(0.6 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.2664 0.0142 259.23);
+
+  --radius: 0.75rem;
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+}
+
+@theme {
+  --color-foreground: var(--color-foreground);
+  --color-background: var(--color-background);
+
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-surface: var(--color-surface);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-surface-elevated: var(--color-surface-elevated);
+
+  --color-border: var(--color-border);
+
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+
+  --color-accent: var(--color-accent);
+
+  --radius: var(--radius);
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+}
+
+@keyframes text-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes text-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes loading-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes citation-enter-next {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes citation-enter-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,209 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "@tanstack/react-router";
+import { Collapsible } from "@base-ui/react/collapsible";
+import {
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  SidebarCloseIcon,
+} from "lucide-react";
+import { cn } from "#/lib/utils";
+import { registry } from "./registry.config";
+import { ThemeToggle } from "./theme-toggle";
+import { SiReact } from "react-icons/si";
+import { Button } from "../ai/button";
+import { useSidebarStore } from "./sidebar-store";
+
+export function Sidebar() {
+  const toggle = useSidebarStore((s) => s.toggle);
+  const close = useSidebarStore((s) => s.close);
+  const params = useParams({ strict: false }) as {
+    component?: string;
+    demo?: string;
+  };
+  const activeComponent = params.component;
+  const activeDemo = params.demo;
+
+  function closeOnMobile() {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 767px)").matches
+    ) {
+      close();
+    }
+  }
+
+  const [expanded, setExpanded] = useState<Set<string>>(() =>
+    activeComponent ? new Set([activeComponent]) : new Set(),
+  );
+
+  useEffect(() => {
+    if (!activeComponent) return;
+    setExpanded((prev) =>
+      prev.has(activeComponent) ? prev : new Set([...prev, activeComponent]),
+    );
+  }, [activeComponent]);
+
+  const isEmpty = registry.every((g) => g.components.length === 0);
+
+  return (
+    <>
+      <header className="px-6 py-2 flex">
+        <div className="font-medium">
+          <Link to="/" onClick={closeOnMobile}>
+            ai-kit
+          </Link>
+        </div>
+        <Button
+          iconOnly
+          variant="ghost"
+          className="ml-auto text-muted-foreground hover:text-foreground"
+          onClick={toggle}
+        >
+          <SidebarCloseIcon className="size-4" />
+        </Button>
+      </header>
+      <nav className="flex-1 overflow-y-auto mt-2">
+        {isEmpty ? (
+          <p className="px-6 py-2 text-xs text-muted-foreground">
+            No components yet.
+          </p>
+        ) : (
+          registry.map((group) => (
+            <section key={group.title} className="mb-3">
+              <div className="px-6 py-1 text-xs font-medium text-muted-foreground">
+                {group.title}
+              </div>
+              <ul className="px-4">
+                {group.components
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((component) => {
+                    const isExpanded = expanded.has(component.slug);
+                    const isActiveBranch = activeComponent === component.slug;
+
+                    return (
+                      <li key={component.slug} className="mb-0.5">
+                        <Collapsible.Root
+                          className="group"
+                          open={isExpanded}
+                          onOpenChange={(open) =>
+                            setExpanded((prev) => {
+                              const next = new Set(prev);
+                              if (open) next.add(component.slug);
+                              else next.delete(component.slug);
+                              return next;
+                            })
+                          }
+                        >
+                          <div
+                            className={cn(
+                              "flex items-center rounded text-sm",
+                              "hover:bg-accent",
+                              isActiveBranch &&
+                                !activeDemo &&
+                                "bg-accent text-foreground",
+                            )}
+                          >
+                            <Collapsible.Trigger
+                              className="p-1 text-muted-foreground hover:text-foreground rounded outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                              aria-label={isExpanded ? "Collapse" : "Expand"}
+                            >
+                              <ChevronRight className="size-3.5 transition-transform group-data-open:rotate-90" />
+                            </Collapsible.Trigger>
+                            <Link
+                              to="/$component"
+                              params={{ component: component.slug }}
+                              onClick={() => {
+                                setExpanded((prev) =>
+                                  prev.has(component.slug)
+                                    ? prev
+                                    : new Set([...prev, component.slug]),
+                                );
+                                closeOnMobile();
+                              }}
+                              className={cn(
+                                "flex items-center gap-1.5 flex-1 min-w-0 py-1 pr-2",
+                                "outline-none focus-visible:ring-2 focus-visible:ring-primary rounded",
+                                "transition-colors duration-150",
+                                isActiveBranch
+                                  ? "text-foreground"
+                                  : "text-muted-foreground hover:text-foreground",
+                              )}
+                            >
+                              {isExpanded ? (
+                                <FolderOpen className="size-4 shrink-0 text-muted-foreground" />
+                              ) : (
+                                <Folder className="size-4 shrink-0 text-muted-foreground" />
+                              )}
+                              <span className="truncate">{component.name}</span>
+                            </Link>
+                          </div>
+
+                          <Collapsible.Panel
+                            className={cn(
+                              "overflow-hidden h-(--collapsible-panel-height)",
+                              "transition-[height] duration-150 ease-out",
+                              "data-starting-style:h-0 data-ending-style:h-0",
+                            )}
+                          >
+                            <ul className="ml-2.5 pl-1.5 border-l border-border mt-0.5 space-y-0.5">
+                              {component.demos.map((demo) => (
+                                <li key={demo.slug}>
+                                  <Link
+                                    to="/$component/$demo"
+                                    params={{
+                                      component: component.slug,
+                                      demo: demo.slug,
+                                    }}
+                                    onClick={closeOnMobile}
+                                    className={cn(
+                                      "flex items-center gap-1.5 px-1.5 py-1 rounded text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
+                                      "data-[status=active]:bg-accent data-[status=active]:text-foreground",
+                                      "transition-colors duration-150",
+                                      "outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                                    )}
+                                  >
+                                    <SiReact className="size-3.5 shrink-0" />
+                                    <span className="truncate">
+                                      {demo.name}
+                                    </span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </Collapsible.Panel>
+                        </Collapsible.Root>
+                      </li>
+                    );
+                  })}
+              </ul>
+            </section>
+          ))
+        )}
+      </nav>
+      <footer className="px-6 py-2 flex">
+        <p className="text-xs text-muted-foreground">
+          Designed by{" "}
+          <a
+            href="https://nauv.al"
+            className="border-b border-foreground text-foreground"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Nauval
+          </a>{" "}
+          at{" "}
+          <a
+            href="https://enterprise.kredibel.com"
+            className="border-b border-foreground text-foreground"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Kredibel
+          </a>
+        </p>
+      </footer>
+      {/* <ThemeToggle /> */}
+    </>
+  );
+}

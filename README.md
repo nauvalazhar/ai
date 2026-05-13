@@ -1,0 +1,18 @@
+# ai-kit
+
+React components for building AI chat surfaces. Messages, streaming, prompt, reasoning blocks, tool calls, citations, and the rest of the pieces a modern AI app needs.
+
+Each component is a thin, themeable wrapper you own. Drop the source into your project, restyle with tokens or Tailwind, and compose freely.
+
+## Documentation
+
+Full docs, live demos, and copy-paste source at [ai-kit.nauv.al](https://ai-kit.nauv.al).
+
+## Local development
+
+```bash
+bun install
+bun --bun run dev
+```
+
+The playground runs on port 3300.

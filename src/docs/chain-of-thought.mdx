@@ -1,0 +1,139 @@
+---
+parts:
+  - name: ChainOfThought
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+  - name: ChainOfThoughtHeader
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: ChainOfThoughtContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+  - name: ChainOfThoughtStep
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+  - name: ChainOfThoughtStepTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: ChainOfThoughtStepStatic
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ChainOfThoughtIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default filled circle. Pass any element to render in its place, like a spinner while a step is in progress or a check when it completes.
+  - name: ChainOfThoughtStepContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+---
+
+An ordered list of thinking steps, each independently expandable.
+
+## Anatomy
+
+Two layers of collapsibles. The outer one wraps the whole chain and toggles every step at once. The inner one wraps each step and toggles just that step's detail. A thin rail runs down the left, joining the header dot to every step dot, threading through any expanded panel and stopping at the final dot. Place a `ChainOfThoughtIcon` inside both the header and each step trigger so the row anchors on the rail.
+
+```tsx
+<ChainOfThought defaultOpen>
+  <ChainOfThoughtHeader>
+    <ChainOfThoughtIcon />
+    Working through the request
+  </ChainOfThoughtHeader>
+  <ChainOfThoughtContent>
+    <ChainOfThoughtStep>
+      <ChainOfThoughtStepTrigger>
+        <ChainOfThoughtIcon />
+        Analyzing the request
+      </ChainOfThoughtStepTrigger>
+      <ChainOfThoughtStepContent>
+        The user wants a side by side compare of two approaches.
+      </ChainOfThoughtStepContent>
+    </ChainOfThoughtStep>
+
+    <ChainOfThoughtStep defaultOpen>
+      <ChainOfThoughtStepTrigger>
+        <ChainOfThoughtIcon />
+        Selecting an approach
+      </ChainOfThoughtStepTrigger>
+      <ChainOfThoughtStepContent>
+        Merge sort makes the divide and conquer pattern easy to read.
+      </ChainOfThoughtStepContent>
+    </ChainOfThoughtStep>
+  </ChainOfThoughtContent>
+</ChainOfThought>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### ChainOfThought
+
+Outer collapsible. Clicking the header toggles the panel, which hides every step at once. Each step keeps its own open state while the panel is hidden.
+
+<Props name="ChainOfThought" />
+
+### ChainOfThoughtHeader
+
+The topmost row on the chain. Renders the icon, the label, and a chevron that rotates from right to down when the panel opens. The header sits on the same column as the step icons, so its icon reads as the start of the chain. When the chain is closed the row stands on its own with no trailing connector.
+
+<Props name="ChainOfThoughtHeader" />
+
+### ChainOfThoughtContent
+
+The panel that holds the step list. Animates open and close. The connectors live inside the panel, so when the chain is closed only the header dot remains.
+
+<Props name="ChainOfThoughtContent" />
+
+### ChainOfThoughtStep
+
+A single step in the chain. Each step opens and closes independently of its siblings and of the outer header. Mark the active step with `defaultOpen` so the user lands on its detail without having to click.
+
+<Props name="ChainOfThoughtStep" />
+
+### ChainOfThoughtStepTrigger
+
+Step header. Renders the icon, the label, and a chevron. The trigger sits on the same column as the header icon, so the chain stays aligned across rows.
+
+<Props name="ChainOfThoughtStepTrigger" />
+
+### ChainOfThoughtStepStatic
+
+A non-collapsible step. Renders a single row of icon and label, with the same column alignment and trailing rail connector as a regular step, but no chevron and no panel. Use it for short status notes that do not need a detail body, like an acknowledgement or a brief intermediate state.
+
+<Props name="ChainOfThoughtStepStatic" />
+
+### ChainOfThoughtIcon
+
+The leading mark on the chain, used inside both the header and each step trigger. Defaults to a small filled circle. Pass any element as children to swap it for a spinner while a step is in progress, a check when it completes, or any custom glyph. The icon container keeps a fixed width so swapping the inner element does not break the rail's column. Size the inner element rather than the container, since the container defines where the rail sits.
+
+<Props name="ChainOfThoughtIcon" />
+
+### ChainOfThoughtStepContent
+
+The expanding detail under a step. Animates height open and close. Indented to sit under the step's label so the chain column on the left stays clean.
+
+<Props name="ChainOfThoughtStepContent" />
