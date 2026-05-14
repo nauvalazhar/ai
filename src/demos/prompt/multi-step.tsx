@@ -47,10 +47,12 @@ export default function MultiStep() {
           <PromptOptionOther placeholder="No, tell me what to change" />
         </PromptStep>
 
-        <PromptFooter>
-          <StepIndicator />
-          <PromptHint keys="Shift+Tab">Back</PromptHint>
-          <PromptHint keys="ESC">Dismiss</PromptHint>
+        <PromptFooter className="max-sm:flex-wrap">
+          <div className="flex items-center w-full justify-end gap-3">
+            <StepIndicator />
+            <PromptHint keys="Shift+Tab">Back</PromptHint>
+            <PromptHint keys="ESC">Dismiss</PromptHint>
+          </div>
           <PromptSubmit />
         </PromptFooter>
       </Prompt>

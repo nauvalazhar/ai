@@ -40,13 +40,13 @@ function Hero() {
         <ArrowRightIcon className="size-3.5 text-muted-foreground" />
       </Link>
 
-      <h1 className="mt-6 max-w-3xl text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl">
-        Components for AI interfaces
+      <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight text-foreground md:text-6xl">
+        The interface for your favorite AI SDK
       </h1>
 
       <p className="mt-4 max-w-2xl text-balance text-base text-muted-foreground">
-        Composable React primitives for chat, reasoning, tools, and agents. Edit
-        the source, theme with your tokens, ship.
+        Agnostic by design. Components hold no opinions about your data layer
+        and work with any AI SDK in React.
       </p>
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-2">

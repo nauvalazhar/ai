@@ -172,6 +172,7 @@ function PassThroughDescription({ passThrough }: { passThrough: PassThrough }) {
           href={passThrough.docsUrl.href}
           target="_blank"
           rel="noreferrer noopener"
+          className="text-foreground border-b border-foreground"
         >
           {passThrough.docsUrl.label}
         </a>
@@ -239,7 +240,7 @@ function CopyMarkdownButton({
       className="text-xs text-muted-foreground hover:text-foreground"
     >
       {copied ? <Check /> : <SiMarkdown />}
-      Copy Markdown
+      Copy Page
     </Button>
   );
 }

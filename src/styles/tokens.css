@@ -19,7 +19,7 @@
   --color-destructive: oklch(0.6 0.2055 24.2);
   --color-destructive-foreground: oklch(1 0 0);
 
-  --color-accent: oklch(0.2664 0.0142 259.23);
+  --color-accent: oklch(0.2664 0.0022 259.23);
 
   --radius: 0.75rem;
   --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));

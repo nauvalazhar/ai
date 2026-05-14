@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_explorer/$component/$demo")({
     const demoName =
       findDemo(params.component, params.demo)?.name ?? params.demo;
     return {
-      meta: [{ title: `${componentName} · ${demoName} — ai-kit` }],
+      meta: [{ title: `${componentName} / ${demoName} — ai-kit` }],
     };
   },
 });
