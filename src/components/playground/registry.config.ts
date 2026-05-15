@@ -153,17 +153,6 @@ export const registry: Group[] = [
         ],
       },
       {
-        name: "Spec",
-        slug: "spec",
-        demos: [
-          {
-            name: "Basic",
-            slug: "basic",
-            Component: lazy(() => import("#/demos/spec/basic")),
-          },
-        ],
-      },
-      {
         name: "Reasoning",
         slug: "reasoning",
         demos: [
@@ -228,44 +217,13 @@ export const registry: Group[] = [
         ],
       },
       {
-        name: "Chip",
-        slug: "chip",
+        name: "Callout",
+        slug: "callout",
         demos: [
           {
             name: "Basic",
             slug: "basic",
-            Component: lazy(() => import("#/demos/chip/basic")),
-          },
-          {
-            name: "Interactive",
-            slug: "interactive",
-            Component: lazy(() => import("#/demos/chip/interactive")),
-          },
-        ],
-      },
-      {
-        name: "Button",
-        slug: "button",
-        demos: [
-          {
-            name: "Basic",
-            slug: "basic",
-            Component: lazy(() => import("#/demos/button/basic")),
-          },
-          {
-            name: "With Icon",
-            slug: "with-icon",
-            Component: lazy(() => import("#/demos/button/with-icon")),
-          },
-          {
-            name: "Icon Only",
-            slug: "icon-only",
-            Component: lazy(() => import("#/demos/button/icon-only")),
-          },
-          {
-            name: "Loading",
-            slug: "loading",
-            Component: lazy(() => import("#/demos/button/loading")),
+            Component: lazy(() => import("#/demos/callout/basic")),
           },
         ],
       },
@@ -339,6 +297,58 @@ export const registry: Group[] = [
             name: "External Trigger",
             slug: "external-trigger",
             Component: lazy(() => import("#/demos/document/external-trigger")),
+          },
+        ],
+      },
+      {
+        name: "Composer",
+        slug: "composer",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/composer/basic")),
+          },
+          {
+            name: "Multiline",
+            slug: "multiline",
+            Component: lazy(() => import("#/demos/composer/multiline")),
+          },
+        ],
+      },
+      {
+        name: "Composer Rich",
+        slug: "composer-rich",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/composer-rich/basic")),
+          },
+          {
+            name: "Mentions",
+            slug: "mentions",
+            Component: lazy(() => import("#/demos/composer-rich/mentions")),
+          },
+          {
+            name: "Submenu",
+            slug: "submenu",
+            Component: lazy(() => import("#/demos/composer-rich/submenu")),
+          },
+          {
+            name: "Async",
+            slug: "async",
+            Component: lazy(() => import("#/demos/composer-rich/async")),
+          },
+          {
+            name: "Groups",
+            slug: "groups",
+            Component: lazy(() => import("#/demos/composer-rich/groups")),
+          },
+          {
+            name: "Custom Data",
+            slug: "custom-data",
+            Component: lazy(() => import("#/demos/composer-rich/custom-data")),
           },
         ],
       },
@@ -453,6 +463,148 @@ export const registry: Group[] = [
             name: "Minimal",
             slug: "minimal",
             Component: lazy(() => import("#/demos/source/minimal")),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Utilities",
+    components: [
+      {
+        name: "Button",
+        slug: "button",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/button/basic")),
+          },
+          {
+            name: "With Icon",
+            slug: "with-icon",
+            Component: lazy(() => import("#/demos/button/with-icon")),
+          },
+          {
+            name: "Icon Only",
+            slug: "icon-only",
+            Component: lazy(() => import("#/demos/button/icon-only")),
+          },
+          {
+            name: "Loading",
+            slug: "loading",
+            Component: lazy(() => import("#/demos/button/loading")),
+          },
+        ],
+      },
+      {
+        name: "Chip",
+        slug: "chip",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/chip/basic")),
+          },
+          {
+            name: "Interactive",
+            slug: "interactive",
+            Component: lazy(() => import("#/demos/chip/interactive")),
+          },
+        ],
+      },
+      {
+        name: "Spec",
+        slug: "spec",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/spec/basic")),
+          },
+        ],
+      },
+      {
+        name: "Tooltip",
+        slug: "tooltip",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/tooltip/basic")),
+          },
+        ],
+      },
+      {
+        name: "Menu",
+        slug: "menu",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/menu/basic")),
+          },
+          {
+            name: "Group",
+            slug: "group",
+            Component: lazy(() => import("#/demos/menu/group")),
+          },
+          {
+            name: "Radio",
+            slug: "radio",
+            Component: lazy(() => import("#/demos/menu/radio")),
+          },
+          {
+            name: "Checkbox",
+            slug: "checkbox",
+            Component: lazy(() => import("#/demos/menu/checkbox")),
+          },
+          {
+            name: "Nested",
+            slug: "nested",
+            Component: lazy(() => import("#/demos/menu/nested")),
+          },
+        ],
+      },
+      {
+        name: "Select",
+        slug: "select",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/select/basic")),
+          },
+          {
+            name: "Group",
+            slug: "group",
+            Component: lazy(() => import("#/demos/select/group")),
+          },
+          {
+            name: "Icon",
+            slug: "icon",
+            Component: lazy(() => import("#/demos/select/icon")),
+          },
+          {
+            name: "Multiple",
+            slug: "multiple",
+            Component: lazy(() => import("#/demos/select/multiple")),
+          },
+          {
+            name: "Disabled",
+            slug: "disabled",
+            Component: lazy(() => import("#/demos/select/disabled")),
+          },
+        ],
+      },
+      {
+        name: "Switch",
+        slug: "switch",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/switch/basic")),
           },
         ],
       },
