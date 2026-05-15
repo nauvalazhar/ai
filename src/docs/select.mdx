@@ -1,0 +1,196 @@
+---
+parts:
+  - name: Select
+    passThrough:
+      type: Select.Root.Props
+      docsUrl:
+        label: Base UI Select.Root
+        href: https://base-ui.com/react/components/select#root
+  - name: SelectTrigger
+    passThrough:
+      type: Select.Trigger.Props
+      docsUrl:
+        label: Base UI Select.Trigger
+        href: https://base-ui.com/react/components/select#trigger
+    props:
+      - name: variant
+        type: '"default" | "subtle" | "plain"'
+        default: '"default"'
+        description: '`default` is the bordered input look. `subtle` softens the surface for forms with many fields. `plain` drops the surface for toolbar-style triggers.'
+  - name: SelectValue
+    passThrough:
+      type: Select.Value.Props
+      docsUrl:
+        label: Base UI Select.Value
+        href: https://base-ui.com/react/components/select#value
+    props:
+      - name: placeholder
+        type: string
+        default: '"Select an option"'
+        description: Text shown when no value is selected.
+  - name: SelectPopup
+    passThrough:
+      type: Select.Popup.Props
+      docsUrl:
+        label: Base UI Select.Popup
+        href: https://base-ui.com/react/components/select#popup
+    props:
+      - name: side
+        type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"'
+        description: Which side of the trigger the popup anchors to.
+      - name: sideOffset
+        type: number
+        default: "6"
+        description: Distance in pixels between the trigger and the popup.
+      - name: align
+        type: '"start" | "center" | "end"'
+        description: Alignment of the popup along the chosen side.
+      - name: alignOffset
+        type: number
+        description: Offset in pixels along the align axis.
+  - name: SelectList
+    passThrough:
+      type: Select.List.Props
+      docsUrl:
+        label: Base UI Select.List
+        href: https://base-ui.com/react/components/select#list
+  - name: SelectItem
+    passThrough:
+      type: Select.Item.Props
+      docsUrl:
+        label: Base UI Select.Item
+        href: https://base-ui.com/react/components/select#item
+  - name: SelectGroup
+    passThrough:
+      type: Select.Group.Props
+      docsUrl:
+        label: Base UI Select.Group
+        href: https://base-ui.com/react/components/select#group
+  - name: SelectGroupLabel
+    passThrough:
+      type: Select.GroupLabel.Props
+      docsUrl:
+        label: Base UI Select.GroupLabel
+        href: https://base-ui.com/react/components/select#group-label
+  - name: SelectSeparator
+    passThrough:
+      type: Select.Separator.Props
+      docsUrl:
+        label: Base UI Select.Separator
+        href: https://base-ui.com/react/components/select#separator
+---
+
+A control for choosing one or more options from a list.
+
+## Anatomy
+
+Pair a trigger with a popup of items. Reach for it when the user picks from a small, known set, like a model, a tone, or a target. For free-form lookups, prefer a combobox.
+
+```tsx
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Pick a model" />
+  </SelectTrigger>
+  <SelectPopup>
+    <SelectList>
+      <SelectItem value="opus">Claude Opus</SelectItem>
+      <SelectItem value="sonnet">Claude Sonnet</SelectItem>
+      <SelectItem value="haiku">Claude Haiku</SelectItem>
+    </SelectList>
+  </SelectPopup>
+</Select>
+```
+
+Group items with a label and a separator when the list grows past a handful.
+
+```tsx
+<SelectPopup>
+  <SelectList>
+    <SelectGroup>
+      <SelectGroupLabel>Cloud</SelectGroupLabel>
+      <SelectItem value="opus">Opus</SelectItem>
+      <SelectItem value="sonnet">Sonnet</SelectItem>
+    </SelectGroup>
+    <SelectSeparator />
+    <SelectGroup>
+      <SelectGroupLabel>Local</SelectGroupLabel>
+      <SelectItem value="llama">Llama</SelectItem>
+    </SelectGroup>
+  </SelectList>
+</SelectPopup>
+```
+
+For multi-select, pass `multiple` to the root. The trigger shows the first value with a chip that counts the rest.
+
+```tsx
+<Select multiple>
+  <SelectTrigger>
+    <SelectValue placeholder="Pick tags" />
+  </SelectTrigger>
+  <SelectPopup>
+    <SelectList>
+      <SelectItem value="bug">Bug</SelectItem>
+      <SelectItem value="docs">Docs</SelectItem>
+      <SelectItem value="perf">Perf</SelectItem>
+    </SelectList>
+  </SelectPopup>
+</Select>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Select
+
+The root. Holds the value, tracks open state, and coordinates keyboard navigation. Pass `multiple` for multi-select.
+
+<Props name="Select" />
+
+### SelectTrigger
+
+The control that opens the popup. Lays out the value on the leading edge and a chevron on the trailing edge. The `variant` prop picks between three surfaces.
+
+<Props name="SelectTrigger" />
+
+### SelectValue
+
+Renders the current value inside the trigger. Falls back to the placeholder when the value is empty. Accepts a single value, a multi-select array, or a rich object with `label`, `value`, and an optional `icon`.
+
+<Props name="SelectValue" />
+
+### SelectPopup
+
+The floating panel. Takes positioner props inline so you can set `side`, `sideOffset`, `align`, and `alignOffset` without reaching for a separate positioner part. Matches the trigger's width on small screens.
+
+<Props name="SelectPopup" />
+
+### SelectList
+
+The scrollable list of items inside the popup. Caps its height to the available space and scrolls when needed.
+
+<Props name="SelectList" />
+
+### SelectItem
+
+A row inside the list. Pass `value` as a string for plain entries, or as an object with `label`, `value`, and `icon` to control how the value renders back in the trigger.
+
+<Props name="SelectItem" />
+
+### SelectGroup
+
+A wrapper that ties a label to a set of items for assistive tech.
+
+<Props name="SelectGroup" />
+
+### SelectGroupLabel
+
+A small heading that names a group. Reads as muted text inside the popup.
+
+<Props name="SelectGroupLabel" />
+
+### SelectSeparator
+
+A thin divider between groups of items.
+
+<Props name="SelectSeparator" />
