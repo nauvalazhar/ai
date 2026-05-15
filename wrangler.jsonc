@@ -3,7 +3,7 @@
   "name": "ai-kit",
   "routes": [
     {
-      "pattern": "ai-kit.nauv.al",
+      "pattern": "ai.nauv.al",
       "custom_domain": true
     }
   ],

@@ -6,7 +6,7 @@ Each component is a thin, themeable wrapper you own. Drop the source into your p
 
 ## Documentation
 
-Full docs, live demos, and copy-paste source at [ai-kit.nauv.al](https://ai-kit.nauv.al).
+Full docs, live demos, and copy-paste source at [ai.nauv.al](https://ai.nauv.al).
 
 ## Local development
 
