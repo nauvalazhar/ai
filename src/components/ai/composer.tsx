@@ -147,16 +147,21 @@ function autosize(el: HTMLTextAreaElement, maxRows: number) {
 export function ComposerInput({
   onSubmit,
   onValueChange,
-  defaultValue = "",
+  value: valueProp,
+  defaultValue,
   placeholder,
   autoFocus = false,
   maxRows = 8,
   submitOnEnter = true,
   className,
   ...props
-}: Omit<React.ComponentProps<"textarea">, "onSubmit" | "onChange" | "rows"> & {
+}: Omit<
+  React.ComponentProps<"textarea">,
+  "onSubmit" | "onChange" | "rows" | "value" | "defaultValue"
+> & {
   onSubmit?: (text: string) => void;
   onValueChange?: (text: string) => void;
+  value?: string;
   defaultValue?: string;
   autoFocus?: boolean;
   maxRows?: number;
@@ -165,41 +170,47 @@ export function ComposerInput({
   const ctx = useComposerContext();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const isComposingRef = useRef(false);
+  const isControlled = valueProp !== undefined;
+  const [internalValue, setInternalValue] = useState(defaultValue ?? "");
+  const value = isControlled ? valueProp : internalValue;
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const isControlledRef = useRef(isControlled);
+  isControlledRef.current = isControlled;
 
   const onSubmitRef = useRef(onSubmit);
   onSubmitRef.current = onSubmit;
   const onValueChangeRef = useRef(onValueChange);
   onValueChangeRef.current = onValueChange;
 
-  const doSubmit = useCallback(() => {
-    const el = inputRef.current;
-    if (!el) return;
-    const text = el.value;
-    if (!text.trim()) return;
-    onSubmitRef.current?.(text);
-    el.value = "";
-    ctx.setEmpty(true);
-    autosize(el, maxRows);
-    onValueChangeRef.current?.("");
-  }, [ctx, maxRows]);
-
-  useEffect(() => ctx.registerSubmit(doSubmit), [ctx, doSubmit]);
-
   useLayoutEffect(() => {
     const el = inputRef.current;
     if (!el) return;
-    el.value = defaultValue;
-    ctx.setEmpty(defaultValue.trim().length === 0);
+    ctx.setEmpty(value.trim().length === 0);
     autosize(el, maxRows);
-    if (autoFocus && !ctx.disabled) el.focus();
+  }, [value, maxRows, ctx]);
+
+  useLayoutEffect(() => {
+    if (autoFocus && !ctx.disabled) inputRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const el = e.currentTarget;
-    ctx.setEmpty(el.value.trim().length === 0);
-    autosize(el, maxRows);
-    onValueChangeRef.current?.(el.value);
+  const doSubmit = useCallback(() => {
+    const text = valueRef.current;
+    if (!text.trim()) return;
+    onSubmitRef.current?.(text);
+    if (!isControlledRef.current) {
+      setInternalValue("");
+      onValueChangeRef.current?.("");
+    }
+  }, []);
+
+  useEffect(() => ctx.registerSubmit(doSubmit), [ctx, doSubmit]);
+
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const next = e.target.value;
+    if (!isControlled) setInternalValue(next);
+    onValueChangeRef.current?.(next);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -217,7 +228,8 @@ export function ComposerInput({
       placeholder={placeholder}
       disabled={ctx.disabled}
       rows={1}
-      onInput={onInput}
+      value={value}
+      onChange={onChange}
       onKeyDown={onKeyDown}
       onFocus={() => ctx.setFocused(true)}
       onBlur={() => ctx.setFocused(false)}

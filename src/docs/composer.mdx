@@ -16,13 +16,16 @@ parts:
     props:
       - name: onSubmit
         type: "(text: string) => void"
-        description: Fires on Enter (without Shift) and when `ComposerSubmit` is clicked. Receives the current text. The input clears after firing.
+        description: Fires on Enter (without Shift) and when `ComposerSubmit` is clicked. Receives the current text. The input clears after firing in uncontrolled mode; in controlled mode the parent owns clearing.
       - name: onValueChange
         type: "(text: string) => void"
-        description: Fires after every keystroke. Useful for draft autosave.
+        description: Fires after every keystroke. Pair with `value` for controlled mode, or use alone for draft autosave.
+      - name: value
+        type: string
+        description: Controlled value. When set, the parent owns the text and must update it from `onValueChange` to reflect typing. The input does not auto-clear after submit.
       - name: defaultValue
         type: string
-        description: Initial text on mount.
+        description: Initial text on mount when uncontrolled. Ignored when `value` is provided.
       - name: autoFocus
         type: boolean
         default: "false"
@@ -98,7 +101,9 @@ The root is engine-agnostic. It tracks empty and focus state and exposes a regis
 
 ### ComposerInput
 
-A styled textarea that registers a submit handler with the root. Autosizes between one row and `maxRows` lines. Sends on Enter without Shift, ignores Enter during IME composition so input methods can commit without firing submit. The textarea is the source of truth, so the parent receives the value through `onSubmit` and `onValueChange`.
+A styled textarea that registers a submit handler with the root. Autosizes between one row and `maxRows` lines. Sends on Enter without Shift, ignores Enter during IME composition so input methods can commit without firing submit.
+
+The input runs in either mode. Leave `value` unset and the component manages its own state, optionally seeded by `defaultValue`, and clears itself after submit. Pass `value` together with `onValueChange` to hand state ownership to the parent. In that mode the parent decides when to clear, typically by setting `value` to an empty string after `onSubmit`.
 
 <Props name="ComposerInput" />
 
