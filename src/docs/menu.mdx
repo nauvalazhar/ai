@@ -1,0 +1,245 @@
+---
+parts:
+  - name: Menu
+    passThrough:
+      type: Menu.Root.Props
+      docsUrl:
+        label: Base UI Menu.Root
+        href: https://base-ui.com/react/components/menu#root
+  - name: MenuTrigger
+    passThrough:
+      type: Menu.Trigger.Props
+      docsUrl:
+        label: Base UI Menu.Trigger
+        href: https://base-ui.com/react/components/menu#trigger
+  - name: MenuPopup
+    passThrough:
+      type: Menu.Popup.Props
+      docsUrl:
+        label: Base UI Menu.Popup
+        href: https://base-ui.com/react/components/menu#popup
+    props:
+      - name: side
+        type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"'
+        description: Which side of the trigger the popup anchors to.
+      - name: sideOffset
+        type: number
+        default: "6"
+        description: Distance in pixels between the trigger and the popup.
+      - name: align
+        type: '"start" | "center" | "end"'
+        description: Alignment of the popup along the chosen side.
+      - name: alignOffset
+        type: number
+        description: Offset in pixels along the align axis.
+  - name: MenuItem
+    passThrough:
+      type: Menu.Item.Props
+      docsUrl:
+        label: Base UI Menu.Item
+        href: https://base-ui.com/react/components/menu#item
+  - name: MenuSeparator
+    passThrough:
+      type: Menu.Separator.Props
+      docsUrl:
+        label: Base UI Menu.Separator
+        href: https://base-ui.com/react/components/menu#separator
+  - name: MenuSubmenu
+    passThrough:
+      type: Menu.SubmenuRoot.Props
+      docsUrl:
+        label: Base UI Menu.SubmenuRoot
+        href: https://base-ui.com/react/components/menu#submenu-root
+  - name: MenuSubmenuTrigger
+    passThrough:
+      type: Menu.SubmenuTrigger.Props
+      docsUrl:
+        label: Base UI Menu.SubmenuTrigger
+        href: https://base-ui.com/react/components/menu#submenu-trigger
+  - name: MenuSubmenuPopup
+    passThrough:
+      type: Menu.Popup.Props
+      docsUrl:
+        label: Base UI Menu.Popup
+        href: https://base-ui.com/react/components/menu#popup
+  - name: MenuGroup
+    passThrough:
+      type: Menu.Group.Props
+      docsUrl:
+        label: Base UI Menu.Group
+        href: https://base-ui.com/react/components/menu#group
+  - name: MenuGroupLabel
+    passThrough:
+      type: Menu.GroupLabel.Props
+      docsUrl:
+        label: Base UI Menu.GroupLabel
+        href: https://base-ui.com/react/components/menu#group-label
+  - name: MenuCheckboxItem
+    passThrough:
+      type: Menu.CheckboxItem.Props
+      docsUrl:
+        label: Base UI Menu.CheckboxItem
+        href: https://base-ui.com/react/components/menu#checkbox-item
+  - name: MenuRadioGroup
+    passThrough:
+      type: Menu.RadioGroup.Props
+      docsUrl:
+        label: Base UI Menu.RadioGroup
+        href: https://base-ui.com/react/components/menu#radio-group
+  - name: MenuRadioItem
+    passThrough:
+      type: Menu.RadioItem.Props
+      docsUrl:
+        label: Base UI Menu.RadioItem
+        href: https://base-ui.com/react/components/menu#radio-item
+    props:
+      - name: variant
+        type: '"default" | "alternate"'
+        default: '"default"'
+        description: '`default` shows a check mark next to the chosen row. `alternate` moves the indicator to the trailing edge as a filled dot inside a ring.'
+---
+
+A list of actions or options that opens from a trigger.
+
+## Anatomy
+
+Open a panel of choices anchored to a button. Reach for it when a control needs a small set of related actions, like a dropdown on a chat row or an overflow menu in a toolbar.
+
+```tsx
+<Menu>
+  <MenuTrigger>Open</MenuTrigger>
+  <MenuPopup>
+    <MenuItem>Copy</MenuItem>
+    <MenuItem>Share</MenuItem>
+  </MenuPopup>
+</Menu>
+```
+
+Group related items, mark a section with a label, and place a separator between groups.
+
+```tsx
+<Menu>
+  <MenuTrigger>Account</MenuTrigger>
+  <MenuPopup>
+    <MenuGroup>
+      <MenuGroupLabel>Account</MenuGroupLabel>
+      <MenuItem>
+        <UserIcon />
+        Profile
+      </MenuItem>
+      <MenuItem>
+        <SettingsIcon />
+        Settings
+      </MenuItem>
+    </MenuGroup>
+    <MenuSeparator />
+    <MenuItem>Sign out</MenuItem>
+  </MenuPopup>
+</Menu>
+```
+
+Nest a submenu by pairing a submenu trigger with its own popup. The chevron on the trigger flips out automatically.
+
+```tsx
+<MenuSubmenu>
+  <MenuSubmenuTrigger>Theme</MenuSubmenuTrigger>
+  <MenuSubmenuPopup>
+    <MenuItem>Light</MenuItem>
+    <MenuItem>Dark</MenuItem>
+    <MenuItem>System</MenuItem>
+  </MenuSubmenuPopup>
+</MenuSubmenu>
+```
+
+For pickers inside the menu, swap items for checkbox or radio variants. The kit handles the indicator and the selected state.
+
+```tsx
+<MenuCheckboxItem checked>Show line numbers</MenuCheckboxItem>
+
+<MenuRadioGroup value={theme} onValueChange={setTheme}>
+  <MenuRadioItem value="light">Light</MenuRadioItem>
+  <MenuRadioItem value="dark">Dark</MenuRadioItem>
+</MenuRadioGroup>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Menu
+
+The root. Tracks open state and coordinates keyboard navigation across the items.
+
+<Props name="Menu" />
+
+### MenuTrigger
+
+The control that opens the menu. Use `render` to swap it for a button or any focusable element.
+
+<Props name="MenuTrigger" />
+
+### MenuPopup
+
+The floating panel. Takes positioner props inline so you can set `side`, `sideOffset`, `align`, and `alignOffset` without reaching for a separate positioner part.
+
+<Props name="MenuPopup" />
+
+### MenuItem
+
+A row inside the popup. Forwards every native item prop, including `disabled` and `onClick`. SVG children are auto-sized.
+
+<Props name="MenuItem" />
+
+### MenuSeparator
+
+A thin divider between groups of items.
+
+<Props name="MenuSeparator" />
+
+### MenuSubmenu
+
+A nested root for a submenu. Wrap a submenu trigger and a submenu popup.
+
+<Props name="MenuSubmenu" />
+
+### MenuSubmenuTrigger
+
+An item that opens its own popup to the side. Renders a trailing chevron so the affordance reads at a glance.
+
+<Props name="MenuSubmenuTrigger" />
+
+### MenuSubmenuPopup
+
+The submenu's popup. Same shape as the main popup and takes the same positioner props.
+
+<Props name="MenuSubmenuPopup" />
+
+### MenuGroup
+
+A wrapper that ties a label to a set of items for assistive tech.
+
+<Props name="MenuGroup" />
+
+### MenuGroupLabel
+
+A small heading that names a group. Reads as muted text inside the popup.
+
+<Props name="MenuGroupLabel" />
+
+### MenuCheckboxItem
+
+An item that toggles on and off. Renders a check on the selected state and reserves space for it on the unselected state so rows stay aligned.
+
+<Props name="MenuCheckboxItem" />
+
+### MenuRadioGroup
+
+A wrapper that ties radio items to a shared value.
+
+<Props name="MenuRadioGroup" />
+
+### MenuRadioItem
+
+A single radio option inside a group. The `variant` prop picks between a leading check and a trailing dot.
+
+<Props name="MenuRadioItem" />
