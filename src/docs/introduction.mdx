@@ -1,0 +1,39 @@
+---
+parts: []
+---
+
+A collection of React components for building agentic AI interfaces, designed to compose into whatever shape your model actually needs.
+
+## Why ai-kit
+
+Most chat UI kits assume the same shape. A sidebar, a thread, a textarea. That works for a generic assistant and stops working the moment you ship reasoning, tool calls, approvals, or any surface that goes beyond a single back-and-forth.
+
+ai-kit treats those surfaces as first-class. Reasoning, tool calls, citations, confirmations, and tasks each have their own primitives, alongside the chat parts you already expect. You compose them into the layout your product needs instead of bending a fixed chat shell to fit.
+
+## Agnostic by design
+
+Components hold no opinions about your data layer. There is no built-in store, no required hook, no transport. Any AI SDK in React works, and so does your own fetch loop. The same composer that drives a basic chat can drive a custom agent harness without touching the markup.
+
+## Composable
+
+Each surface is assembled from small headless pieces. A composer is a root, an input, a toolbar, and a submit. A message is a header, a body, and a row of actions. Pull pieces out, swap them, or wrap them. The shape is yours.
+
+This keeps the API narrow. A handful of parts compose into many layouts, instead of one monolith with a long list of variants.
+
+## Built for streaming
+
+Reasoning, tool calls, and replies render as they arrive. Components handle the in-progress states, not just the final ones. A reasoning block streams its own body. A task flips through running, succeeded, and failed without remounting. A composer toolbar can show a stop control while a reply is in flight.
+
+## Beyond chat
+
+Agents do more than reply. They run tools, request approval, cite sources, read documents, and walk through long chains of thought. ai-kit ships primitives for each of those. Use them inside a conversation, in a sidebar, or on their own.
+
+## Own the code
+
+Components live in your repo. There is no package to update and no abstraction to fight. Drop a component in, edit it, fork it, delete the parts you don't need. The kit is a starting point, not a dependency.
+
+That trade is intentional. You take on a little more upkeep in exchange for full control over every surface you ship.
+
+## What's next
+
+Browse the sidebar to see every component, or jump into a specific one to read the API and run the demos. Each page includes a copy-as-markdown button so you can hand the docs to your favorite model when you want it to scaffold the surface for you.
