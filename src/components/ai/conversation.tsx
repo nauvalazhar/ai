@@ -1,4 +1,3 @@
-import { ScrollArea } from "@base-ui/react/scroll-area";
 import { useRender } from "@base-ui/react/use-render";
 import {
   createContext,
@@ -37,9 +36,9 @@ export function useConversation() {
 
 export function Conversation({
   className,
-  children,
+  render,
   ...props
-}: ScrollArea.Root.Props) {
+}: useRender.ComponentProps<"div">) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const wasAtBottomRef = useRef(true);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -49,6 +48,17 @@ export function Conversation({
     if (!v) return;
     v.scrollTo({ top: v.scrollHeight, behavior });
   }, []);
+
+  const element = useRender({
+    render,
+    defaultTagName: "div",
+    props: {
+      ...props,
+      "data-slot": "conversation",
+      "data-at-bottom": isAtBottom ? "true" : "false",
+      className: cn("relative overflow-hidden", className),
+    },
+  });
 
   return (
     <ConversationContext.Provider
@@ -60,24 +70,7 @@ export function Conversation({
         scrollToBottom,
       }}
     >
-      <ScrollArea.Root
-        data-slot="conversation"
-        data-at-bottom={isAtBottom ? "true" : "false"}
-        className={cn("relative overflow-hidden", className)}
-        {...props}
-      >
-        {children}
-        <ScrollArea.Scrollbar
-          orientation="vertical"
-          className={cn(
-            "m-1 flex w-1.5 justify-center rounded-full",
-            "opacity-0 transition-opacity duration-200",
-            "data-hovering:opacity-100 data-scrolling:opacity-100",
-          )}
-        >
-          <ScrollArea.Thumb className="w-full rounded-full bg-border" />
-        </ScrollArea.Scrollbar>
-      </ScrollArea.Root>
+      {element}
     </ConversationContext.Provider>
   );
 }
@@ -86,8 +79,9 @@ export function ConversationContent({
   className,
   children,
   onScroll,
+  render,
   ...props
-}: ScrollArea.Viewport.Props) {
+}: useRender.ComponentProps<"div">) {
   const { viewportRef, isAtBottom, setIsAtBottom, wasAtBottomRef } =
     useConversationContext();
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -122,23 +116,29 @@ export function ConversationContent({
     return () => ro.disconnect();
   }, [recompute, viewportRef, wasAtBottomRef]);
 
-  return (
-    <ScrollArea.Viewport
-      ref={viewportRef}
-      data-slot="conversation-content"
-      data-at-bottom={isAtBottom ? "true" : "false"}
-      onScroll={(event) => {
+  return useRender({
+    render,
+    defaultTagName: "div",
+    ref: viewportRef,
+    props: {
+      ...props,
+      "data-slot": "conversation-content",
+      "data-at-bottom": isAtBottom ? "true" : "false",
+      onScroll: (event: React.UIEvent<HTMLDivElement>) => {
         recompute();
         onScroll?.(event);
-      }}
-      className={cn("overscroll-contain size-full", className)}
-      {...props}
-    >
-      <ScrollArea.Content ref={contentRef} className="flex flex-col gap-6">
-        {children}
-      </ScrollArea.Content>
-    </ScrollArea.Viewport>
-  );
+      },
+      className: cn(
+        "overflow-y-auto overscroll-contain size-full",
+        className,
+      ),
+      children: (
+        <div ref={contentRef} className="flex flex-col gap-6">
+          {children}
+        </div>
+      ),
+    },
+  });
 }
 
 export function ConversationScrollButton({

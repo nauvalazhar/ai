@@ -2,16 +2,20 @@
 parts:
   - name: Conversation
     passThrough:
-      type: ScrollArea.Root.Props
-      docsUrl:
-        label: Base UI ScrollArea.Root
-        href: https://base-ui.com/react/components/scroll-area#root
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default `div`. Pass a custom scroll area root if you want to replace the default native scroll. The substitute element receives a `data-at-bottom` attribute reflecting the current scroll state.
   - name: ConversationContent
     passThrough:
-      type: ScrollArea.Viewport.Props
-      docsUrl:
-        label: Base UI ScrollArea.Viewport
-        href: https://base-ui.com/react/components/scroll-area#viewport
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default scrolling `div`. The substitute must forward `ref` and `onScroll` to the element that actually scrolls so the stick-to-bottom logic and `ConversationScrollButton` keep working. The packaged `ScrollArea` is set up for this.
   - name: ConversationScrollButton
     passThrough:
       type: useRender.ComponentProps<"button">
@@ -49,6 +53,34 @@ Wraps a scroll area and adds stick-to-bottom behavior so streamed content keeps 
     <ArrowDownIcon />
   </ConversationScrollButton>
 </Conversation>
+```
+
+## Custom scroll area
+
+The viewport defaults to a plain element with native browser scroll. Both `Conversation` and `ConversationContent` accept a `render` prop, so you can swap in any scroll area implementation. The packaged `ScrollArea` is wired up for this.
+
+```tsx
+<Conversation>
+  <ConversationContent render={<ScrollArea scrollbar="vertical" />}>
+    <Message type="outgoing">…</Message>
+    <Message type="incoming">…</Message>
+  </ConversationContent>
+</Conversation>
+```
+
+If you supply your own component, the incoming `ref` and `onScroll` need to land on the inner viewport, not the outer container. The outer element does not scroll, so a ref on it would never see scroll events and `scrollTop` would always read zero, breaking stick-to-bottom and `ConversationScrollButton`.
+
+```tsx
+function MyScrollArea({ ref, onScroll, children, ...props }) {
+  return (
+    <ScrollAreaRoot {...props}>
+      <ScrollAreaViewport ref={ref} onScroll={onScroll}>
+        {children}
+      </ScrollAreaViewport>
+      …
+    </ScrollAreaRoot>
+  );
+}
 ```
 
 ## API
