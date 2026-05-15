@@ -1,0 +1,138 @@
+---
+parts:
+  - name: Composer
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: disabled
+        type: boolean
+        default: "false"
+        description: Locks every input registered to the root, dims the surface, and disables the submit button. Inputs that register with the root respect this flag.
+  - name: ComposerInput
+    passThrough:
+      type: React.ComponentProps<"textarea">
+      to: <textarea>
+    props:
+      - name: onSubmit
+        type: "(text: string) => void"
+        description: Fires on Enter (without Shift) and when `ComposerSubmit` is clicked. Receives the current text. The input clears after firing.
+      - name: onValueChange
+        type: "(text: string) => void"
+        description: Fires after every keystroke. Useful for draft autosave.
+      - name: defaultValue
+        type: string
+        description: Initial text on mount.
+      - name: autoFocus
+        type: boolean
+        default: "false"
+        description: Focuses the textarea on mount. Skipped while the root is disabled.
+      - name: placeholder
+        type: string
+        description: Shown when the textarea is empty.
+      - name: maxRows
+        type: number
+        default: "8"
+        description: The maximum number of visible lines before vertical scroll kicks in. The input grows with content up to this cap.
+      - name: submitOnEnter
+        type: boolean
+        default: "true"
+        description: When true, Enter submits and Shift+Enter inserts a newline. When false, Enter inserts a newline and the only way to submit is the `ComposerSubmit` button.
+  - name: ComposerToolbar
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ComposerToolbarSpacer
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ComposerSubmit
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: rendered element
+    props:
+      - name: render
+        type: "ReactElement | (props, state) => ReactElement"
+        description: The element used to render the submit. Defaults to a plain `<button>`. Pass your own button (e.g. `render={<Button iconOnly className=\"rounded-full\" />}`) to control the styling.
+---
+
+A chat-style prompt input that grows with content, paired with a toolbar and a submit button.
+
+## Anatomy
+
+A root holds the empty and focus state. The input is a styled textarea that registers a submit handler with the root, so the same submit button drives whichever input is mounted. The toolbar sits below the input as a separate strip.
+
+```tsx
+<Composer>
+  <ComposerInput placeholder="Ask anything" onSubmit={(text) => send(text)} />
+  <ComposerToolbar>
+    <button>...</button>
+    <ComposerToolbarSpacer>
+      <ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+        <ArrowUpIcon />
+      </ComposerSubmit>
+    </ComposerToolbarSpacer>
+  </ComposerToolbar>
+</Composer>
+```
+
+## Keyboard
+
+- `Enter` submits when the input is non-empty.
+- `Shift+Enter` inserts a newline.
+- `Tab` moves focus out of the input as expected.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Composer
+
+The root. Owns the empty and focus state, the disabled flag, and the registration channel for inputs. Renders a relative flex column so the toolbar sits below the input and any future floating UI can anchor to the root.
+
+<Note>
+The root is engine-agnostic. It tracks empty and focus state and exposes a registration hook that any input can hand its submit handler to. The default `ComposerInput` registers a textarea-based handler. For mentions, commands, and chips, drop in `ComposerRichInput` from `composer-rich` instead.
+</Note>
+
+<Props name="Composer" />
+
+### ComposerInput
+
+A styled textarea that registers a submit handler with the root. Autosizes between one row and `maxRows` lines. Sends on Enter without Shift, ignores Enter during IME composition so input methods can commit without firing submit. The textarea is the source of truth, so the parent receives the value through `onSubmit` and `onValueChange`.
+
+<Props name="ComposerInput" />
+
+### ComposerToolbar
+
+The bottom strip below the input. A flex row with a top divider. Drop in any buttons or menus. Keep `ComposerToolbarSpacer` near the end to push the trailing controls to the right.
+
+<Props name="ComposerToolbar" />
+
+### ComposerToolbarSpacer
+
+A flex group with `ml-auto`. Wraps the trailing controls so they cluster to the right edge of the toolbar.
+
+<Props name="ComposerToolbarSpacer" />
+
+### ComposerSubmit
+
+A headless trigger wired to the registered input's submit action. Renders a plain `<button>` by default and exposes a `render` prop so the consumer supplies the real button. The submit applies `disabled` whenever the input is empty or the root is disabled, and surfaces `data-empty` for fine-grained styling. Children pass through to the rendered element so the icon stays outside the styling concern.
+
+```tsx
+<ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+  <ArrowUpIcon />
+</ComposerSubmit>
+```
+
+<Props name="ComposerSubmit" />
+
+### useComposer
+
+Hook for reading root state and triggering submit from a custom part. Returns `{ isEmpty, isFocused, disabled, submit }`. Use it when building a custom submit button or a status indicator.
+
+```tsx
+function WordCount() {
+  const { isEmpty } = useComposer();
+  return <span>{isEmpty ? "Type to start" : "Ready"}</span>;
+}
+```
