@@ -1,0 +1,42 @@
+---
+parts:
+  - name: Switch
+    passThrough:
+      type: Switch.Root.Props
+      docsUrl:
+        label: Base UI Switch.Root
+        href: https://base-ui.com/react/components/switch#root
+---
+
+A toggle for binary on/off states.
+
+## Anatomy
+
+A single root that owns the thumb. Pair it with a label so the control reads as a sentence.
+
+```tsx
+<label className="flex items-center gap-2.5 text-sm cursor-pointer">
+  <Switch checked={enabled} onCheckedChange={setEnabled} />
+  Turn on notifications
+</label>
+```
+
+Drop it inside a menu item to swap out a checkbox indicator. The popup's selector pushes the switch to the trailing edge automatically.
+
+```tsx
+<MenuItem closeOnClick={false} onClick={() => setOn((v) => !v)}>
+  <GlobeIcon />
+  Web search
+  <Switch checked={on} className="pointer-events-none" />
+</MenuItem>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Switch
+
+The root. Renders the track and the thumb. Accepts the full Base UI Switch.Root surface, so controlled and uncontrolled usage, disabled state, and form integration all flow through.
+
+<Props name="Switch" />
