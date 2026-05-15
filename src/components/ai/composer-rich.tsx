@@ -224,6 +224,88 @@ function isEditorBlank(editor: Editor): boolean {
   return editor.getText().trim().length === 0;
 }
 
+type TiptapJSONNode = {
+  type: string;
+  attrs?: Record<string, unknown>;
+  content?: TiptapJSONNode[];
+  text?: string;
+};
+
+function composerValueToContent(
+  value: ComposerValue,
+  editor: Editor,
+): TiptapJSONNode {
+  const blocks: TiptapJSONNode[] = [];
+  let inline: TiptapJSONNode[] = [];
+
+  const flushBlock = () => {
+    blocks.push({
+      type: "paragraph",
+      ...(inline.length > 0 ? { content: inline } : {}),
+    });
+    inline = [];
+  };
+
+  for (const seg of value.segments) {
+    if (seg.type === "text") {
+      const lines = seg.value.split("\n");
+      for (let i = 0; i < lines.length; i++) {
+        if (i > 0) flushBlock();
+        if (lines[i].length > 0) {
+          inline.push({ type: "text", text: lines[i] });
+        }
+      }
+    } else {
+      const chipId = `chip-${makeChipId()}`;
+      const storage = getChipStorage(editor);
+      if (!storage.items) storage.items = new Map();
+      storage.items.set(chipId, seg.item);
+      inline.push({
+        type: "composerChip",
+        attrs: {
+          trigger: seg.trigger,
+          chipId,
+          itemId: seg.item.id,
+          label: seg.item.label,
+        },
+      });
+    }
+  }
+  flushBlock();
+
+  return {
+    type: "doc",
+    content: blocks.length > 0 ? blocks : [{ type: "paragraph" }],
+  };
+}
+
+function composerValueEqual(a: ComposerValue, b: ComposerValue): boolean {
+  if (a === b) return true;
+  if (a.text !== b.text) return false;
+  if (a.segments.length !== b.segments.length) return false;
+  for (let i = 0; i < a.segments.length; i++) {
+    const sa = a.segments[i];
+    const sb = b.segments[i];
+    if (sa.type !== sb.type) return false;
+    if (sa.type === "text") {
+      if (sb.type !== "text" || sa.value !== sb.value) return false;
+    } else if (sa.type === "chip") {
+      if (sb.type !== "chip") return false;
+      if (sa.trigger !== sb.trigger) return false;
+      if (sa.item.id !== sb.item.id) return false;
+    }
+  }
+  return true;
+}
+
+function isComposerValueEmpty(value: ComposerValue): boolean {
+  for (const seg of value.segments) {
+    if (seg.type === "chip") return false;
+    if (seg.value.trim().length > 0) return false;
+  }
+  return true;
+}
+
 function serializeEditor(editor: Editor): ComposerValue {
   const segments: ComposerSegment[] = [];
   let text = "";
@@ -354,6 +436,8 @@ export function ComposerRichInput({
   triggers = {},
   onSubmit,
   onValueChange,
+  value: valueProp,
+  defaultValue,
   placeholder,
   autoFocus = false,
   className,
@@ -361,6 +445,8 @@ export function ComposerRichInput({
   triggers?: Record<string, ComposerTrigger>;
   onSubmit?: (value: ComposerValue) => void;
   onValueChange?: (value: ComposerValue) => void;
+  value?: ComposerValue;
+  defaultValue?: ComposerValue;
   placeholder?: string;
   autoFocus?: boolean;
   className?: string;
@@ -369,6 +455,14 @@ export function ComposerRichInput({
   const extCtx = useComposerExtensionContext();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const listboxId = useId();
+
+  const isControlled = valueProp !== undefined;
+  const isControlledRef = useRef(isControlled);
+  isControlledRef.current = isControlled;
+  const lastEmittedRef = useRef<ComposerValue | null>(null);
+  const initialSeedRef = useRef<ComposerValue | undefined>(
+    valueProp ?? defaultValue,
+  );
 
   const onSubmitRef = useRef(onSubmit);
   onSubmitRef.current = onSubmit;
@@ -659,12 +753,19 @@ export function ComposerRichInput({
       },
     },
     onCreate: ({ editor }) => {
+      const seed = initialSeedRef.current;
+      if (seed && !isComposerValueEmpty(seed)) {
+        const content = composerValueToContent(seed, editor);
+        editor.commands.setContent(content);
+      }
       ctx.setEmpty(isEditorBlank(editor));
     },
     onUpdate: ({ editor }) => {
       pruneChipStorage(editor);
       ctx.setEmpty(isEditorBlank(editor));
-      onValueChangeRef.current?.(serializeEditor(editor));
+      const v = serializeEditor(editor);
+      lastEmittedRef.current = v;
+      onValueChangeRef.current?.(v);
     },
     onFocus: () => ctx.setFocused(true),
     onBlur: () => ctx.setFocused(false),
@@ -676,8 +777,10 @@ export function ComposerRichInput({
       if (isEditorBlank(editor)) return;
       const value = serializeEditor(editor);
       onSubmitRef.current?.(value);
-      editor.commands.clearContent();
-      ctx.setEmpty(true);
+      if (!isControlledRef.current) {
+        editor.commands.clearContent();
+        ctx.setEmpty(true);
+      }
     });
   }, [editor, ctx]);
 
@@ -685,6 +788,24 @@ export function ComposerRichInput({
     if (!editor) return;
     editor.setEditable(!ctx.disabled);
   }, [editor, ctx.disabled]);
+
+  useEffect(() => {
+    if (!editor || valueProp === undefined) return;
+    if (
+      lastEmittedRef.current &&
+      composerValueEqual(valueProp, lastEmittedRef.current)
+    ) {
+      return;
+    }
+    if (isComposerValueEmpty(valueProp)) {
+      if (isEditorBlank(editor)) return;
+      editor.commands.clearContent();
+      ctx.setEmpty(true);
+      return;
+    }
+    const content = composerValueToContent(valueProp, editor);
+    editor.commands.setContent(content);
+  }, [editor, valueProp, ctx]);
 
   const setExtState = extCtx.setState;
   useEffect(() => {
