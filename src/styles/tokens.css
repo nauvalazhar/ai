@@ -10,6 +10,8 @@
 
   --color-border: oklch(0.2867 0 0);
 
+  --scrollbar: oklch(0.4625 0.0092 248.03);
+
   --color-primary: oklch(0.6 0.1906 259.23);
   --color-primary-foreground: oklch(1 0 0);
 
@@ -37,6 +39,8 @@
   --color-surface-elevated: var(--color-surface-elevated);
 
   --color-border: var(--color-border);
+
+  --color-scrollbar: var(--scrollbar);
 
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);

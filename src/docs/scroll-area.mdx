@@ -1,0 +1,41 @@
+---
+parts:
+  - name: ScrollArea
+    passThrough:
+      type: ScrollArea.Viewport.Props
+      docsUrl:
+        label: Base UI ScrollArea.Viewport
+        href: https://base-ui.com/react/components/scroll-area#viewport
+    props:
+      - name: scrollbar
+        type: '"horizontal" | "vertical" | "both" | false'
+        default: '"both"'
+        description: Which scrollbars to render. Pass `false` to suppress them entirely and let the underlying viewport scroll without any chrome.
+      - name: fitContent
+        type: boolean
+        default: "false"
+        description: When true, the viewport caps its height at the parent's `max-height` instead of filling it. Use when the scroll area should grow with its content up to a parent-imposed limit.
+      - name: className
+        type: string
+        description: Applied to the outer container. Use it to size or style the visible box. Other props pass through to the inner viewport.
+---
+
+A native scroll container with custom scrollbars that fade in on hover or while scrolling.
+
+## Anatomy
+
+A single component that wraps the scrollable content. Size or style the outer box via `className`. Scrollbars overlay the corner without taking space in the layout.
+
+```tsx
+<ScrollArea className="h-64">Content</ScrollArea>
+```
+
+## API
+
+Reference for the component's available props and behavior.
+
+### ScrollArea
+
+Wraps its content in a viewport that scrolls when overflowed. `className` styles the outer container, while `ref`, `onScroll`, and any other props pass through to the inner viewport. That makes it safe to drop into render slots like `ConversationContent`, where the parent needs a handle on the element that actually scrolls.
+
+<Props name="ScrollArea" />
