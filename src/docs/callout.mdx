@@ -1,0 +1,70 @@
+---
+parts:
+  - name: Callout
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: tone
+        type: '"info" | "warning" | "danger"'
+        default: '"info"'
+        description: Paints the icon and the ring color. `info` is the muted default, `warning` is amber, `danger` uses the destructive color.
+      - name: render
+        type: ReactElement
+        description: Render the root as another element, like a link or a list item.
+  - name: CalloutIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: CalloutContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A boxed note for inline asides next to body text.
+
+## Anatomy
+
+A box with an icon on the left and content on the right. Use it for short context that belongs near the prose but should not read as a regular paragraph, like a behavioral note, a heads-up, or a caveat.
+
+```tsx
+<Callout>
+  <CalloutIcon><Info /></CalloutIcon>
+  <CalloutContent>
+    The root is engine-agnostic. It tracks empty and focus state and exposes a
+    registration hook that any input can hand its submit handler to.
+  </CalloutContent>
+</Callout>
+```
+
+Tone tints the icon and the ring. The same parts cover an info note, a warning, or a destructive alert.
+
+```tsx
+<Callout tone="warning">
+  <CalloutIcon><AlertTriangle /></CalloutIcon>
+  <CalloutContent>Async items are cached per query.</CalloutContent>
+</Callout>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Callout
+
+The root. Sets `data-tone` on the element so the icon picks up the tone color through a group selector. Tone is the only visual variant; the rest of the styling is the same across tones, so the same children render in any tone.
+
+<Props name="Callout" />
+
+### CalloutIcon
+
+The icon slot. Sizes the icon and aligns it with the first line of content. Reads the tone from the root, so the color matches the tone without extra props.
+
+<Props name="CalloutIcon" />
+
+### CalloutContent
+
+The text content. A flex column that grows to fill the box.
+
+<Props name="CalloutContent" />

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Info } from "lucide-react";
 import { cn } from "#/lib/utils";
+import { Callout, CalloutContent, CalloutIcon } from "../ai/callout";
 import {
   CodeBlock,
   CodeBlockAction,
@@ -42,6 +43,14 @@ export function DocsView({
       if (!part) return null;
       return <PartProps part={part} />;
     },
+    Note: ({ children }: { children?: ReactNode }) => (
+      <Callout className="not-prose my-6">
+        <CalloutIcon>
+          <Info />
+        </CalloutIcon>
+        <CalloutContent>{children}</CalloutContent>
+      </Callout>
+    ),
   };
 
   return (
