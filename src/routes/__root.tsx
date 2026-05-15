@@ -46,9 +46,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head>
+        <script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        ></script>
         <HeadContent />
       </head>
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="isolate">
         {children}
         {/* <TanStackDevtools
           config={{
