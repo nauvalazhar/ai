@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { Collapsible } from "@base-ui/react/collapsible";
 import {
+  BookOpenIcon,
   ChevronRight,
   Folder,
   FolderOpen,
@@ -9,10 +10,10 @@ import {
 } from "lucide-react";
 import { cn } from "#/lib/utils";
 import { registry } from "./registry.config";
-import { ThemeToggle } from "./theme-toggle";
-import { SiReact } from "react-icons/si";
+import { SiGithub, SiReact } from "react-icons/si";
 import { Button } from "../ai/button";
 import { useSidebarStore } from "./sidebar-store";
+import { Chip } from "../ai/chip";
 
 export function Sidebar() {
   const toggle = useSidebarStore((s) => s.toggle);
@@ -49,11 +50,16 @@ export function Sidebar() {
   return (
     <>
       <header className="px-6 py-2 flex">
-        <div className="font-medium">
-          <Link to="/" onClick={closeOnMobile}>
-            ai-kit
-          </Link>
-        </div>
+        <Link
+          to="/"
+          onClick={closeOnMobile}
+          className={cn(
+            "flex items-center text-sm font-medium px-2.5 py-2 rounded -ml-2.5 -mt-1 hover:bg-accent transition-colors duration-150",
+          )}
+        >
+          <img src="/logo.webp" alt="Logo" className="size-5.5 mr-2.5" />
+          nauvalazhar/ai-kit
+        </Link>
         <Button
           iconOnly
           variant="ghost"
@@ -63,7 +69,50 @@ export function Sidebar() {
           <SidebarCloseIcon className="size-4" />
         </Button>
       </header>
+      <div className="pb-2 px-6">
+        <p className="text-xs leading-relaxed text-muted-foreground mb-4">
+          React components for building agentic AI applications.
+        </p>
+
+        <Chip
+          render={
+            <a
+              href="https://github.com/nauvalazhar/ai-kit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs"
+            >
+              <SiGithub />
+              GitHub
+            </a>
+          }
+          className="ring-foreground/15"
+        />
+      </div>
       <nav className="flex-1 overflow-y-auto mt-2">
+        <section className="mb-3">
+          <div className="px-6 py-1 text-xs font-medium text-muted-foreground">
+            Get Started
+          </div>
+          <ul className="px-4">
+            <li className="mb-0.5">
+              <Link
+                to="/introduction"
+                onClick={closeOnMobile}
+                className={cn(
+                  "flex items-center gap-2 pl-5.5 pr-2 py-1 rounded text-sm",
+                  "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  "data-[status=active]:bg-accent data-[status=active]:text-foreground",
+                  "outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "transition-colors duration-150",
+                )}
+              >
+                <BookOpenIcon className="size-4 shrink-0 text-muted-foreground" />
+                <span className="truncate">Introduction</span>
+              </Link>
+            </li>
+          </ul>
+        </section>
         {isEmpty ? (
           <p className="px-6 py-2 text-xs text-muted-foreground">
             No components yet.
@@ -122,7 +171,7 @@ export function Sidebar() {
                                 closeOnMobile();
                               }}
                               className={cn(
-                                "flex items-center gap-1.5 flex-1 min-w-0 py-1 pr-2",
+                                "flex items-center gap-2 flex-1 min-w-0 py-1 pr-2",
                                 "outline-none focus-visible:ring-2 focus-visible:ring-primary rounded",
                                 "transition-colors duration-150",
                                 isActiveBranch
@@ -157,7 +206,7 @@ export function Sidebar() {
                                     }}
                                     onClick={closeOnMobile}
                                     className={cn(
-                                      "flex items-center gap-1.5 px-1.5 py-1 rounded text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
+                                      "flex items-center gap-2 px-1.5 py-1 rounded text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
                                       "data-[status=active]:bg-accent data-[status=active]:text-foreground",
                                       "transition-colors duration-150",
                                       "outline-none focus-visible:ring-2 focus-visible:ring-primary",
@@ -181,7 +230,7 @@ export function Sidebar() {
           ))
         )}
       </nav>
-      <footer className="px-6 py-2 flex">
+      <footer className="px-6 pb-2 pt-4 flex">
         <p className="text-xs text-muted-foreground">
           Designed by{" "}
           <a

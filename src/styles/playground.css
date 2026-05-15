@@ -12,7 +12,7 @@
   --color-site-background: oklch(0.1778 0.0022 259.23);
   --color-site-muted: oklch(0.726 0 0);
   --color-site-panel: oklch(0.1985 0.0022 259.23);
-  --color-site-accent: oklch(0.2912 0.022 259.23);
+  --color-site-accent: oklch(0.2664 0.022 259.23);
   --color-site-border: oklch(0.2683 0.0022 259.23);
   --shadow-site-panel: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
 }

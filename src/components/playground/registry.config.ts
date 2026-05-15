@@ -43,9 +43,12 @@ export const registry: Group[] = [
           {
             name: "Custom Button",
             slug: "custom-button",
-            Component: lazy(
-              () => import("#/demos/conversation/custom-button"),
-            ),
+            Component: lazy(() => import("#/demos/conversation/custom-button")),
+          },
+          {
+            name: "Scroll Area",
+            slug: "scroll-area",
+            Component: lazy(() => import("#/demos/conversation/scroll-area")),
           },
         ],
       },
@@ -314,6 +317,11 @@ export const registry: Group[] = [
             slug: "multiline",
             Component: lazy(() => import("#/demos/composer/multiline")),
           },
+          {
+            name: "Controlled",
+            slug: "controlled",
+            Component: lazy(() => import("#/demos/composer/controlled")),
+          },
         ],
       },
       {
@@ -349,6 +357,11 @@ export const registry: Group[] = [
             name: "Custom Data",
             slug: "custom-data",
             Component: lazy(() => import("#/demos/composer-rich/custom-data")),
+          },
+          {
+            name: "Controlled",
+            slug: "controlled",
+            Component: lazy(() => import("#/demos/composer-rich/controlled")),
           },
         ],
       },
@@ -437,6 +450,37 @@ export const registry: Group[] = [
             name: "Multiple",
             slug: "multiple",
             Component: lazy(() => import("#/demos/tool/multiple")),
+          },
+        ],
+      },
+      {
+        name: "Suggestion",
+        slug: "suggestion",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/suggestion/basic")),
+          },
+          {
+            name: "Column",
+            slug: "column",
+            Component: lazy(() => import("#/demos/suggestion/column")),
+          },
+          {
+            name: "List",
+            slug: "list",
+            Component: lazy(() => import("#/demos/suggestion/list")),
+          },
+          {
+            name: "With Icon",
+            slug: "with-icon",
+            Component: lazy(() => import("#/demos/suggestion/with-icon")),
+          },
+          {
+            name: "With Composer",
+            slug: "with-composer",
+            Component: lazy(() => import("#/demos/suggestion/with-composer")),
           },
         ],
       },
@@ -605,6 +649,17 @@ export const registry: Group[] = [
             name: "Basic",
             slug: "basic",
             Component: lazy(() => import("#/demos/switch/basic")),
+          },
+        ],
+      },
+      {
+        name: "Scroll Area",
+        slug: "scroll-area",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/scroll-area/basic")),
           },
         ],
       },
