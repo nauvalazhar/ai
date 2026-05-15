@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { CornerDownLeftIcon } from "lucide-react";
+import { Button } from "#/components/ai/button";
 import {
   Prompt,
   PromptFooter,
@@ -53,7 +55,10 @@ export default function MultiStep() {
             <PromptHint keys="Shift+Tab">Back</PromptHint>
             <PromptHint keys="ESC">Dismiss</PromptHint>
           </div>
-          <PromptSubmit />
+          <PromptSubmit render={<Button />}>
+            Submit
+            <CornerDownLeftIcon />
+          </PromptSubmit>
         </PromptFooter>
       </Prompt>
 

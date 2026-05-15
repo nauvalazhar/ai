@@ -66,8 +66,12 @@ parts:
         description: Label rendered as a small key cap next to the hint text. Free-form, so authors mix shortcuts like `ESC`, `Shift+Tab`, or `1-9` without a fixed vocabulary.
   - name: PromptSubmit
     passThrough:
-      type: Button.Props
-      to: Button
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: React.ReactElement | ((props, state) => React.ReactElement)
+        description: Element or function the submit slot renders into. Pass a kit component like `<Button />` to use its styling, or omit to render a plain `<button>`. The slot wires the click handler and `data-slot` onto whatever you render.
 ---
 
 A keyboard-driven picker for a single question or a chain of follow-ups, with a write-in row for free-text answers.
@@ -87,7 +91,10 @@ A root holds the active step, a footer, and the answer state. Each step carries 
   </PromptStep>
   <PromptFooter>
     <PromptHint keys="ESC">Dismiss</PromptHint>
-    <PromptSubmit />
+    <PromptSubmit render={<Button />}>
+      Submit
+      <CornerDownLeftIcon />
+    </PromptSubmit>
   </PromptFooter>
 </Prompt>
 ```
@@ -106,7 +113,10 @@ For a chain of follow-ups, stack more steps. The same footer covers the whole fl
   <PromptFooter>
     <PromptHint keys="Shift+Tab">Back</PromptHint>
     <PromptHint keys="ESC">Dismiss</PromptHint>
-    <PromptSubmit />
+    <PromptSubmit render={<Button />}>
+      Submit
+      <CornerDownLeftIcon />
+    </PromptSubmit>
   </PromptFooter>
 </Prompt>
 ```
@@ -173,7 +183,7 @@ A small label paired with a key cap. Free-form `keys` so authors mix shortcuts w
 
 ### PromptSubmit
 
-Headless submit control rendered as the kit's `Button`. Wires the root's submit action onto the click. Pass children to override the label; the corner-arrow icon is added after the label.
+Headless submit slot. Wires the root's submit action onto the click and leaves rendering to the consumer. Pass `render={<Button />}` for the kit's button, or any other element to render into, and supply children for the label and icon.
 
 <Props name="PromptSubmit" />
 

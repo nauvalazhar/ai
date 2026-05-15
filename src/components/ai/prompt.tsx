@@ -11,9 +11,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { CornerDownLeftIcon } from "lucide-react";
+import { useRender } from "@base-ui/react/use-render";
 import { cn } from "#/lib/utils";
-import { Button } from "#/components/ai/button";
 
 type OptionInfo = { value: string; isOther: boolean };
 type StepInfo = { name: string; defaultValue?: string; options: OptionInfo[] };
@@ -34,7 +33,6 @@ type PromptContextValue = {
 
   optionIndexMap: Map<string, number>;
   otherIndex: number;
-  optionNodes: React.RefObject<Map<number, HTMLElement>>;
 
   highlightedIndex: number;
   setHighlightedIndex: (i: number) => void;
@@ -271,7 +269,6 @@ export function Prompt({
   const otherInputRef = useRef<HTMLInputElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const measureRef = useRef<HTMLDivElement | null>(null);
-  const optionNodes = useRef<Map<number, HTMLElement>>(new Map());
 
   const [contentHeight, setContentHeight] = useState<number | null>(null);
   const [hasMeasured, setHasMeasured] = useState(false);
@@ -446,7 +443,6 @@ export function Prompt({
     partial: state.partial,
     optionIndexMap,
     otherIndex,
-    optionNodes,
     highlightedIndex: state.highlightedIndex,
     setHighlightedIndex,
     otherValue: state.otherValue,
@@ -509,45 +505,11 @@ export function PromptStep({
     <div
       data-slot="prompt-step"
       data-step={name}
-      className={cn("relative flex flex-col space-y-0.5", className)}
+      className={cn("flex flex-col space-y-0.5", className)}
       {...props}
     >
       {children}
-      <PromptIndicator />
     </div>
-  );
-}
-
-function PromptIndicator() {
-  const ctx = usePromptContext();
-  const [pos, setPos] = useState<{ top: number; height: number } | null>(null);
-  const [ready, setReady] = useState(false);
-
-  useLayoutEffect(() => {
-    const target = ctx.optionNodes.current.get(ctx.highlightedIndex);
-    if (!target) {
-      setPos(null);
-      return;
-    }
-    setPos({ top: target.offsetTop, height: target.offsetHeight });
-    if (!ready) {
-      requestAnimationFrame(() => setReady(true));
-    }
-  }, [ctx.highlightedIndex, ctx.currentStepIndex, ctx.optionNodes, ready]);
-
-  return (
-    <div
-      data-slot="prompt-indicator"
-      aria-hidden
-      className={cn(
-        "pointer-events-none absolute left-0 right-0 z-0 bg-accent rounded",
-        ready && "transition-[top] duration-150 ease-out",
-      )}
-      style={{
-        top: pos ? `${pos.top}px` : 0,
-        height: pos ? `${pos.height}px` : 0,
-      }}
-    />
   );
 }
 
@@ -577,13 +539,6 @@ export function PromptOption({
   return (
     <button
       type="button"
-      ref={(el) => {
-        if (!el || index < 0) return;
-        ctx.optionNodes.current.set(index, el);
-        return () => {
-          ctx.optionNodes.current.delete(index);
-        };
-      }}
       data-slot="prompt-option"
       data-highlighted={isHighlighted ? "true" : "false"}
       onMouseEnter={() => {
@@ -595,9 +550,9 @@ export function PromptOption({
         if (ctx.submitOnClick) ctx.submit();
       }}
       className={cn(
-        "relative z-10 flex items-center gap-3 px-3.5 py-2 text-left cursor-pointer select-none",
-        "bg-transparent rounded text-sm",
-        "focus:outline-none transition-all duration-150",
+        "flex items-center gap-3 px-3.5 py-2 text-left cursor-pointer select-none",
+        "rounded text-sm focus:outline-none",
+        isHighlighted ? "bg-accent text-foreground" : "bg-transparent",
         className,
       )}
       {...props}
@@ -621,13 +576,6 @@ export function PromptOptionOther({
 
   return (
     <div
-      ref={(el) => {
-        if (!el || index < 0) return;
-        ctx.optionNodes.current.set(index, el);
-        return () => {
-          ctx.optionNodes.current.delete(index);
-        };
-      }}
       data-slot="prompt-option-other"
       data-highlighted={isHighlighted ? "true" : "false"}
       onMouseEnter={() => {
@@ -639,9 +587,9 @@ export function PromptOptionOther({
         ctx.otherInputRef.current?.focus();
       }}
       className={cn(
-        "relative z-10 flex items-center gap-3 px-3.5 py-2 cursor-text select-none",
-        "bg-transparent rounded text-sm",
-        "focus:outline-none transition-all duration-150",
+        "flex items-center gap-3 px-3.5 py-2 cursor-text select-none",
+        "rounded text-sm focus:outline-none",
+        isHighlighted ? "bg-accent text-foreground" : "bg-transparent",
         className,
       )}
       {...props}
@@ -720,21 +668,22 @@ export function PromptHint({
 }
 
 export function PromptSubmit({
-  className,
-  children,
+  render,
+  onClick: userOnClick,
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: useRender.ComponentProps<"button">) {
   const ctx = usePromptContext();
-  return (
-    <Button
-      type="button"
-      data-slot="prompt-submit"
-      onClick={() => ctx.submit()}
-      className={cn(className)}
-      {...props}
-    >
-      {children ?? "Submit"}
-      <CornerDownLeftIcon />
-    </Button>
-  );
+  return useRender({
+    render,
+    defaultTagName: "button",
+    props: {
+      ...props,
+      type: "button",
+      "data-slot": "prompt-submit",
+      onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
+        userOnClick?.(event);
+        if (!event.defaultPrevented) ctx.submit();
+      },
+    },
+  });
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { CornerDownLeftIcon } from "lucide-react";
+import { Button } from "#/components/ai/button";
 import {
   Prompt,
   PromptFooter,
@@ -31,7 +33,10 @@ export default function WithOther() {
         </PromptStep>
         <PromptFooter>
           <PromptHint keys="ESC">Dismiss</PromptHint>
-          <PromptSubmit />
+          <PromptSubmit render={<Button />}>
+            Submit
+            <CornerDownLeftIcon />
+          </PromptSubmit>
         </PromptFooter>
       </Prompt>
 
