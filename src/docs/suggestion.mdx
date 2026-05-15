@@ -1,0 +1,65 @@
+---
+parts:
+  - name: Suggestion
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: rendered element
+    props:
+      - name: variant
+        type: '"default" | "plain" | "list"'
+        default: '"default"'
+        description: Visual style. `default` is a rounded chip with a muted fill and ring border, well suited to a horizontal row of prompt starters. `plain` strips the chip styling and keeps only the hover state, for quiet rows that should not look button-like at rest. `list` is a rectangular row with muted text, suited to stacked typeahead results.
+      - name: children
+        type: ReactNode
+        description: The contents of the suggestion. Pass an inline SVG before the text to render an icon. Icons inside a suggestion are auto-sized.
+      - name: render
+        type: "ReactElement | (props, state) => ReactElement"
+        description: Renders another element in place of the default `<button>`. Useful for `<a>` or any custom trigger.
+---
+
+A single prompt suggestion.
+
+## Anatomy
+
+One element with optional inline icons and the suggestion text. No internal layout for grouping. The parent picks `flex-row`, `flex-wrap`, or `flex-col` to arrange a set.
+
+```tsx
+<Suggestion>Write a poem</Suggestion>
+
+<Suggestion>
+  <SparklesIcon />
+  Surprise me
+</Suggestion>
+
+<Suggestion variant="list" onClick={pick}>
+  Explore new hiking trails nearby
+</Suggestion>
+```
+
+## API
+
+Reference for the component's available props and behavior.
+
+### Suggestion
+
+A button by default, so it is clickable without extra wiring. Pass `render` to swap the tag, for example to render an anchor inside a list of suggested searches. Inline SVG children are sized automatically, so an icon and its label can sit side by side without per-element class wiring.
+
+Each variant carries its own padding, radius, and color, and the focus ring is the same across all three. The `data-variant` attribute mirrors the active variant for downstream styling.
+
+## Wiring to the composer
+
+Drive a controlled `ComposerInput` from a parent state. On click, set the state to the suggestion text and the composer reflects it on the next render.
+
+```tsx
+const [text, setText] = useState("");
+
+<Suggestion onClick={() => setText("Write a poem about the ocean")}>
+  Write a poem about the ocean
+</Suggestion>
+
+<Composer>
+  <ComposerInput value={text} onValueChange={setText} onSubmit={() => setText("")} />
+</Composer>
+```
+
+<Props name="Suggestion" />
