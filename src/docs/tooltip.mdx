@@ -1,0 +1,91 @@
+---
+parts:
+  - name: Tooltip
+    passThrough:
+      type: Tooltip.Root.Props
+      docsUrl:
+        label: Base UI Tooltip.Root
+        href: https://base-ui.com/react/components/tooltip#root
+  - name: TooltipTrigger
+    passThrough:
+      type: Tooltip.Trigger.Props
+      docsUrl:
+        label: Base UI Tooltip.Trigger
+        href: https://base-ui.com/react/components/tooltip#trigger
+  - name: TooltipPopup
+    passThrough:
+      type: Tooltip.Popup.Props
+      docsUrl:
+        label: Base UI Tooltip.Popup
+        href: https://base-ui.com/react/components/tooltip#popup
+    props:
+      - name: side
+        type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"'
+        default: '"top"'
+        description: Which side of the trigger the popup anchors to.
+      - name: sideOffset
+        type: number
+        default: "12"
+        description: Distance in pixels between the trigger and the popup.
+      - name: align
+        type: '"start" | "center" | "end"'
+        default: '"center"'
+        description: Alignment of the popup along the chosen side.
+      - name: alignOffset
+        type: number
+        description: Offset in pixels along the align axis.
+      - name: anchor
+        type: Element | VirtualElement | Ref
+        description: Custom anchor for the popup. Falls back to the trigger.
+      - name: sticky
+        type: boolean
+        description: Keep the popup pinned to the anchor while scrolling.
+      - name: positionMethod
+        type: '"absolute" | "fixed"'
+        default: '"absolute"'
+        description: Positioning strategy passed to the floating engine.
+---
+
+A small hint that surfaces on hover or focus to explain a control.
+
+## Anatomy
+
+Wrap any trigger and pair it with a popup. Reach for it when a control needs a short label that should not live in the layout itself, like an icon button or a compact action in a toolbar.
+
+```tsx
+<Tooltip>
+  <TooltipTrigger render={<Button iconOnly aria-label="Send"><ArrowUpIcon /></Button>} />
+  <TooltipPopup>Send message</TooltipPopup>
+</Tooltip>
+```
+
+The popup mounts in a portal and arrives with a tiny scale-and-fade. An arrow points back at the trigger and flips with `side`.
+
+```tsx
+<Tooltip>
+  <TooltipTrigger>Trigger</TooltipTrigger>
+  <TooltipPopup side="right">On the right</TooltipPopup>
+</Tooltip>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Tooltip
+
+The root. Tracks hover and focus and coordinates the open state. Wraps a trigger and a popup.
+
+<Props name="Tooltip" />
+
+### TooltipTrigger
+
+The control that opens the tooltip. Use `render` to swap it for a button, a link, or any focusable element.
+
+<Props name="TooltipTrigger" />
+
+### TooltipPopup
+
+The floating content. Takes positioner props inline so you can set `side`, `sideOffset`, `align`, and `alignOffset` without reaching for a separate positioner part. Renders inside a portal with an arrow that points back at the trigger.
+
+<Props name="TooltipPopup" />
