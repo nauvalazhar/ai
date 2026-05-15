@@ -1,0 +1,393 @@
+---
+parts:
+  - name: ComposerRichInput
+    passThrough:
+      type: HTMLDivElement
+      to: <div>
+    props:
+      - name: triggers
+        type: "Record<string, ComposerTrigger>"
+        description: Map from a single character to its trigger config. Each entry decides what items appear, how they filter, what selecting one does, and how a selected item renders if it lands inline as a chip. The trigger fires when its character is typed at a word boundary in the editor.
+      - name: onSubmit
+        type: "(value: ComposerValue) => void"
+        description: Fires when the root's submit is triggered (Enter or `ComposerSubmit` click) while the suggestion list is closed. Receives the full value with text and structured segments. The editor clears after firing.
+      - name: onValueChange
+        type: "(value: ComposerValue) => void"
+        description: Fires on every edit. Useful for syncing draft state.
+      - name: placeholder
+        type: string
+        description: Shown when the editor is empty.
+      - name: autoFocus
+        type: boolean
+        default: "false"
+        description: Focuses the editor on mount. Skipped while the root is disabled.
+  - name: ComposerSuggestions
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: renderItem
+        type: "(item, state) => ReactNode"
+        description: Custom row renderer for a suggestion. `state` carries `{ highlighted, trigger, query, depth }`. The default shows icon, label, description, and a submenu chevron when the item has children.
+      - name: renderEmpty
+        type: "(state) => ReactNode"
+        description: Custom empty state for when no items match the current query.
+      - name: renderLoading
+        type: "() => ReactNode"
+        description: Custom loading state shown while an async items function is in flight.
+      - name: renderHeader
+        type: "(state) => ReactNode"
+        description: Optional row above the items list. `state.parents` is the chain of parent items when inside a submenu, so a breadcrumb falls out naturally.
+      - name: renderGroup
+        type: "(label: string, state) => ReactNode"
+        description: Custom group header. Receives the group label and the current trigger and query. The default renders a small uppercase label in the muted color.
+  - name: ComposerTrigger
+    props:
+      - name: items
+        type: "ComposerItem<T>[] | ((query: string) => ComposerItem<T>[] | Promise<ComposerItem<T>[]>)"
+        description: Static list, or a function that returns items for the current query. Async functions show the loading state while the promise is in flight, and stale results are dropped if a newer query has started.
+      - name: action
+        type: '"execute" | "insert"'
+        description: What happens when an item is picked and no `onSelect` is provided. `insert` lays the item down as a chip. `execute` clears the trigger text and does nothing else. Defaults to `insert` for the `@` trigger and `execute` for every other character.
+      - name: onSelect
+        type: "(item: ComposerItem<T>, ctx: SelectContext<T>) => void"
+        description: Custom selection handler. Overrides the default action. The handler is responsible for deciding what happens, using the helpers on `ctx`.
+      - name: filter
+        type: "(item: ComposerItem<T>, query: string) => boolean"
+        description: Replaces the built-in filter. The default matches the query case-insensitively against `label`, `description`, and `keywords`. Pass `() => true` when items come pre-filtered from a server.
+      - name: renderChip
+        type: "(item: ComposerItem<T>) => ReactNode"
+        description: Renders the inner contents of an inserted chip. The chip wrapper, including the rounded background and ring, stays consistent. The default shows the item's icon and label.
+      - name: hideOnEmpty
+        type: boolean
+        default: "true"
+        description: Hide the popup when the current query matches zero items. Set to `false` to keep the empty state visible so the user can see they typed something that doesn't match.
+  - name: ComposerItem
+    props:
+      - name: id
+        type: string
+        description: Stable identifier for this item. Used as the React key in the list and as the item's identity in the submit payload's placeholder syntax.
+      - name: label
+        type: string
+        description: The text shown in the default row and in the default chip.
+      - name: description
+        type: string
+        description: Secondary muted text in the default row. Hidden in the default chip.
+      - name: icon
+        type: ReactNode
+        description: Leading visual in the default row and the default chip.
+      - name: children
+        type: "ComposerItem<T>[]"
+        description: Nested submenu items. Picking a row with children opens the submenu instead of firing the trigger's action.
+      - name: data
+        type: T
+        description: Your own payload. Carried through `onSubmit` on the chip segment without being serialized, so non-serializable values like React elements survive.
+      - name: disabled
+        type: boolean
+        description: Row is dimmed and not pickable by keyboard or mouse.
+      - name: keywords
+        type: "string[]"
+        description: Extra strings the default filter matches against, on top of `label` and `description`.
+      - name: group
+        type: string
+        description: Section label. Consecutive items with the same `group` render under a single header in the popup.
+  - name: SelectContext
+    props:
+      - name: trigger
+        type: string
+        description: The character that opened the picker, like `"/"` or `"@"`.
+      - name: query
+        type: string
+        description: The text typed after the trigger character, before the user picked the item.
+      - name: insertChip
+        type: "(item: ComposerItem<T>) => void"
+        description: Lays the item down as an inline chip. The trigger text and the query that came after it are replaced. Useful when the picked item should turn into an attachment-style chip instead of running a command.
+      - name: clearTrigger
+        type: "() => void"
+        description: Removes the trigger text and the query without inserting anything. Use this after firing a command so the editor returns to a clean state.
+      - name: close
+        type: "() => void"
+        description: Closes the suggestion popup without touching the editor contents.
+---
+
+A rich input for `Composer` with slash commands, mentions, and inline chips.
+
+## Anatomy
+
+Drops in for `ComposerInput`. The root, toolbar, and submit button are shared between both inputs. Pair it with `ComposerSuggestions` for the popup. Type a configured character to open a filterable list. Picking a command runs the trigger's callback. Picking a mention inserts a chip that flows inline with the text and stays atomic under the caret.
+
+```tsx
+import { Button } from "#/components/ai/button";
+import {
+  Composer,
+  ComposerToolbar,
+  ComposerSubmit,
+  ComposerToolbarSpacer,
+} from "#/components/ai/composer";
+import {
+  ComposerRichInput,
+  ComposerSuggestions,
+} from "#/components/ai/composer-rich";
+
+<Composer>
+  <ComposerRichInput
+    placeholder="Ask anything. Type / for commands, @ to mention."
+    triggers={{
+      "/": { items: commands },
+      "@": { items: mentions },
+    }}
+    onSubmit={(value) => send(value)}
+  />
+  <ComposerSuggestions />
+  <ComposerToolbar>
+    <ComposerToolbarSpacer>
+      <ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+        <ArrowUpIcon />
+      </ComposerSubmit>
+    </ComposerToolbarSpacer>
+  </ComposerToolbar>
+</Composer>;
+```
+
+Items are plain objects, not JSX. Each one has an `id`, a `label`, an optional `description`, an optional `icon`, and an optional `children` array for a nested list. `data` is carried through to the submit payload, so a mention's full record can ride along without a side lookup.
+
+```tsx
+const commands = [
+  { id: "review", label: "Code review", icon: <CodeIcon /> },
+  {
+    id: "mcp",
+    label: "MCP",
+    description: "Show MCP server status",
+    icon: <HashIcon />,
+  },
+  {
+    id: "model",
+    label: "Model",
+    icon: <BotIcon />,
+    children: [
+      { id: "gpt-5", label: "GPT-5" },
+      { id: "gpt-5-mini", label: "GPT-5 mini" },
+    ],
+  },
+];
+```
+
+## Triggers
+
+The same prop drives both pickers. The difference between `/` and `@` is the default action.
+
+- `action: "insert"` replaces the trigger text with a chip. Default for `@`.
+- `action: "execute"` clears the trigger text and fires `onSelect`. Default for anything else.
+
+Pass `onSelect` to take full control. The handler receives the picked item and a context with `insertChip`, `clearTrigger`, and `close`.
+
+```tsx
+<ComposerRichInput
+  triggers={{
+    "/": {
+      items: commands,
+      onSelect: (item, ctx) => {
+        if (item.id === "submit") send();
+        else if (item.id === "attach") openFilePicker();
+        ctx.clearTrigger();
+        ctx.close();
+      },
+    },
+  }}
+/>
+```
+
+Selecting an item with `children` opens a submenu instead of firing. The DOM query under the trigger is cleared so the user can keep typing to filter inside the submenu. `ArrowLeft` or `Escape` steps back to the parent list.
+
+## Mentions
+
+A mention picks an item and lays it down as a chip. The chip is one atomic unit: the caret skips over it and a single Backspace removes it. Pass `renderChip` on the trigger config to control how the chip renders. Items keep their `data` payload, so the renderer can branch on it.
+
+```tsx
+<ComposerRichInput
+  triggers={{
+    "@": {
+      items: files,
+      renderChip: (item) => (
+        <span
+          data-kind={item.data?.kind}
+          className="inline-flex items-center gap-1"
+        >
+          <span>{item.icon}</span>
+          {item.label}
+        </span>
+      ),
+    },
+  }}
+/>
+```
+
+## Grouping
+
+Items can carry an optional `group` label. Consecutive items with the same group label render under a single header. The grouping is purely visual: keyboard navigation walks the full flat list, so a user pressing ArrowDown moves through items regardless of group boundaries.
+
+```tsx
+const items = [
+  { id: "chat", label: "Chat", group: "General" },
+  { id: "review", label: "Code review", group: "General" },
+  { id: "model", label: "Model", group: "Settings" },
+  { id: "permissions", label: "Permissions", group: "Settings" },
+];
+```
+
+Pass `renderGroup` on `ComposerSuggestions` to customize the header. The default header is a small uppercase label.
+
+```tsx
+<ComposerSuggestions
+  renderGroup={(label) => (
+    <div className="flex items-center gap-1.5 px-2.5 pt-2 pb-1 text-xs text-muted-foreground">
+      <ClockIcon className="size-3" />
+      <span className="uppercase tracking-wide">{label}</span>
+    </div>
+  )}
+/>
+```
+
+Order matters: ungrouped items can appear before, between, or after groups by leaving `group` undefined. Filtering preserves order, so a group with all items filtered out collapses naturally.
+
+## Async items
+
+`items` accepts a function that returns a promise. The function receives the current query, so a server-fed mention list can debounce by query length on the caller side. While the promise resolves, the suggestion list shows the loading state. Stale results are dropped if a newer query has already started.
+
+```tsx
+const fetchFiles = async (query: string) => {
+  const res = await fetch(`/api/files?q=${encodeURIComponent(query)}`);
+  return res.json();
+};
+
+<ComposerRichInput
+  triggers={{ "@": { items: fetchFiles, filter: () => true } }}
+/>;
+```
+
+Pass `filter: () => true` when the server already returns matches so the client does not filter twice.
+
+## Custom data
+
+A chip stores identity, not content. Whatever you put on the original `ComposerItem` survives intact through `onSubmit`, because the chip references the item in editor storage rather than serializing it through JSON. Non-serializable fields like the React `icon` round-trip too.
+
+```tsx
+const files: ComposerItem<{ path: string; mime: string }>[] = [
+  {
+    id: "f1",
+    label: "README.md",
+    data: { path: "/README.md", mime: "text/markdown" },
+  },
+  {
+    id: "f2",
+    label: "hero.png",
+    data: { path: "/public/hero.png", mime: "image/png" },
+  },
+];
+
+<ComposerRichInput
+  triggers={{ "@": { items: files } }}
+  onSubmit={(value) => {
+    const attachments = value.segments
+      .filter((s) => s.type === "chip")
+      .map((s) => s.item.data);
+    send(value.text, attachments);
+  }}
+/>;
+```
+
+The two consumer patterns:
+
+- **Cheap metadata on the item itself.** Drop `data: { path, mime, size }` on the item. Read `segment.item.data` directly at submit.
+- **Identity plus lookup.** Put only `id` and `label` on the item, and resolve heavier content from your store or an API at submit time. Best when the payload is large.
+
+```tsx
+async function handleSubmit(value: ComposerValue) {
+  const ids = value.segments.flatMap((s) =>
+    s.type === "chip" ? [s.item.id] : [],
+  );
+  const records = await Promise.all(
+    ids.map((id) => fetch(`/api/files/${id}`).then((r) => r.json())),
+  );
+  send(value.text, records);
+}
+```
+
+A pragmatic split: keep small identifiers on `data` (path, kind, thumbnail URL), and lazy-resolve heavy stuff right before the API call.
+
+## Submission payload
+
+`onSubmit` receives a `ComposerValue` with two views over the same content.
+
+```ts
+type ComposerValue = {
+  text: string; // chips serialized as `{{<trigger>:<id>}}` placeholders
+  segments:
+    | { type: "text"; value: string }
+    | { type: "chip"; trigger: string; item: ComposerItem };
+};
+```
+
+`text` is the easy path. Walk the placeholders or send the raw string to the model. `segments` is the structured view, walk it when the call site needs the picked items in order with their full data attached.
+
+## Keyboard
+
+While the suggestion list is closed:
+
+- `Enter` submits. `Shift+Enter` adds a newline.
+
+While the suggestion list is open:
+
+- `ArrowUp` / `ArrowDown` move the highlight, clamping at the ends.
+- `Enter` or `Tab` picks the highlighted item.
+- `ArrowRight` drills into a submenu when the highlighted item has children.
+- `ArrowLeft` or `Escape` steps out of a submenu, then closes the list.
+- Typing past the trigger char filters live. Spaces are allowed, so multi-word queries like `/plan mode` keep filtering.
+- Backspace on the trigger char or before it closes the list.
+
+By default the list hides itself once a query has zero matches, so a stale popup does not hover under the caret while typing freely. Enter then falls through to submit. Set `hideOnEmpty: false` on a trigger to keep the empty state visible for that trigger only.
+
+```tsx
+<ComposerRichInput
+  triggers={{
+    "/": { items: commands, hideOnEmpty: false },
+    "@": { items: mentions },
+  }}
+/>
+```
+
+A chip is one atom under the caret. Backspace right after a chip deletes the whole chip rather than a character.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### ComposerRichInput
+
+The Tiptap-based input. Registers a submit handler with the surrounding `Composer` root, so the toolbar's submit button drives it the same way it would the plain textarea. Configures one Tiptap suggestion plugin per trigger character. Chips are a custom node type rendered through a React node view, so `renderChip` is a normal React function and gets all React features.
+
+<Props name="ComposerRichInput" />
+
+### ComposerSuggestions
+
+The floating list above the input. Renders only when a trigger is active. Anchors to the rich input wrapper and flips above or below depending on available space. `renderItem`, `renderEmpty`, `renderLoading`, and `renderHeader` cover every cell of the list.
+
+<Props name="ComposerSuggestions" />
+
+### type ComposerTrigger
+
+The shape of a single entry in the `triggers` map. One trigger per character. The generic `T` flows through to `ComposerItem<T>` and `SelectContext<T>`, so a per-trigger `data` shape stays typed end to end.
+
+<Props name="ComposerTrigger" />
+
+### type ComposerItem
+
+The shape of a row in the suggestion list. Plain object, not JSX. The same shape is reused for a chip's identity after it lands in the editor, and the picked item surfaces on the chip segment in `onSubmit`.
+
+<Props name="ComposerItem" />
+
+### type SelectContext
+
+The second argument to `onSelect`. Helpers for the three things a custom selection handler tends to do, like inserting the picked item as a chip, clearing what the user typed after the trigger, or closing the popup. The same `T` generic from the trigger flows in, so `insertChip` is typed against your item shape.
+
+<Props name="SelectContext" />
