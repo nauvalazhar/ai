@@ -466,6 +466,10 @@ The signature you pass to `Uploader`'s `uploader` prop. See [The uploader functi
 A factory that returns an `UploaderFn` for the common case of one HTTP request per file with a multipart body. Wires upload progress via `xhr.upload.onprogress`, aborts on `signal`, and parses a JSON response (falling back to `{ body: text }` for non-JSON). The resolved value is returned verbatim, so a server that responds with `{ url: "..." }` lights up `item.previewUrl` automatically.
 
 ```ts
+function createXhrUploader(options: CreateXhrUploaderOptions): UploaderFn;
+```
+
+```ts
 import { createXhrUploader } from "#/components/ai/uploader";
 
 const upload = createXhrUploader({
@@ -475,8 +479,6 @@ const upload = createXhrUploader({
 });
 ```
 
-For anything beyond a single multipart POST (signed URLs, chunked transfer, your own protocol), write the `UploaderFn` yourself.
-
-### type CreateXhrUploaderOptions
-
 <Props name="CreateXhrUploaderOptions" />
+
+For anything beyond a single multipart POST (signed URLs, chunked transfer, your own protocol), write the `UploaderFn` yourself.
