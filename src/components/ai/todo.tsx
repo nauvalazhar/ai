@@ -110,7 +110,7 @@ export function TodoItemIcon({
       aria-hidden
       className={cn(
         "inline-flex size-5 shrink-0 items-center justify-center rounded-full ring ring-border text-muted-foreground",
-        "in-data-[status=in_progress]:text-foreground",
+        "in-data-[status=in\\_progress]:text-foreground",
         "in-data-[status=completed]:bg-primary in-data-[status=completed]:text-primary-foreground in-data-[status=completed]:ring-primary",
         className,
       )}
@@ -134,7 +134,7 @@ function TodoStatusIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden size-3.5 animate-spin in-data-[status=in_progress]:block"
+        className="hidden size-3.5 animate-spin in-data-[status=in\\_progress]:block"
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
