@@ -41,7 +41,7 @@ export default function Basic() {
               <TodoItemIcon />
               <TodoItemLabel>Create main HTML page</TodoItemLabel>
             </TodoItem>
-            <TodoItem status="in_progress">
+            <TodoItem status="progress">
               <TodoItemIcon />
               <TodoItemLabel>Adding JavaScript functionality</TodoItemLabel>
             </TodoItem>

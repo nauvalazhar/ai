@@ -43,8 +43,8 @@ parts:
       to: <li>
     props:
       - name: status
-        type: '"pending" | "in_progress" | "completed"'
-        description: The lifecycle stage of the item. Drives the default icon and label styling, and is exposed as `data-status` for custom styling. Matches the values emitted by the Claude Agent SDK's `TodoWrite` tool.
+        type: '"pending" | "progress" | "completed"'
+        description: The lifecycle stage of the item. Drives the default icon and label styling, and is exposed as `data-status` for custom styling. The SDK emits `in_progress`; rename it to `progress` at the boundary.
   - name: TodoItemIcon
     passThrough:
       type: React.ComponentProps<"span">
@@ -65,7 +65,7 @@ A framed checklist that mirrors the agent's task plan as it progresses.
 
 Reach for it when the model breaks a request into several steps and you want the user to see the plan unfold. The frame keeps the list grouped as one update, the header summarises progress, and each row reflects one item's lifecycle so the reader can scan what is done, what is running, and what is queued.
 
-The component maps one-to-one to the items the Claude Agent SDK emits through `TodoWrite`. Hold the array in state, swap each item's `status` as updates arrive, and render the activeForm sentence while an item is `in_progress` so the row reads as a present action.
+The component maps one-to-one to the items the Claude Agent SDK emits through `TodoWrite`. Hold the array in state, swap each item's `status` as updates arrive, and render the activeForm sentence while an item is running so the row reads as a present action. The SDK uses `in_progress` for the running state; rename it to `progress` at the boundary when handing it to `TodoItem`.
 
 The body is dumb. It owns the frame, the header row, the height transition, and the per-item indicators. Compose any list of items inside, or wire the list to live data from a streaming response.
 
@@ -88,7 +88,7 @@ The body is dumb. It owns the frame, the header row, the height transition, and 
         <TodoItemIcon />
         <TodoItemLabel>Set up project structure</TodoItemLabel>
       </TodoItem>
-      <TodoItem status="in_progress">
+      <TodoItem status="progress">
         <TodoItemIcon />
         <TodoItemLabel>Creating main HTML page</TodoItemLabel>
       </TodoItem>
@@ -143,13 +143,13 @@ The list wrapper. Renders as a `ul` and stacks each item in document order. Keep
 
 ### TodoItem
 
-A single entry in the plan. The `status` prop drives both the default icon and the label styling, and is also exposed as `data-status` for custom rules. Use the SDK's three values: `pending` for queued, `in_progress` for the one being worked on, and `completed` once it lands.
+A single entry in the plan. The `status` prop drives both the default icon and the label styling, and is also exposed as `data-status` for custom rules. The three values are `pending` for queued, `progress` for the one being worked on, and `completed` once it lands. The SDK emits the running state as `in_progress`, so rename it to `progress` at the boundary.
 
 <Props name="TodoItem" />
 
 ### TodoItemIcon
 
-The leading status mark. Defaults to an empty square for `pending`, a spinning loader for `in_progress`, and a filled checkbox for `completed`. The icon reads its status from the parent `TodoItem`, so swap the indicator by passing children rather than threading status through props.
+The leading status mark. Renders as a ringed circle whose contents change with the parent's `data-status`: empty for `pending`, a spinning arc for `progress`, and a check on a primary-filled disk for `completed`. The icon reads its status from the parent `TodoItem`, so swap the indicator by passing children rather than threading status through props.
 
 <Props name="TodoItemIcon" />
 

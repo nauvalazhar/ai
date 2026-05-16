@@ -112,7 +112,10 @@ export default function Streaming() {
         <TodoContent>
           <TodoList>
             {todos.map((todo, i) => (
-              <TodoItem key={i} status={todo.status}>
+              <TodoItem
+                key={i}
+                status={todo.status === "in_progress" ? "progress" : todo.status}
+              >
                 <TodoItemIcon />
                 <TodoItemLabel>
                   {todo.status === "in_progress"
