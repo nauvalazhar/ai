@@ -304,6 +304,37 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Uploader",
+        slug: "uploader",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/uploader/basic")),
+          },
+          {
+            name: "Dropzone",
+            slug: "dropzone",
+            Component: lazy(() => import("#/demos/uploader/dropzone")),
+          },
+          {
+            name: "Avatar",
+            slug: "avatar",
+            Component: lazy(() => import("#/demos/uploader/avatar")),
+          },
+          {
+            name: "Composer",
+            slug: "composer",
+            Component: lazy(() => import("#/demos/uploader/composer")),
+          },
+          {
+            name: "Persisted",
+            slug: "persisted",
+            Component: lazy(() => import("#/demos/uploader/persisted")),
+          },
+        ],
+      },
+      {
         name: "Document",
         slug: "document",
         demos: [
