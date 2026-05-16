@@ -44,7 +44,7 @@ parts:
     props:
       - name: status
         type: '"pending" | "progress" | "completed"'
-        description: The lifecycle stage of the item. Drives the default icon and label styling, and is exposed as `data-status` for custom styling. The SDK emits `in_progress`; rename it to `progress` at the boundary.
+        description: The lifecycle stage of the item. Drives the default icon and label styling, and is exposed as `data-status` for custom styling. Map any `in_progress` from the source to `progress` here.
   - name: TodoItemIcon
     passThrough:
       type: React.ComponentProps<"span">
@@ -63,13 +63,9 @@ A framed checklist that mirrors the agent's task plan as it progresses.
 
 ## Anatomy
 
-Reach for it when the model breaks a request into several steps and you want the user to see the plan unfold. The frame keeps the list grouped as one update, the header summarises progress, and each row reflects one item's lifecycle so the reader can scan what is done, what is running, and what is queued.
+A framed list of steps where each row carries one of three states: queued, running, and done. Reach for it when the model breaks a request into several actions and you want the reader to watch the plan unfold.
 
-The component maps one-to-one to the items the Claude Agent SDK emits through `TodoWrite`. Hold the array in state, swap each item's `status` as updates arrive, and render the activeForm sentence while an item is running so the row reads as a present action. The SDK uses `in_progress` for the running state; rename it to `progress` at the boundary when handing it to `TodoItem`.
-
-The body is dumb. It owns the frame, the header row, the height transition, and the per-item indicators. Compose any list of items inside, or wire the list to live data from a streaming response.
-
-`TodoTrigger` is headless. It wires the toggle behavior and ARIA wiring through Base UI's Collapsible, but ships no styling. Pass `render` to provide the visual button (typically the kit's `Button`) and `children` for the icon. The root exposes `data-open` when expanded so the chevron can rotate off the state.
+Hold the array of steps in state, swap each item's `status` as updates arrive, and switch the label to a present-tense sentence while a row is running so it reads as a live action.
 
 ```tsx
 <Todo defaultOpen>
@@ -143,7 +139,7 @@ The list wrapper. Renders as a `ul` and stacks each item in document order. Keep
 
 ### TodoItem
 
-A single entry in the plan. The `status` prop drives both the default icon and the label styling, and is also exposed as `data-status` for custom rules. The three values are `pending` for queued, `progress` for the one being worked on, and `completed` once it lands. The SDK emits the running state as `in_progress`, so rename it to `progress` at the boundary.
+A single entry in the plan. The `status` prop drives both the default icon and the label styling, and is also exposed as `data-status` for custom rules. The three values are `pending` for queued, `progress` for the one being worked on, and `completed` once it lands. Map any `in_progress` from the source to `progress` here.
 
 <Props name="TodoItem" />
 
@@ -155,6 +151,6 @@ The leading status mark. Renders as a ringed circle whose contents change with t
 
 ### TodoItemLabel
 
-The text of the row. Reads the status from the parent `TodoItem` to apply muted color and a strikethrough once the item completes. Pass the imperative `content` for queued and finished items, and switch to the present-tense `activeForm` while the item is in progress so the row reads as a running action.
+The text of the row. Reads the status from the parent `TodoItem` to apply muted color and a strikethrough once the item completes. Pass the imperative form for queued and finished items, and switch to a present-tense sentence while the item is running so the row reads as a live action.
 
 <Props name="TodoItemLabel" />
