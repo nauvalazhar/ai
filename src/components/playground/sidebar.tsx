@@ -14,6 +14,7 @@ import { SiGithub, SiReact } from "react-icons/si";
 import { Button } from "../ai/button";
 import { useSidebarStore } from "./sidebar-store";
 import { Chip } from "../ai/chip";
+import { ScrollArea } from "../ai/scroll-area";
 
 export function Sidebar() {
   const toggle = useSidebarStore((s) => s.toggle);
@@ -55,6 +56,7 @@ export function Sidebar() {
           onClick={closeOnMobile}
           className={cn(
             "flex items-center text-sm font-medium px-2.5 py-2 rounded -ml-2.5 -mt-1 hover:bg-accent transition-colors duration-150",
+            "focus-visible:ring-2 focus-visible:ring-primary outline-0",
           )}
         >
           <img src="/logo.webp" alt="Logo" className="size-5.5 mr-2.5" />
@@ -89,12 +91,17 @@ export function Sidebar() {
           className="ring-foreground/15"
         />
       </div>
-      <nav className="flex-1 overflow-y-auto mt-2">
+      <ScrollArea render={<nav />} className="flex-1 overflow-y-auto mt-2">
         <section className="mb-3">
           <div className="px-6 py-1 text-xs font-medium text-muted-foreground">
             Get Started
           </div>
-          <ul className="px-4">
+          <ul
+            className={cn(
+              "px-4 relative before:w-px before:h-full before:bg-border before:absolute",
+              "before:left-7",
+            )}
+          >
             <li className="mb-0.5">
               <Link
                 to="/introduction"
@@ -229,7 +236,7 @@ export function Sidebar() {
             </section>
           ))
         )}
-      </nav>
+      </ScrollArea>
       <footer className="px-6 pb-2 pt-4 flex">
         <p className="text-xs text-muted-foreground">
           Designed by{" "}
