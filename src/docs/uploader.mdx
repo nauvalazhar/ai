@@ -232,19 +232,64 @@ type UploaderFn = (input: {
 
 The id lets you key external state by item, which matters for retries and resumable flows. The signal aborts when the user cancels or removes the item; wire it into your transport. The progress callback takes a number in `[0, 100]`. The resolved value lands on `item.result`. If it has a string `url` field, the kit copies it into `item.previewUrl` so reloaded items can show a thumbnail without holding the original `File`.
 
-For the common case of one HTTP request per file with multipart body and upload progress, use the bundled helper.
+## Writing a custom uploader
 
-```ts
-import { createXhrUploader } from "#/components/ai/uploader";
+The bundled [`createXhrUploader`](#createxhruploader) is a shortcut for the most common case (one multipart POST per file, with progress). Anything beyond that is a normal `async` function. The four arguments above are the only contract; what happens in between is yours.
 
-const upload = createXhrUploader({
-  url: "/api/upload",
-  field: "file",
-  headers: () => ({ Authorization: `Bearer ${getToken()}` }),
-});
+The smallest useful uploader is a `fetch`. No progress, because `fetch` cannot report upload progress, but the kit still drives the row from `pending` to `success` and surfaces the resolved body on `item.result`.
+
+```tsx
+const upload: UploaderFn = async ({ file, signal }) => {
+  const body = new FormData();
+  body.append("file", file);
+  const res = await fetch("/api/upload", { method: "POST", body, signal });
+  if (!res.ok) {
+    throw Object.assign(new Error(`HTTP ${res.status}`), {
+      code: `http_${res.status}`,
+    });
+  }
+  return await res.json();
+};
 ```
 
-For anything custom (signed URLs, chunked transfer, your own protocol), write the function yourself.
+For progress, fall back to `XMLHttpRequest` and forward `xhr.upload.onprogress` to `onProgress`. Wire `signal.addEventListener("abort", () => xhr.abort())` so `cancel(id)` actually stops the request. The pattern below also covers the common signed URL handshake: a JSON call to your API to mint a presigned URL, then a direct `PUT` to storage.
+
+```tsx
+const upload: UploaderFn = async ({ id, file, signal, onProgress }) => {
+  const init = await fetch("/api/uploads/sign", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ id, name: file.name, type: file.type }),
+    signal,
+  });
+  const { putUrl, finalUrl } = await init.json();
+
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", putUrl);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
+    };
+    xhr.onload = () =>
+      xhr.status < 300
+        ? resolve()
+        : reject(
+            Object.assign(new Error(`HTTP ${xhr.status}`), {
+              code: `http_${xhr.status}`,
+            }),
+          );
+    xhr.onerror = () =>
+      reject(Object.assign(new Error("Network error"), { code: "network" }));
+    signal.addEventListener("abort", () => xhr.abort());
+    xhr.send(file);
+  });
+
+  return { url: finalUrl };
+};
+```
+
+Throw an `Error` with a `code` property to land a typed error on `item.error`. The kit synthesizes `upload_failed` when no code is provided. Return `{ url }` (or anything with a string `url` field) to set the durable `previewUrl` on success. For chunked or resumable transports, see [Resumable uploads](#resumable-uploads).
 
 ## Item shape
 
