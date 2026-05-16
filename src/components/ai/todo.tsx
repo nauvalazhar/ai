@@ -109,9 +109,11 @@ export function TodoItemIcon({
       data-slot="todo-item-icon"
       aria-hidden
       className={cn(
-        "inline-flex size-5 shrink-0 items-center justify-center rounded-full ring ring-border text-muted-foreground",
-        "in-data-[status=progress]:text-foreground",
+        "inline-flex size-5 shrink-0 items-center justify-center rounded-full ring ring-border",
+        "in-data-[status=progress]:text-foreground in-data-[status=progress]:ring-transparent",
         "in-data-[status=completed]:bg-primary in-data-[status=completed]:text-primary-foreground in-data-[status=completed]:ring-primary",
+        "transition-all duration-150",
+        "[&>svg]:absolute [&>svg]:transition-all",
         className,
       )}
       {...props}
@@ -134,7 +136,10 @@ function TodoStatusIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden animate-spin in-data-[status=progress]:block"
+        className={cn(
+          "animate-spin opacity-0 in-data-[status=progress]:opacity-100",
+          "scale-0 in-data-[status=progress]:scale-100",
+        )}
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
@@ -148,7 +153,10 @@ function TodoStatusIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden size-3.5 in-data-[status=completed]:block"
+        className={cn(
+          "size-3.5 opacity-0 in-data-[status=completed]:opacity-100",
+          "scale-0 in-data-[status=completed]:scale-100",
+        )}
       >
         <path d="M20 6 9 17l-5-5" />
       </svg>
@@ -166,6 +174,7 @@ export function TodoItemLabel({
       className={cn(
         "min-w-0 flex-1 leading-5 text-foreground",
         "in-data-[status=completed]:text-muted-foreground in-data-[status=completed]:line-through",
+        "transition-all",
         className,
       )}
       {...props}
