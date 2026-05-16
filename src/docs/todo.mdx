@@ -1,0 +1,163 @@
+---
+parts:
+  - name: Todo
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: open
+        type: boolean
+        description: Controlled open state. Pair with onOpenChange.
+      - name: defaultOpen
+        type: boolean
+        default: "false"
+        description: Initial open state when uncontrolled.
+      - name: onOpenChange
+        type: "(open: boolean) => void"
+        description: Fires when the open state changes from either the built-in trigger or a controlled update.
+  - name: TodoHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TodoTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TodoTrigger
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a chevron icon. The trigger has no default icon, so pass one explicitly.
+  - name: TodoContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TodoList
+    passThrough:
+      type: React.ComponentProps<"ul">
+      to: <ul>
+  - name: TodoItem
+    passThrough:
+      type: React.ComponentProps<"li">
+      to: <li>
+    props:
+      - name: status
+        type: '"pending" | "in_progress" | "completed"'
+        description: The lifecycle stage of the item. Drives the default icon and label styling, and is exposed as `data-status` for custom styling. Matches the values emitted by the Claude Agent SDK's `TodoWrite` tool.
+  - name: TodoItemIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default status indicator. Pass any element to render in its place, such as a custom spinner or a tool icon.
+  - name: TodoItemLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+---
+
+A framed checklist that mirrors the agent's task plan as it progresses.
+
+## Anatomy
+
+Reach for it when the model breaks a request into several steps and you want the user to see the plan unfold. The frame keeps the list grouped as one update, the header summarises progress, and each row reflects one item's lifecycle so the reader can scan what is done, what is running, and what is queued.
+
+The component maps one-to-one to the items the Claude Agent SDK emits through `TodoWrite`. Hold the array in state, swap each item's `status` as updates arrive, and render the activeForm sentence while an item is `in_progress` so the row reads as a present action.
+
+The body is dumb. It owns the frame, the header row, the height transition, and the per-item indicators. Compose any list of items inside, or wire the list to live data from a streaming response.
+
+```tsx
+<Todo defaultOpen>
+  <TodoHeader>
+    <TodoTitle>Update Todos</TodoTitle>
+    <TodoTrigger
+      aria-label="Toggle todos"
+      render={<Button iconOnly variant="ghost" />}
+    >
+      <ChevronDownIcon className="group-data-open/todo:rotate-180" />
+    </TodoTrigger>
+  </TodoHeader>
+  <TodoContent>
+    <TodoList>
+      <TodoItem status="completed">
+        <TodoItemIcon />
+        <TodoItemLabel>Set up project structure</TodoItemLabel>
+      </TodoItem>
+      <TodoItem status="in_progress">
+        <TodoItemIcon />
+        <TodoItemLabel>Creating main HTML page</TodoItemLabel>
+      </TodoItem>
+      <TodoItem status="pending">
+        <TodoItemIcon />
+        <TodoItemLabel>Add local storage for saving dive logs</TodoItemLabel>
+      </TodoItem>
+    </TodoList>
+  </TodoContent>
+</Todo>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Todo
+
+Root. Owns the open state and the frame. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror state. Sets `data-open` when expanded so descendants can style off the parent.
+
+<Props name="Todo" />
+
+### TodoHeader
+
+The top row. Lays out as a flex row so the title takes the leading space and any action sits at the end. Stays fixed in place when the body expands or collapses.
+
+<Props name="TodoHeader" />
+
+### TodoTitle
+
+The label for the update. Renders as a div so the caller can choose the heading level. Use it for a static label like Update Todos, or for a live count like 3 of 5 completed by deriving the text from the same array that feeds the list.
+
+<Props name="TodoTitle" />
+
+### TodoTrigger
+
+Headless toggle. Wires the open state, `aria-expanded`, and `aria-controls` to a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The trigger has no default styling and no default icon, so it composes with whatever button family the call site already uses. Place it inside `TodoHeader` for the standard chevron, or anywhere inside the component.
+
+<Props name="TodoTrigger" />
+
+### TodoContent
+
+The body. Animates between zero and the measured full height when the open state changes. Does not unmount its children, so live updates to the list keep their identity across collapses.
+
+<Props name="TodoContent" />
+
+### TodoList
+
+The list wrapper. Renders as a `ul` and stacks each item in document order. Keeps bottom padding so the last row breathes inside the frame.
+
+<Props name="TodoList" />
+
+### TodoItem
+
+A single entry in the plan. The `status` prop drives both the default icon and the label styling, and is also exposed as `data-status` for custom rules. Use the SDK's three values: `pending` for queued, `in_progress` for the one being worked on, and `completed` once it lands.
+
+<Props name="TodoItem" />
+
+### TodoItemIcon
+
+The leading status mark. Defaults to an empty square for `pending`, a spinning loader for `in_progress`, and a filled checkbox for `completed`. The icon reads its status from the parent `TodoItem`, so swap the indicator by passing children rather than threading status through props.
+
+<Props name="TodoItemIcon" />
+
+### TodoItemLabel
+
+The text of the row. Reads the status from the parent `TodoItem` to apply muted color and a strikethrough once the item completes. Pass the imperative `content` for queued and finished items, and switch to the present-tense `activeForm` while the item is in progress so the row reads as a running action.
+
+<Props name="TodoItemLabel" />

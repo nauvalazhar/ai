@@ -1,3 +1,5 @@
+import { ChevronDownIcon } from "lucide-react";
+import { Button } from "#/components/ai/button";
 import {
   Todo,
   TodoContent,
@@ -16,7 +18,18 @@ export default function Basic() {
       <Todo defaultOpen>
         <TodoHeader>
           <TodoTitle>Update Todos</TodoTitle>
-          <TodoTrigger aria-label="Toggle todos" />
+          <TodoTrigger
+            aria-label="Toggle todos"
+            render={
+              <Button
+                iconOnly
+                variant="ghost"
+                className="-mr-1 text-muted-foreground hover:text-foreground"
+              />
+            }
+          >
+            <ChevronDownIcon className="group-data-open/todo:rotate-180" />
+          </TodoTrigger>
         </TodoHeader>
         <TodoContent>
           <TodoList>

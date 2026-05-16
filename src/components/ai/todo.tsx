@@ -1,8 +1,31 @@
-import { Collapsible } from "@base-ui/react/collapsible";
-import { createContext, useContext } from "react";
+import { useRender } from "@base-ui/react/use-render";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "#/lib/utils";
 
 type TodoStatus = "pending" | "in_progress" | "completed";
+
+type TodoContextValue = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  contentId: string;
+};
+
+const TodoContext = createContext<TodoContextValue | null>(null);
+
+function useTodoContext() {
+  const ctx = useContext(TodoContext);
+  if (!ctx) {
+    throw new Error("Todo parts must be rendered inside <Todo>.");
+  }
+  return ctx;
+}
 
 const TodoItemContext = createContext<TodoStatus | null>(null);
 
@@ -14,16 +37,41 @@ function useTodoItemStatus() {
   return status;
 }
 
-export function Todo({ className, ...props }: Collapsible.Root.Props) {
+type TodoProps = React.ComponentProps<"div"> & {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export function Todo({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  className,
+  ...props
+}: TodoProps) {
+  const [openState, setOpenState] = useState(defaultOpen);
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp : openState;
+  const contentId = useId();
+
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setOpenState(next);
+    onOpenChange?.(next);
+  };
+
   return (
-    <Collapsible.Root
-      data-slot="todo"
-      className={cn(
-        "group/todo flex flex-col rounded-outer bg-surface ring ring-border p-1",
-        className,
-      )}
-      {...props}
-    />
+    <TodoContext.Provider value={{ open, setOpen, contentId }}>
+      <div
+        data-slot="todo"
+        data-open={open || undefined}
+        className={cn(
+          "group/todo flex flex-col rounded-outer bg-surface ring ring-border p-1",
+          className,
+        )}
+        {...props}
+      />
+    </TodoContext.Provider>
   );
 }
 
@@ -34,7 +82,7 @@ export function TodoHeader({
   return (
     <div
       data-slot="todo-header"
-      className={cn("flex items-center gap-2 px-2.5 py-1.5", className)}
+      className={cn("flex items-center gap-2 px-3.5 py-2.5", className)}
       {...props}
     />
   );
@@ -57,65 +105,67 @@ export function TodoTitle({
 }
 
 export function TodoTrigger({
-  className,
-  children,
+  render,
   ...props
-}: Collapsible.Trigger.Props) {
-  return (
-    <Collapsible.Trigger
-      data-slot="todo-trigger"
-      className={cn(
-        "inline-flex size-7 -mr-1 items-center justify-center rounded bg-transparent",
-        "text-muted-foreground hover:bg-accent hover:text-foreground",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-        "cursor-pointer transition-colors",
-        className,
-      )}
-      {...props}
-    >
-      {children ?? (
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-          className="size-4 shrink-0 transition-transform duration-200 group-data-open/todo:rotate-180"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-      )}
-    </Collapsible.Trigger>
-  );
+}: useRender.ComponentProps<"button">) {
+  const { open, setOpen, contentId } = useTodoContext();
+  return useRender({
+    render,
+    defaultTagName: "button",
+    props: {
+      ...props,
+      type: "button",
+      "data-slot": "todo-trigger",
+      "data-open": open || undefined,
+      "aria-expanded": open,
+      "aria-controls": contentId,
+      onClick: () => setOpen(!open),
+    },
+  });
 }
 
 export function TodoContent({
   className,
+  children,
   ...props
-}: Collapsible.Panel.Props) {
+}: React.ComponentProps<"div">) {
+  const { open, contentId } = useTodoContext();
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [fullHeight, setFullHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+
+    const update = () => setFullHeight(el.scrollHeight);
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const height =
+    fullHeight === null ? (open ? undefined : 0) : open ? fullHeight : 0;
+
   return (
-    <Collapsible.Panel
+    <div
+      id={contentId}
       data-slot="todo-content"
+      data-open={open || undefined}
       className={cn(
-        "overflow-hidden",
-        "h-(--collapsible-panel-height)",
-        "transition-[height] duration-200 ease-out",
-        "data-starting-style:h-0 data-ending-style:h-0",
+        "overflow-hidden transition-[height] duration-200 ease-out",
         className,
       )}
+      style={{ height: height !== undefined ? `${height}px` : undefined }}
       {...props}
-    />
+    >
+      <div ref={innerRef}>{children}</div>
+    </div>
   );
 }
 
-export function TodoList({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+export function TodoList({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       data-slot="todo-list"
@@ -136,7 +186,7 @@ export function TodoItem({ status, className, ...props }: TodoItemProps) {
         data-slot="todo-item"
         data-status={status}
         className={cn(
-          "flex items-start gap-2.5 rounded px-2.5 py-1.5 text-sm",
+          "flex items-start gap-2.5 rounded px-3.5 py-1.5 text-sm",
           className,
         )}
         {...props}
