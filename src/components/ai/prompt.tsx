@@ -520,7 +520,7 @@ export function PromptQuestion({
   return (
     <div
       data-slot="prompt-question"
-      className={cn("px-3.5 pt-2.5 pb-2.5 text-foreground text-sm", className)}
+      className={cn("px-3.5 py-2.5 text-foreground text-sm", className)}
       {...props}
     />
   );
