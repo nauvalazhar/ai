@@ -1,18 +1,7 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { createContext, useContext } from "react";
 import { cn } from "#/lib/utils";
 
 type TodoStatus = "pending" | "in_progress" | "completed";
-
-const TodoItemContext = createContext<TodoStatus | null>(null);
-
-function useTodoItemStatus() {
-  const status = useContext(TodoItemContext);
-  if (!status) {
-    throw new Error("TodoItem parts must be used inside <TodoItem>");
-  }
-  return status;
-}
 
 export function Todo({ className, ...props }: Collapsible.Root.Props) {
   return (
@@ -92,17 +81,15 @@ type TodoItemProps = React.ComponentProps<"li"> & {
 
 export function TodoItem({ status, className, ...props }: TodoItemProps) {
   return (
-    <TodoItemContext.Provider value={status}>
-      <li
-        data-slot="todo-item"
-        data-status={status}
-        className={cn(
-          "flex items-start gap-2.5 rounded px-3.5 py-1.5 text-sm",
-          className,
-        )}
-        {...props}
-      />
-    </TodoItemContext.Provider>
+    <li
+      data-slot="todo-item"
+      data-status={status}
+      className={cn(
+        "flex items-start gap-2.5 rounded px-3.5 py-1.5 text-sm",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -111,26 +98,25 @@ export function TodoItemIcon({
   children,
   ...props
 }: React.ComponentProps<"span">) {
-  const status = useTodoItemStatus();
   return (
     <span
       data-slot="todo-item-icon"
       aria-hidden
       className={cn(
-        "inline-flex size-5 shrink-0 items-center justify-center",
-        status === "pending" ? "text-muted-foreground" : "text-foreground",
+        "inline-flex size-5 shrink-0 items-center justify-center text-foreground",
+        "in-data-[status=pending]:text-muted-foreground",
         className,
       )}
       {...props}
     >
-      {children ?? <TodoStatusIcon status={status} />}
+      {children ?? <TodoStatusIcon />}
     </span>
   );
 }
 
-function TodoStatusIcon({ status }: { status: TodoStatus }) {
-  if (status === "completed") {
-    return (
+function TodoStatusIcon() {
+  return (
+    <>
       <svg
         width="24"
         height="24"
@@ -141,46 +127,40 @@ function TodoStatusIcon({ status }: { status: TodoStatus }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="size-4"
+        className="hidden size-4 in-data-[status=pending]:block"
+      >
+        <rect width="18" height="18" x="3" y="3" rx="3" />
+      </svg>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+        className="hidden size-4 animate-spin in-data-[status=in_progress]:block"
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+        className="hidden size-4 in-data-[status=completed]:block"
       >
         <rect width="18" height="18" x="3" y="3" rx="3" />
         <path d="m9 12 2 2 4-4" />
       </svg>
-    );
-  }
-  if (status === "in_progress") {
-    return (
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-        className="size-4 animate-spin"
-      >
-        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-      </svg>
-    );
-  }
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-      className="size-4"
-    >
-      <rect width="18" height="18" x="3" y="3" rx="3" />
-    </svg>
+    </>
   );
 }
 
@@ -188,15 +168,12 @@ export function TodoItemLabel({
   className,
   ...props
 }: React.ComponentProps<"span">) {
-  const status = useTodoItemStatus();
   return (
     <span
       data-slot="todo-item-label"
       className={cn(
-        "min-w-0 flex-1 leading-5",
-        status === "completed"
-          ? "text-muted-foreground line-through"
-          : "text-foreground",
+        "min-w-0 flex-1 leading-5 text-foreground",
+        "in-data-[status=completed]:text-muted-foreground in-data-[status=completed]:line-through",
         className,
       )}
       {...props}
