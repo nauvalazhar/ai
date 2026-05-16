@@ -61,9 +61,7 @@ function ComposerWithUpload() {
             <Attachment
               layout="card"
               className="size-14 rounded"
-              progress={
-                item.status === "uploading" ? item.progress : undefined
-              }
+              progress={item.status === "uploading" ? item.progress : undefined}
               state={item.status === "error" ? "error" : "default"}
             >
               <AttachmentMedia>
@@ -90,9 +88,7 @@ function ComposerWithUpload() {
                 aria-label={
                   item.status === "uploading" ? "Cancel upload" : "Remove"
                 }
-                onClick={
-                  item.status === "uploading" ? actions.cancel : actions.remove
-                }
+                onClick={actions.remove}
                 className="absolute top-1 right-1 size-4.5 rounded-full bg-foreground text-background hover:bg-foreground/85 hover:text-background [&>svg]:size-3"
               >
                 <XIcon />

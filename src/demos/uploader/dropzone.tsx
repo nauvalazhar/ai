@@ -43,27 +43,21 @@ export default function Dropzone() {
   return (
     <div className="mx-auto max-w-2xl flex flex-col gap-4">
       <Uploader uploader={upload} multiple>
-        <UploaderDropzone className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border bg-surface px-6 py-10 text-center text-muted-foreground">
+        <UploaderDropzone className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border bg-surface px-6 py-10 text-center text-muted-foreground rounded-outer data-drag-over:bg-accent">
           <UploadCloudIcon className="size-8" />
           <div className="text-sm">
             <p className="text-foreground">Drop files here</p>
             <p className="text-xs">or pick from your device</p>
           </div>
           <UploaderTrigger
-            render={
-              <Button variant="outline">
-                Browse files
-              </Button>
-            }
+            render={<Button variant="outline">Browse files</Button>}
           />
         </UploaderDropzone>
 
         <UploaderList className="flex flex-col gap-2">
           {(item, actions) => (
             <Attachment
-              progress={
-                item.status === "uploading" ? item.progress : undefined
-              }
+              progress={item.status === "uploading" ? item.progress : undefined}
               state={item.status === "error" ? "error" : "default"}
             >
               <AttachmentMedia>

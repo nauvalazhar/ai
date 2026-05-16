@@ -24,9 +24,16 @@ const upload: UploaderFn = async ({ file, signal, onProgress }) => {
 export default function Avatar() {
   return (
     <div className="mx-auto max-w-md flex flex-col items-center gap-4 py-8">
-      <Uploader uploader={upload} maxFiles={1} accept="image/*" multiple={false}>
+      <Uploader
+        uploader={upload}
+        maxFiles={1}
+        accept="image/*"
+        multiple={false}
+      >
         <AvatarTile />
-        <p className="text-sm text-muted-foreground">Click the avatar to upload</p>
+        <p className="text-sm text-muted-foreground">
+          Click the avatar to upload
+        </p>
       </Uploader>
     </div>
   );
@@ -42,7 +49,7 @@ function AvatarTile() {
       layout="card"
       progress={uploading ? item.progress : undefined}
       state={item?.status === "error" ? "error" : "default"}
-      className="size-24 rounded-full overflow-hidden ring-2 ring-border [&_[data-slot=attachment-media-img]]:rounded-full"
+      className="size-24 rounded-full! overflow-hidden ring-2 ring-border [&_[data-slot=attachment-media-img]]:rounded-full"
       render={
         <button
           type="button"
@@ -51,7 +58,7 @@ function AvatarTile() {
         />
       }
     >
-      <AttachmentMedia className="rounded-full">
+      <AttachmentMedia className="rounded-full!">
         {item?.preview ? (
           <img data-slot="attachment-media-img" src={item.preview} alt="" />
         ) : item ? (

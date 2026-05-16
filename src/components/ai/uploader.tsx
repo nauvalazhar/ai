@@ -141,7 +141,8 @@ export function Uploader({
             return file.name.toLowerCase().endsWith(t.toLowerCase());
           return file.type === t;
         });
-        if (!matched) return { code: "accept", message: "File type not accepted" };
+        if (!matched)
+          return { code: "accept", message: "File type not accepted" };
       }
       return null;
     },
@@ -158,7 +159,9 @@ export function Uploader({
         (i) => i.status !== "canceled" && i.status !== "error",
       );
       const remaining =
-        maxFiles === undefined ? incoming.length : Math.max(0, maxFiles - live.length);
+        maxFiles === undefined
+          ? incoming.length
+          : Math.max(0, maxFiles - live.length);
       const limit = multiple ? remaining : 1;
       const accepted = incoming.slice(0, limit);
 
@@ -230,8 +233,7 @@ export function Uploader({
           result && typeof result === "object" && "url" in result
             ? (result as { url?: unknown }).url
             : undefined;
-        const previewUrl =
-          typeof maybeUrl === "string" ? maybeUrl : undefined;
+        const previewUrl = typeof maybeUrl === "string" ? maybeUrl : undefined;
 
         mutate((prev) =>
           prev.map((i) =>
@@ -253,9 +255,7 @@ export function Uploader({
       } catch (e) {
         if (controller.signal.aborted) {
           mutate((prev) =>
-            prev.map((i) =>
-              i.id === id ? { ...i, status: "canceled" } : i,
-            ),
+            prev.map((i) => (i.id === id ? { ...i, status: "canceled" } : i)),
           );
         } else {
           const err = e as { code?: string; message?: string };
@@ -264,7 +264,9 @@ export function Uploader({
             message: err?.message ?? "Upload failed",
           };
           mutate((prev) =>
-            prev.map((i) => (i.id === id ? { ...i, status: "error", error } : i)),
+            prev.map((i) =>
+              i.id === id ? { ...i, status: "error", error } : i,
+            ),
           );
           const finalItem = itemsRef.current.find((i) => i.id === id);
           if (finalItem) onErrorRef.current?.(finalItem);
@@ -343,11 +345,7 @@ export function Uploader({
       }
     }
     for (const item of items) {
-      if (
-        item.file &&
-        item.file.type.startsWith("image/") &&
-        !next[item.id]
-      ) {
+      if (item.file && item.file.type.startsWith("image/") && !next[item.id]) {
         next[item.id] = URL.createObjectURL(item.file);
         mutated = true;
       }
@@ -476,11 +474,7 @@ export function UploaderDropzone({
         setIsOver(false);
         if (e.dataTransfer.files.length > 0) add(e.dataTransfer.files);
       }}
-      className={cn(
-        "rounded-outer transition-colors",
-        "data-[drag-over]:bg-accent",
-        className,
-      )}
+      className={cn(className)}
       {...props}
     />
   );
@@ -513,7 +507,6 @@ export function UploaderList({
     </div>
   );
 }
-
 
 export function useUploaderAttach(
   target: React.RefObject<HTMLElement | null>,
@@ -627,9 +620,7 @@ export function createXhrUploader(
         }
       };
       xhr.onerror = () =>
-        reject(
-          Object.assign(new Error("Network error"), { code: "network" }),
-        );
+        reject(Object.assign(new Error("Network error"), { code: "network" }));
       xhr.onabort = () =>
         reject(Object.assign(new Error("Aborted"), { code: "aborted" }));
 
