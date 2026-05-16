@@ -71,7 +71,7 @@ export function ReasoningContent({
       )}
       {...props}
     >
-      <div className="pl-6 pt-2 text-sm text-muted-foreground">{children}</div>
+      <div className="pl-6 py-2 text-sm text-muted-foreground">{children}</div>
     </Collapsible.Panel>
   );
 }
