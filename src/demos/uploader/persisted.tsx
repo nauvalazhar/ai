@@ -1,20 +1,27 @@
 import { useState } from "react";
-import { CameraIcon, UserIcon } from "lucide-react";
+import { PaperclipIcon, XIcon } from "lucide-react";
 import { Button } from "#/components/ai/button";
 import {
   Attachment,
+  AttachmentAction,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentIcon,
   AttachmentMedia,
+  AttachmentName,
   AttachmentOverlay,
   AttachmentProgress,
 } from "#/components/ai/attachment";
 import {
   Uploader,
+  UploaderList,
+  UploaderTrigger,
   useUploader,
   type UploaderFn,
   type UploadItem,
 } from "#/components/ai/uploader";
 
-const STORAGE_KEY = "uploader-demo:avatar";
+const STORAGE_KEY = "uploader-demo:form";
 
 const upload: UploaderFn = async ({ file, signal, onProgress }) => {
   const total = 25;
@@ -36,90 +43,129 @@ function loadInitial(): UploadItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as UploadItem;
-    return [parsed];
+    return raw ? (JSON.parse(raw) as UploadItem[]) : [];
   } catch {
     return [];
   }
+}
+
+function formatSize(bytes?: number) {
+  if (bytes === undefined) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
 }
 
 export default function Persisted() {
   const [initial] = useState(loadInitial);
 
   return (
-    <div className="mx-auto max-w-md flex flex-col items-center gap-4 py-8">
+    <div className="mx-auto max-w-2xl flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-base font-medium">Project attachments</h3>
+        <p className="text-sm text-muted-foreground">
+          Upload a few files, then reload the page. The list is restored from
+          local storage.
+        </p>
+      </div>
       <Uploader
         uploader={upload}
-        maxFiles={1}
-        multiple={false}
-        accept="image/*"
         defaultItems={initial}
         onItemsChange={(next) => {
-          const done = next.find((i) => i.status === "success");
-          if (done) {
-            const { file: _file, ...rest } = done;
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
-          } else if (next.length === 0) {
+          const persistable = next
+            .filter((i) => i.status === "success")
+            .map(({ file: _file, ...rest }) => rest);
+          if (persistable.length > 0) {
+            window.localStorage.setItem(
+              STORAGE_KEY,
+              JSON.stringify(persistable),
+            );
+          } else {
             window.localStorage.removeItem(STORAGE_KEY);
           }
         }}
       >
-        <AvatarTile />
-        <p className="text-sm text-muted-foreground text-center">
-          Upload an image, then reload the page. The avatar persists.
-        </p>
-        <ClearButton />
+        <FormBody />
       </Uploader>
     </div>
   );
 }
 
-function AvatarTile() {
-  const { items, open } = useUploader();
-  const item = items[0];
-  const uploading = item?.status === "uploading";
-
-  return (
-    <Attachment
-      layout="card"
-      progress={uploading ? item.progress : undefined}
-      state={item?.status === "error" ? "error" : "default"}
-      className="size-28 rounded-full overflow-hidden ring-2 ring-border [&_[data-slot=attachment-media-img]]:rounded-full"
-      render={
-        <button
-          type="button"
-          onClick={open}
-          aria-label={item ? "Change photo" : "Upload photo"}
-        />
-      }
-    >
-      <AttachmentMedia className="rounded-full">
-        {item?.preview ? (
-          <img data-slot="attachment-media-img" src={item.preview} alt="" />
-        ) : item ? (
-          <UserIcon className="size-10" />
-        ) : (
-          <div className="flex size-full items-center justify-center bg-surface-elevated text-muted-foreground">
-            <CameraIcon className="size-9" />
-          </div>
-        )}
-        {uploading && (
-          <AttachmentOverlay className="rounded-full">
-            <AttachmentProgress />
-          </AttachmentOverlay>
-        )}
-      </AttachmentMedia>
-    </Attachment>
-  );
-}
-
-function ClearButton() {
+function FormBody() {
   const { items, clear } = useUploader();
-  if (items.length === 0) return null;
+
   return (
-    <Button variant="ghost" onClick={clear}>
-      Remove photo
-    </Button>
+    <>
+      <UploaderList className="flex flex-col gap-2 empty:hidden">
+        {(item, actions) => (
+          <Attachment
+            progress={item.status === "uploading" ? item.progress : undefined}
+            state={item.status === "error" ? "error" : "default"}
+          >
+            <AttachmentMedia>
+              {item.preview ? (
+                <img
+                  data-slot="attachment-media-img"
+                  src={item.preview}
+                  alt=""
+                />
+              ) : (
+                <AttachmentIcon>
+                  <PaperclipIcon />
+                </AttachmentIcon>
+              )}
+              {item.status === "uploading" && (
+                <AttachmentOverlay>
+                  <AttachmentProgress className="size-5" />
+                </AttachmentOverlay>
+              )}
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentName>{item.name}</AttachmentName>
+              <AttachmentDescription>
+                {item.status === "uploading"
+                  ? `${Math.round(item.progress)}% of ${formatSize(item.size)}`
+                  : item.status === "error"
+                    ? (item.error?.message ?? "Upload failed")
+                    : item.status === "canceled"
+                      ? "Canceled"
+                      : formatSize(item.size)}
+              </AttachmentDescription>
+            </AttachmentContent>
+            <AttachmentAction>
+              <Button
+                iconOnly
+                variant="ghost"
+                aria-label={
+                  item.status === "uploading" ? "Cancel upload" : "Remove"
+                }
+                onClick={
+                  item.status === "uploading" ? actions.cancel : actions.remove
+                }
+                className="size-7 text-muted-foreground hover:text-foreground"
+              >
+                <XIcon />
+              </Button>
+            </AttachmentAction>
+          </Attachment>
+        )}
+      </UploaderList>
+      <div className="flex items-center gap-2">
+        <UploaderTrigger
+          render={
+            <Button variant="outline">
+              <PaperclipIcon />
+              Attach files
+            </Button>
+          }
+        />
+        {items.length > 0 && (
+          <Button variant="ghost" onClick={clear}>
+            Clear all
+          </Button>
+        )}
+      </div>
+    </>
   );
 }

@@ -354,9 +354,9 @@ type UploadItem = {
 
 ## Persistence
 
-Reloaded queues are user-implementable today; the kit ships no storage adapter. Two rules cover the common cases.
+The motivating case is a long form with several attachments. The user uploads three files, accidentally reloads, and the three rows come back with their thumbnails intact. The kit ships no storage adapter, but the wiring is small.
 
-First, only persist `success` items. Anything in flight at the time of reload has no `File` to resume against and is not meaningful to restore. Second, strip the `file` field before serialization, since `File` does not survive `JSON.stringify`.
+Two rules cover the common cases. First, only persist `success` items. Anything in flight at the time of reload has no `File` to resume against and is not meaningful to restore. Second, strip the `file` field before serialization, since `File` does not survive `JSON.stringify`.
 
 ```tsx
 const [initial] = useState(() => {
@@ -371,12 +371,18 @@ const [initial] = useState(() => {
     const persistable = next
       .filter((i) => i.status === "success")
       .map(({ file, ...rest }) => rest);
-    localStorage.setItem("files", JSON.stringify(persistable));
+    if (persistable.length > 0) {
+      localStorage.setItem("files", JSON.stringify(persistable));
+    } else {
+      localStorage.removeItem("files");
+    }
   }}
 />;
 ```
 
-For an avatar that survives reload, the same pattern with `maxFiles={1}` and a single-item store works.
+`onItemsChange` is the right channel for this. It fires on structural changes (add, status transition, remove) but not on progress ticks, so a localStorage write inside the handler does not run on every percentage update.
+
+For the thumbnail to survive reload, the durable source needs to live in `previewUrl`. A server response with `{ url }` flows there automatically (see [Swapping preview on success](#swapping-preview-on-success)). For a fully local demo with no backend, a `FileReader` data URL works in place of a remote URL.
 
 ## Resumable uploads
 
