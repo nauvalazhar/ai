@@ -49,7 +49,11 @@ export function TodoTrigger(props: Collapsible.Trigger.Props) {
   return <Collapsible.Trigger data-slot="todo-trigger" {...props} />;
 }
 
-export function TodoContent({ className, ...props }: Collapsible.Panel.Props) {
+export function TodoContent({
+  className,
+  children,
+  ...props
+}: Collapsible.Panel.Props) {
   return (
     <Collapsible.Panel
       data-slot="todo-content"
@@ -61,7 +65,9 @@ export function TodoContent({ className, ...props }: Collapsible.Panel.Props) {
         className,
       )}
       {...props}
-    />
+    >
+      <div className="pb-1">{children}</div>
+    </Collapsible.Panel>
   );
 }
 
@@ -69,7 +75,7 @@ export function TodoList({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       data-slot="todo-list"
-      className={cn("flex flex-col pb-1", className)}
+      className={cn("flex flex-col", className)}
       {...props}
     />
   );
@@ -103,8 +109,9 @@ export function TodoItemIcon({
       data-slot="todo-item-icon"
       aria-hidden
       className={cn(
-        "inline-flex size-5 shrink-0 items-center justify-center text-foreground",
-        "in-data-[status=pending]:text-muted-foreground",
+        "inline-flex size-5 shrink-0 items-center justify-center rounded-full ring ring-border text-muted-foreground",
+        "in-data-[status=in_progress]:text-foreground",
+        "in-data-[status=completed]:bg-primary in-data-[status=completed]:text-primary-foreground in-data-[status=completed]:ring-primary",
         className,
       )}
       {...props}
@@ -123,25 +130,11 @@ function TodoStatusIcon() {
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden size-4 in-data-[status=pending]:block"
-      >
-        <rect width="18" height="18" x="3" y="3" rx="3" />
-      </svg>
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-        className="hidden size-4 animate-spin in-data-[status=in_progress]:block"
+        className="hidden size-3.5 animate-spin in-data-[status=in_progress]:block"
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
@@ -151,14 +144,13 @@ function TodoStatusIcon() {
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth={3}
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden size-4 in-data-[status=completed]:block"
+        className="hidden size-3.5 in-data-[status=completed]:block"
       >
-        <rect width="18" height="18" x="3" y="3" rx="3" />
-        <path d="m9 12 2 2 4-4" />
+        <path d="M20 6 9 17l-5-5" />
       </svg>
     </>
   );
