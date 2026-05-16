@@ -2,22 +2,22 @@
 parts:
   - name: Citation
     passThrough:
-      type: PreviewCard.Root.Props
+      type: Popover.Root.Props
       docsUrl:
-        label: Base UI PreviewCard.Root
-        href: https://base-ui.com/react/components/preview-card#root
+        label: Base UI Popover.Root
+        href: https://base-ui.com/react/components/popover#root
   - name: CitationTrigger
     passThrough:
-      type: PreviewCard.Trigger.Props
+      type: Popover.Trigger.Props
       docsUrl:
-        label: Base UI PreviewCard.Trigger
-        href: https://base-ui.com/react/components/preview-card#trigger
+        label: Base UI Popover.Trigger
+        href: https://base-ui.com/react/components/popover#trigger
   - name: CitationPopup
     passThrough:
-      type: PreviewCard.Popup.Props
+      type: Popover.Popup.Props
       docsUrl:
-        label: Base UI PreviewCard.Popup
-        href: https://base-ui.com/react/components/preview-card#popup
+        label: Base UI Popover.Popup
+        href: https://base-ui.com/react/components/popover#popup
   - name: CitationHeader
     passThrough:
       type: React.ComponentProps<"div">
@@ -162,13 +162,13 @@ Reference for each part of the component, including its available props and beha
 
 ### Citation
 
-Root preview card. Provides the carousel state to every part and tracks the current index, the total number of items, and the direction of the last move so the active item can animate from the matching side.
+Root of the citation popover. Provides the carousel state to every part and tracks the current index, the total number of items, and the direction of the last move so the active item can animate from the matching side.
 
 <Props name="Citation" />
 
 ### CitationTrigger
 
-The pill that opens the card on hover or focus. Wraps the Base UI PreviewCard trigger, so the trigger renders as an anchor and inherits a short delay before opening and a slightly longer delay before closing. The hover gesture survives the user moving from the trigger across the gap into the card. Accepts any children, so the author can hand-write the visible label, including an extra count like "+2" when there are more sources behind the trigger.
+The pill that opens the card on hover, focus, or tap. Wraps a popover trigger with hover-to-open enabled by default, a short delay before opening, and a slightly longer delay before closing, so the gesture survives the user moving from the trigger across the gap into the card. A tap also opens it, which keeps the citation reachable on touch devices that have no hover. Accepts any children, so the author can hand-write the visible label, including an extra count like "+2" when there are more sources behind the trigger.
 
 <Props name="CitationTrigger" />
 

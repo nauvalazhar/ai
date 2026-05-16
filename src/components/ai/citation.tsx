@@ -1,4 +1,4 @@
-import { PreviewCard } from "@base-ui/react/preview-card";
+import { Popover } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import {
   Children,
@@ -43,7 +43,7 @@ export function useCitation() {
   return useCitationContext();
 }
 
-export function Citation({ children, ...props }: PreviewCard.Root.Props) {
+export function Citation({ children, ...props }: Popover.Root.Props) {
   const [index, setIndexState] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [total, setTotal] = useState(0);
@@ -82,20 +82,22 @@ export function Citation({ children, ...props }: PreviewCard.Root.Props) {
   return (
     <CitationContext.Provider value={value}>
       <CitationInternalContext.Provider value={internal}>
-        <PreviewCard.Root {...props}>{children}</PreviewCard.Root>
+        <Popover.Root {...props}>{children}</Popover.Root>
       </CitationInternalContext.Provider>
     </CitationContext.Provider>
   );
 }
 
 export function CitationTrigger({
+  openOnHover = true,
   delay = 150,
   closeDelay = 200,
   className,
   ...props
-}: PreviewCard.Trigger.Props) {
+}: Popover.Trigger.Props) {
   return (
-    <PreviewCard.Trigger
+    <Popover.Trigger
+      openOnHover={openOnHover}
       delay={delay}
       closeDelay={closeDelay}
       data-slot="citation-trigger"
@@ -118,11 +120,11 @@ export function CitationPopup({
   className,
   children,
   ...props
-}: PreviewCard.Popup.Props) {
+}: Popover.Popup.Props) {
   return (
-    <PreviewCard.Portal>
-      <PreviewCard.Positioner sideOffset={8} align="start">
-        <PreviewCard.Popup
+    <Popover.Portal>
+      <Popover.Positioner sideOffset={8} align="start">
+        <Popover.Popup
           data-slot="citation-popup"
           className={cn(
             "w-80 max-w-[90vw] flex flex-col gap-1 p-1",
@@ -136,9 +138,9 @@ export function CitationPopup({
           {...props}
         >
           {children}
-        </PreviewCard.Popup>
-      </PreviewCard.Positioner>
-    </PreviewCard.Portal>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
   );
 }
 
