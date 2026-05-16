@@ -291,6 +291,45 @@ const upload: UploaderFn = async ({ id, file, signal, onProgress }) => {
 
 Throw an `Error` with a `code` property to land a typed error on `item.error`. The kit synthesizes `upload_failed` when no code is provided. Return `{ url }` (or anything with a string `url` field) to set the durable `previewUrl` on success. For chunked or resumable transports, see [Resumable uploads](#resumable-uploads).
 
+## Swapping preview on success
+
+The kit swaps from the blob URL to your server's URL automatically. Two pieces wire it up.
+
+When your `uploader` resolves with an object that has a string `url` field, that value lands on `item.previewUrl`:
+
+```tsx
+const upload: UploaderFn = async ({ file, signal }) => {
+  const res = await fetch("/api/upload", { method: "POST", body: file, signal });
+  const json = await res.json();
+  return { url: json.cdnUrl };
+};
+```
+
+And `item.preview` is derived, not stored. Every render computes `preview = previewUrl ?? blobUrl`. While the upload is in flight, `previewUrl` is undefined so `preview` is the blob URL. The moment `previewUrl` is set, the next render switches `preview` to the remote URL. Your `<img src={item.preview} />` re-renders with the new source. No manual swap, no callback.
+
+The blob URL itself stays alive until the item leaves the queue (then the kit revokes it), so the cutover never produces a flash of empty media.
+
+If your server does not return a `{ url }` shape, set `previewUrl` yourself from `onSuccess` in controlled mode.
+
+```tsx
+<Uploader
+  uploader={upload}
+  items={items}
+  onItemsChange={setItems}
+  onSuccess={(item) =>
+    setItems((prev) =>
+      prev.map((i) =>
+        i.id === item.id
+          ? { ...i, previewUrl: deriveUrl(item.result) }
+          : i,
+      ),
+    )
+  }
+/>
+```
+
+Same `preview = previewUrl ?? blobUrl` rule applies, so the swap follows automatically.
+
 ## Item shape
 
 ```ts
