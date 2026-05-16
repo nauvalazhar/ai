@@ -1,31 +1,8 @@
-import { useRender } from "@base-ui/react/use-render";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { Collapsible } from "@base-ui/react/collapsible";
+import { createContext, useContext } from "react";
 import { cn } from "#/lib/utils";
 
 type TodoStatus = "pending" | "in_progress" | "completed";
-
-type TodoContextValue = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  contentId: string;
-};
-
-const TodoContext = createContext<TodoContextValue | null>(null);
-
-function useTodoContext() {
-  const ctx = useContext(TodoContext);
-  if (!ctx) {
-    throw new Error("Todo parts must be rendered inside <Todo>.");
-  }
-  return ctx;
-}
 
 const TodoItemContext = createContext<TodoStatus | null>(null);
 
@@ -37,41 +14,16 @@ function useTodoItemStatus() {
   return status;
 }
 
-type TodoProps = React.ComponentProps<"div"> & {
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-};
-
-export function Todo({
-  open: openProp,
-  defaultOpen = false,
-  onOpenChange,
-  className,
-  ...props
-}: TodoProps) {
-  const [openState, setOpenState] = useState(defaultOpen);
-  const isControlled = openProp !== undefined;
-  const open = isControlled ? openProp : openState;
-  const contentId = useId();
-
-  const setOpen = (next: boolean) => {
-    if (!isControlled) setOpenState(next);
-    onOpenChange?.(next);
-  };
-
+export function Todo({ className, ...props }: Collapsible.Root.Props) {
   return (
-    <TodoContext.Provider value={{ open, setOpen, contentId }}>
-      <div
-        data-slot="todo"
-        data-open={open || undefined}
-        className={cn(
-          "group/todo flex flex-col rounded-outer bg-surface ring ring-border p-1",
-          className,
-        )}
-        {...props}
-      />
-    </TodoContext.Provider>
+    <Collapsible.Root
+      data-slot="todo"
+      className={cn(
+        "group/todo flex flex-col rounded-outer bg-surface ring ring-border p-1",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -104,64 +56,23 @@ export function TodoTitle({
   );
 }
 
-export function TodoTrigger({
-  render,
-  ...props
-}: useRender.ComponentProps<"button">) {
-  const { open, setOpen, contentId } = useTodoContext();
-  return useRender({
-    render,
-    defaultTagName: "button",
-    props: {
-      ...props,
-      type: "button",
-      "data-slot": "todo-trigger",
-      "data-open": open || undefined,
-      "aria-expanded": open,
-      "aria-controls": contentId,
-      onClick: () => setOpen(!open),
-    },
-  });
+export function TodoTrigger(props: Collapsible.Trigger.Props) {
+  return <Collapsible.Trigger data-slot="todo-trigger" {...props} />;
 }
 
-export function TodoContent({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
-  const { open, contentId } = useTodoContext();
-  const innerRef = useRef<HTMLDivElement>(null);
-  const [fullHeight, setFullHeight] = useState<number | null>(null);
-
-  useEffect(() => {
-    const el = innerRef.current;
-    if (!el) return;
-
-    const update = () => setFullHeight(el.scrollHeight);
-    update();
-
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const height =
-    fullHeight === null ? (open ? undefined : 0) : open ? fullHeight : 0;
-
+export function TodoContent({ className, ...props }: Collapsible.Panel.Props) {
   return (
-    <div
-      id={contentId}
+    <Collapsible.Panel
       data-slot="todo-content"
-      data-open={open || undefined}
       className={cn(
-        "overflow-hidden transition-[height] duration-200 ease-out",
+        "overflow-hidden",
+        "h-(--collapsible-panel-height)",
+        "transition-[height] duration-200 ease-out",
+        "data-starting-style:h-0 data-ending-style:h-0",
         className,
       )}
-      style={{ height: height !== undefined ? `${height}px` : undefined }}
       {...props}
-    >
-      <div ref={innerRef}>{children}</div>
-    </div>
+    />
   );
 }
 

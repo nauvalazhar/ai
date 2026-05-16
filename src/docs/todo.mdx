@@ -2,19 +2,10 @@
 parts:
   - name: Todo
     passThrough:
-      type: React.ComponentProps<"div">
-      to: <div>
-    props:
-      - name: open
-        type: boolean
-        description: Controlled open state. Pair with onOpenChange.
-      - name: defaultOpen
-        type: boolean
-        default: "false"
-        description: Initial open state when uncontrolled.
-      - name: onOpenChange
-        type: "(open: boolean) => void"
-        description: Fires when the open state changes from either the built-in trigger or a controlled update.
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
   - name: TodoHeader
     passThrough:
       type: React.ComponentProps<"div">
@@ -25,8 +16,10 @@ parts:
       to: <div>
   - name: TodoTrigger
     passThrough:
-      type: useRender.ComponentProps<"button">
-      to: <button>
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
     props:
       - name: render
         type: ReactElement
@@ -36,8 +29,10 @@ parts:
         description: Content of the rendered element. Typically a chevron icon. The trigger has no default icon, so pass one explicitly.
   - name: TodoContent
     passThrough:
-      type: React.ComponentProps<"div">
-      to: <div>
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
   - name: TodoList
     passThrough:
       type: React.ComponentProps<"ul">
@@ -73,6 +68,8 @@ Reach for it when the model breaks a request into several steps and you want the
 The component maps one-to-one to the items the Claude Agent SDK emits through `TodoWrite`. Hold the array in state, swap each item's `status` as updates arrive, and render the activeForm sentence while an item is `in_progress` so the row reads as a present action.
 
 The body is dumb. It owns the frame, the header row, the height transition, and the per-item indicators. Compose any list of items inside, or wire the list to live data from a streaming response.
+
+`TodoTrigger` is headless. It wires the toggle behavior and ARIA wiring through Base UI's Collapsible, but ships no styling. Pass `render` to provide the visual button (typically the kit's `Button`) and `children` for the icon. The root exposes `data-open` when expanded so the chevron can rotate off the state.
 
 ```tsx
 <Todo defaultOpen>
@@ -110,7 +107,7 @@ Reference for each part of the component, including its available props and beha
 
 ### Todo
 
-Root. Owns the open state and the frame. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror state. Sets `data-open` when expanded so descendants can style off the parent.
+Root. Wraps Base UI's Collapsible.Root and adds the frame. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror state. Sets `data-open` when expanded so descendants can style off the parent.
 
 <Props name="Todo" />
 
@@ -128,13 +125,13 @@ The label for the update. Renders as a div so the caller can choose the heading 
 
 ### TodoTrigger
 
-Headless toggle. Wires the open state, `aria-expanded`, and `aria-controls` to a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The trigger has no default styling and no default icon, so it composes with whatever button family the call site already uses. Place it inside `TodoHeader` for the standard chevron, or anywhere inside the component.
+Headless toggle. Forwards to Base UI's Collapsible.Trigger, which wires the open state, `aria-expanded`, and `aria-controls` to a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The trigger has no default styling and no default icon, so it composes with whatever button family the call site already uses.
 
 <Props name="TodoTrigger" />
 
 ### TodoContent
 
-The body. Animates between zero and the measured full height when the open state changes. Does not unmount its children, so live updates to the list keep their identity across collapses.
+The body. Forwards to Base UI's Collapsible.Panel and animates between zero and the measured panel height when the open state changes. Does not unmount its children, so live updates to the list keep their identity across collapses.
 
 <Props name="TodoContent" />
 
