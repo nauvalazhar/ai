@@ -72,6 +72,73 @@ parts:
       - name: fallback
         type: ReactNode
         description: "Rendered when the item has no source to show, for example a PDF that has no thumbnail or a placeholder before the first file is added."
+  - name: UploadItem
+    props:
+      - name: id
+        type: string
+        description: "Stable identifier the kit generates on add. The same id flows into the uploader function and into `cancel`, `retry`, `remove`."
+      - name: name
+        type: string
+        description: "File name. Used as the default row label and as part of the fingerprint when matching a rehydrated row against a re-picked file."
+      - name: size
+        type: number
+        description: "File size in bytes. Optional because a rehydrated item may have been stored without it."
+      - name: type
+        type: string
+        description: "MIME type from the picked file. Optional for the same reason."
+      - name: status
+        type: '"pending" | "uploading" | "success" | "error" | "canceled"'
+        description: "Lifecycle state. `pending` is the brief window between add and first byte. `uploading` is in flight with live progress. `success`, `error`, and `canceled` are terminal."
+      - name: progress
+        type: number
+        description: "0 to 100, merged from the latest `onProgress` tick. 100 on `success`, last reported value on `canceled` or `error`."
+      - name: file
+        type: File
+        description: "The original file. Present in the session that picked it; absent after a reload. The kit never auto-starts an item that lacks `file`."
+      - name: previewUrl
+        type: string
+        description: "Durable image source for `UploaderPreview`. Set automatically when the uploader's resolved value has a string `url` field, so reloaded items show a thumbnail without holding a `File`."
+      - name: result
+        type: unknown
+        description: "The uploader function's resolved value, surfaced verbatim. Use it to read whatever the backend returned (asset id, url, metadata)."
+      - name: error
+        type: "{ code: string; message: string }"
+        description: "Present when `status` is `error`. `code` is yours to define if you throw a typed error from the uploader; otherwise the kit synthesizes one (`http_<status>`, `network`, `aborted`, `file_too_large`, `file_type_rejected`)."
+  - name: UploaderFn
+    description: "The signature of the function you pass to `Uploader`'s `uploader` prop. The kit calls it once per item and lifts the resolved value onto `item.result`."
+    props:
+      - name: id
+        type: string
+        description: "The item id. Use it as the key for an external session store, so a resumable transport can find the prior session on retry."
+      - name: file
+        type: File
+        description: "The file to upload."
+      - name: signal
+        type: AbortSignal
+        description: "Aborts when the user cancels, removes the item, or unmounts the root. Wire it into your transport so the request actually stops."
+      - name: onProgress
+        type: "(progress: number) => void"
+        description: "Reports upload progress in `[0, 100]`. The kit merges the latest value into `items[n].progress` and fires `onProgress` on the root."
+  - name: CreateXhrUploaderOptions
+    props:
+      - name: url
+        type: string
+        description: "Endpoint the file is posted to."
+      - name: method
+        type: string
+        default: '"POST"'
+        description: "HTTP method used for the request."
+      - name: field
+        type: string
+        default: '"file"'
+        description: "Form field name the file lands under in the multipart body."
+      - name: headers
+        type: "Record<string, string> | () => Record<string, string>"
+        description: "Static headers or a function called once per upload, useful for tokens that rotate between requests."
+      - name: withCredentials
+        type: boolean
+        default: "false"
+        description: "Forwarded to `XMLHttpRequest.withCredentials` for cross-origin cookie auth."
 ---
 
 A controller that pairs with `<Attachment>` to handle picking, validating, dragging, dropping, pasting, and uploading. Renders no chrome of its own.
@@ -379,3 +446,37 @@ The hook installs listeners on the element behind the ref, ignores drags that do
 - `isDragOver` — true while a file drag is over the element. Use it to render an overlay or tone the surface.
 - `options.drop` — when false, the hook skips the drag listeners. Defaults to true.
 - `options.paste` — when false, the hook skips the paste listener. Defaults to true.
+
+The paste listener fires on the element behind the ref, so paste only works when a focusable child (an `<input>`, `<textarea>`, or `contenteditable`) receives the paste event and it bubbles to the attached element. A bare `<div>` will not catch a global Cmd+V.
+
+### type UploadItem
+
+The shape of a row in the queue. Stored in `items`, passed to `onSuccess` and `onError`, and forwarded as the first argument to the `UploaderList` render-prop. See [Item shape](#item-shape) for the persistence implications of each field.
+
+<Props name="UploadItem" />
+
+### type UploaderFn
+
+The signature you pass to `Uploader`'s `uploader` prop. See [The uploader function](#the-uploader-function) for the contract and how the resolved value flows back into the item.
+
+<Props name="UploaderFn" />
+
+### createXhrUploader
+
+A factory that returns an `UploaderFn` for the common case of one HTTP request per file with a multipart body. Wires upload progress via `xhr.upload.onprogress`, aborts on `signal`, and parses a JSON response (falling back to `{ body: text }` for non-JSON). The resolved value is returned verbatim, so a server that responds with `{ url: "..." }` lights up `item.previewUrl` automatically.
+
+```ts
+import { createXhrUploader } from "#/components/ai/uploader";
+
+const upload = createXhrUploader({
+  url: "/api/upload",
+  field: "file",
+  headers: () => ({ Authorization: `Bearer ${getToken()}` }),
+});
+```
+
+For anything beyond a single multipart POST (signed URLs, chunked transfer, your own protocol), write the `UploaderFn` yourself.
+
+### type CreateXhrUploaderOptions
+
+<Props name="CreateXhrUploaderOptions" />
