@@ -74,11 +74,11 @@ parts:
         description: "Rendered when the item has no source to show, for example a PDF that has no thumbnail or a placeholder before the first file is added."
 ---
 
-A controller that pairs with `<Attachment>` to handle the upload side: picking files, validating, dragging, dropping, pasting, tracking progress, and surviving a reload. Renders no chrome of its own. You bring the trigger, the dropzone, the list rows, and the avatar tile; the kit owns the queue, the input, the progress plumbing, and the abort wiring.
+A controller that pairs with `<Attachment>` to handle picking, validating, dragging, dropping, pasting, and uploading. Renders no chrome of its own.
 
 ## Anatomy
 
-The root sits high in the tree. It owns the file input element, the queue state, and the abort controllers. Triggers, dropzones, lists, and previews live anywhere underneath and read the queue through `useUploader()`.
+The root owns the queue, the hidden file input, and the abort wiring. Triggers, dropzones, lists, and previews live anywhere underneath and read the queue through `useUploader()`. You bring the trigger, the dropzone, and the rows.
 
 ```tsx
 <Uploader uploader={upload}>
@@ -93,16 +93,44 @@ The root sits high in the tree. It owns the file input element, the queue state,
 </Uploader>
 ```
 
-The dropzone is optional. Drop it in for a drag target, leave it out for a button-only flow.
+The dropzone is optional. Drop it in for a drag target, leave it out for a button-only flow. The dropzone exposes `data-drag-over` while a file drag is over the element, so the consumer can tone the surface through a Tailwind variant.
 
 ```tsx
 <Uploader uploader={upload}>
-  <UploaderDropzone className="border-2 border-dashed p-8 rounded-outer text-center">
+  <UploaderDropzone className="border-2 border-dashed p-8 data-[drag-over]:border-primary">
     Drop files here, or
     <UploaderTrigger render={<Button variant="ghost">browse</Button>} />
   </UploaderDropzone>
-  <UploaderList>{(item, actions) => <Attachment ...>...</Attachment>}</UploaderList>
+  <UploaderList>{(item, actions) => <Attachment>...</Attachment>}</UploaderList>
 </Uploader>
+```
+
+For an avatar tile, skip the trigger and bind `open` from `useUploader()` directly to a clickable `<Attachment>`. Use `maxFiles={1}` to make the queue replace-on-add.
+
+```tsx
+function AvatarTile() {
+  const { items, open } = useUploader();
+  const item = items[0];
+  return (
+    <Attachment
+      layout="card"
+      progress={item?.status === "uploading" ? item.progress : undefined}
+      render={<button type="button" onClick={open} aria-label="Change photo" />}
+    >
+      <AttachmentMedia>
+        {item ? <UploaderPreview itemId={item.id} /> : <img data-slot="attachment-media-img" src={defaultSrc} alt="" />}
+        {item?.status === "uploading" && <AttachmentOverlay><AttachmentProgress /></AttachmentOverlay>}
+      </AttachmentMedia>
+    </Attachment>
+  );
+}
+```
+
+To attach drop and paste behavior to an arbitrary surface without making it look like a dropzone, use `useUploaderAttach` on a ref. Useful for a composer or a canvas that should accept files as a side behavior.
+
+```tsx
+const wrapRef = useRef<HTMLDivElement | null>(null);
+const { isDragOver } = useUploaderAttach(wrapRef);
 ```
 
 ## The uploader function
@@ -134,29 +162,6 @@ const upload = createXhrUploader({
 
 For anything custom (signed URLs, chunked transfer, your own protocol), write the function yourself.
 
-## Hooks
-
-### useUploader
-
-Read the queue and act on it from any descendant. Returns the same shape regardless of controlled or uncontrolled mode.
-
-```ts
-const { items, open, add, cancel, retry, remove, clear } = useUploader();
-```
-
-`open` opens the hidden file picker. `add` accepts a `File[]` or `FileList` and pushes through the same validation the trigger uses. The action methods take an item id and do the right thing for that item's current status. The items array reflects live progress merged in, so a render-time read of `item.progress` is always fresh.
-
-### useUploaderAttach
-
-Attach drop and paste behavior to an arbitrary element. Useful when an existing component (a composer, a prompt, a canvas) should accept files as a side behavior without becoming a dropzone visually.
-
-```ts
-const ref = useRef<HTMLDivElement | null>(null);
-const { isDragOver } = useUploaderAttach(ref, { drop: true, paste: true });
-```
-
-The hook installs listeners on the element behind the ref, ignores drags that do not carry files, and counts drag depth so nested children with their own drag handlers do not flicker the over state. The returned `isDragOver` is the same signal you get on a `<UploaderDropzone>` and is suitable for an overlay.
-
 ## Item shape
 
 ```ts
@@ -175,101 +180,6 @@ type UploadItem = {
 ```
 
 The `file` field is the volatile half. It exists in the session the file was picked in and is gone after a reload. Everything else is durable. To restore a previous queue, hydrate items with the durable fields, `status: "success"`, and `progress: 100`. The kit does not auto-start items that have no `file`.
-
-## API
-
-Reference for each part of the component, including its available props and behavior.
-
-### Uploader
-
-The root. Owns the queue, the abort controllers, and the hidden file input. Renders no DOM of its own beyond the input, so layout decisions stay with the consumer.
-
-The kit treats `onItemsChange` as the structural channel and `onProgress` as the granular one. Wiring `onItemsChange` to a storage write is safe; it only fires when an item is added, removed, retried, cleared, or transitions status. Progress ticks come through `onProgress` and the merged `items` array on the context.
-
-Controlled mode follows the standard React shape: pass `items` and `onItemsChange`, then forward the new value back into state from the handler. Uncontrolled mode uses `defaultItems` for the initial snapshot and emits the same `onItemsChange` for storage.
-
-<Props name="Uploader" />
-
-### UploaderTrigger
-
-A passthrough button that opens the file picker. Pass the visible element through `render`. The kit attaches an `onClick` and merges with any handler on the rendered element, so a Button or a MenuItem keeps its own behavior.
-
-```tsx
-<UploaderTrigger render={<Button><PaperclipIcon /> Attach</Button>} />
-<UploaderTrigger render={<MenuItem>Upload from disk</MenuItem>} />
-```
-
-For the avatar pattern where the trigger is the display, skip the trigger and bind `open` from `useUploader()` directly to a clickable Attachment.
-
-```tsx
-function AvatarTile() {
-  const { items, open } = useUploader();
-  const item = items[0];
-  return (
-    <Attachment
-      layout="card"
-      progress={item?.status === "uploading" ? item.progress : undefined}
-      render={<button type="button" onClick={open} aria-label="Change photo" />}
-    >
-      <AttachmentMedia>
-        {item ? <UploaderPreview itemId={item.id} /> : <img data-slot="attachment-media-img" src={defaultSrc} alt="" />}
-        {item?.status === "uploading" && <AttachmentOverlay><AttachmentProgress /></AttachmentOverlay>}
-      </AttachmentMedia>
-    </Attachment>
-  );
-}
-```
-
-<Props name="UploaderTrigger" />
-
-### UploaderDropzone
-
-A drop target. Sets `data-drag-over` while a file drag is over the element, so the consumer can tone the surface through a Tailwind variant.
-
-The dropzone ignores drags that do not carry files and counts drag depth, so nested children with their own dragenter and dragleave handlers do not flicker the over state.
-
-```tsx
-<UploaderDropzone className="border-2 border-dashed p-8 data-[drag-over]:border-primary">
-  Drop files here, or
-  <UploaderTrigger render={<Button variant="ghost">browse</Button>} />
-</UploaderDropzone>
-```
-
-<Props name="UploaderDropzone" />
-
-### UploaderList
-
-A render-prop wrapper that maps over the queue and gives you per-item actions.
-
-```tsx
-<UploaderList>
-  {(item, { cancel, retry, remove }) => (
-    <Attachment
-      progress={item.status === "uploading" ? item.progress : undefined}
-      state={item.status === "error" ? "error" : "default"}
-    >
-      ...
-    </Attachment>
-  )}
-</UploaderList>
-```
-
-The item passed in already has live progress merged. The actions are bound to that item, so the call sites stay terse: `onClick={cancel}`, not `onClick={() => cancel(item.id)}`.
-
-<Props name="UploaderList" />
-
-### UploaderPreview
-
-An image element keyed by item id. Prefers `previewUrl` when set, so reloaded items render their remote thumbnail directly. Falls back to a blob URL from the live `file` when the file is an image, with revoke-on-unmount. Renders the `fallback` node when there is no source available, useful for a PDF row or an empty avatar slot.
-
-```tsx
-<UploaderPreview
-  itemId={item.id}
-  fallback={<AttachmentIcon><FileTextIcon /></AttachmentIcon>}
-/>
-```
-
-<Props name="UploaderPreview" />
 
 ## Persistence
 
@@ -375,3 +285,97 @@ function resume(id: string) {
 Things to keep in mind: a wrong file on resume should be refused or treated as a fresh upload, sessions can outlive items so the server-side store needs an expiry, and cancel mid-upload should keep the session row around so the user can resume later instead of restarting from zero.
 
 Future kit additions (`meta` on `UploadItem`, `previous` on the uploader input, `onMeta` for mid-flight writes, `attachFile(id, file)` as a one-call swap-and-retry) will shorten this. Code written against today's surface keeps working when they land.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Uploader
+
+The root. Owns the queue, the abort controllers, and the hidden file input. Renders no DOM of its own beyond the input, so layout decisions stay with the consumer.
+
+The kit treats `onItemsChange` as the structural channel and `onProgress` as the granular one. Wiring `onItemsChange` to a storage write is safe; it only fires when an item is added, removed, retried, cleared, or transitions status. Progress ticks come through `onProgress` and the merged `items` array on the context.
+
+Controlled mode follows the standard React shape: pass `items` and `onItemsChange`, then forward the new value back into state from the handler. Uncontrolled mode uses `defaultItems` for the initial snapshot and emits the same `onItemsChange` for storage.
+
+<Props name="Uploader" />
+
+### UploaderTrigger
+
+A passthrough button that opens the file picker. Pass the visible element through `render`. The kit attaches an `onClick` and merges with any handler on the rendered element, so a Button or a MenuItem keeps its own behavior.
+
+```tsx
+<UploaderTrigger render={<Button><PaperclipIcon /> Attach</Button>} />
+<UploaderTrigger render={<MenuItem>Upload from disk</MenuItem>} />
+```
+
+<Props name="UploaderTrigger" />
+
+### UploaderDropzone
+
+A drop target. Sets `data-drag-over` while a file drag is over the element, so the consumer can tone the surface through a Tailwind variant. Ignores drags that do not carry files and counts drag depth, so nested children with their own dragenter and dragleave handlers do not flicker the over state.
+
+<Props name="UploaderDropzone" />
+
+### UploaderList
+
+A render-prop wrapper that maps over the queue and gives you per-item actions. The item passed in already has live progress merged. The actions are bound to that item, so the call sites stay terse: `onClick={cancel}`, not `onClick={() => cancel(item.id)}`.
+
+```tsx
+<UploaderList>
+  {(item, { cancel, retry, remove }) => (
+    <Attachment
+      progress={item.status === "uploading" ? item.progress : undefined}
+      state={item.status === "error" ? "error" : "default"}
+    >
+      ...
+    </Attachment>
+  )}
+</UploaderList>
+```
+
+<Props name="UploaderList" />
+
+### UploaderPreview
+
+An image element keyed by item id. Prefers `previewUrl` when set, so reloaded items render their remote thumbnail directly. Falls back to a blob URL from the live `file` when the file is an image, with revoke-on-unmount. Renders the `fallback` node when there is no source available, useful for a PDF row or an empty avatar slot.
+
+```tsx
+<UploaderPreview
+  itemId={item.id}
+  fallback={<AttachmentIcon><FileTextIcon /></AttachmentIcon>}
+/>
+```
+
+<Props name="UploaderPreview" />
+
+### useUploader
+
+Read the queue and act on it from any descendant. Returns the same shape regardless of controlled or uncontrolled mode.
+
+```ts
+const { items, open, add, cancel, retry, remove, clear } = useUploader();
+```
+
+- `items` — the live queue with per-tick progress merged in, so a render-time read of `item.progress` is always fresh.
+- `open()` — opens the hidden file picker, the same action the trigger fires.
+- `add(files)` — accepts a `File[]` or `FileList` and pushes them through the same validation the picker uses, applying `accept`, `maxSize`, and `maxFiles`.
+- `cancel(id)` — aborts the upload for that item and marks it `canceled`. No-op for items that are not in flight.
+- `retry(id)` — restarts a `canceled` or `error` item from scratch. The same `id` flows into the uploader function, which is how a resumable transport keys its session store.
+- `remove(id)` — drops the item entirely, aborting it first if it is still in flight.
+- `clear()` — empties the queue and aborts everything mid-flight.
+
+### useUploaderAttach
+
+Attach drop and paste behavior to an arbitrary element. Useful when an existing component (a composer, a prompt, a canvas) should accept files as a side behavior without becoming a dropzone visually.
+
+```ts
+const ref = useRef<HTMLDivElement | null>(null);
+const { isDragOver } = useUploaderAttach(ref, { drop: true, paste: true });
+```
+
+The hook installs listeners on the element behind the ref, ignores drags that do not carry files, and counts drag depth so nested children with their own drag handlers do not flicker the over state.
+
+- `isDragOver` — true while a file drag is over the element. Use it to render an overlay or tone the surface.
+- `options.drop` — when false, the hook skips the drag listeners. Defaults to true.
+- `options.paste` — when false, the hook skips the paste listener. Defaults to true.
