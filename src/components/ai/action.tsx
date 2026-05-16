@@ -100,7 +100,7 @@ export function ActionContent({
       )}
       {...props}
     >
-      <div className="pl-8 pt-2 text-muted-foreground">{children}</div>
+      <div className="pl-8 py-2 text-muted-foreground">{children}</div>
     </Collapsible.Panel>
   );
 }
