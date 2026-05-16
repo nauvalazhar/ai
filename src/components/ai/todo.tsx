@@ -134,7 +134,7 @@ function TodoStatusIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
-        className="hidden size-3.5 animate-spin in-data-[status=progress]:block"
+        className="hidden animate-spin in-data-[status=progress]:block"
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
