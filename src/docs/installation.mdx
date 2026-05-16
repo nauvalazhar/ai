@@ -1,0 +1,166 @@
+---
+parts: []
+---
+
+Set ai-kit up by hand. There is no CLI yet, so you copy the source into your repo and wire up a few project-level pieces. The steps below assume Tailwind v4 is already installed and working in your project.
+
+## Dependencies
+
+Install the packages every kit component relies on.
+
+```bash
+npm install @base-ui/react class-variance-authority clsx tailwind-merge lucide-react
+```
+
+Base UI powers the interactive parts like collapsibles, popovers, and scroll areas. `class-variance-authority` drives visual variants. `clsx` and `tailwind-merge` back the `cn` helper. Lucide ships the default icon set used across the kit.
+
+Some components have their own extras. The Code Block uses `react-shiki` for syntax highlighting. The Message family pairs with `react-markdown` for streamed prose. The rich Composer is built on `@tiptap/react` and its starter kit. Install these only when you pull in the component that needs them.
+
+## Path Aliases
+
+The kit imports its utility helper with `#/lib/utils`. Pick the alias style that fits your bundler.
+
+For Vite, Next.js, and most modern bundlers, add the alias in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "#/*": ["./src/*"]
+    }
+  }
+}
+```
+
+If your bundler honors the `imports` field in `package.json`, mirror it there so Node resolution works the same way:
+
+```json
+{
+  "imports": {
+    "#/*": "./src/*"
+  }
+}
+```
+
+You can use any prefix you like. Just keep it consistent with the import paths inside the component files you copy in.
+
+## Utility
+
+The kit relies on a single `cn` helper to merge Tailwind classes. Create it at `src/lib/utils.ts`:
+
+```ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Every component imports `cn` from this file. If you move it, update the import paths to match.
+
+## Theme Tokens
+
+Components style themselves with CSS variables. Names match the shadcn and Selia conventions, so an existing theme will drop in unchanged. Add the following to your global stylesheet:
+
+```css
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-foreground: oklch(0.22 0 0);
+  --color-background: oklch(1 0 0);
+
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.45 0 0);
+
+  --color-surface: oklch(1 0 0);
+  --color-surface-elevated: oklch(0.98 0 0);
+
+  --color-border: oklch(0.92 0 0);
+
+  --color-primary: oklch(0.6 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.96 0 0);
+  --color-secondary-foreground: oklch(0.22 0 0);
+
+  --color-destructive: oklch(0.6 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.95 0 0);
+
+  --radius: 0.75rem;
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+}
+
+.dark {
+  --color-foreground: oklch(0.982 0 0);
+  --color-background: oklch(0.1985 0.0022 259.23);
+
+  --color-muted: oklch(0.22 0 0);
+  --color-muted-foreground: oklch(0.65 0 0);
+
+  --color-surface: oklch(0.2065 0.0022 259.23);
+  --color-surface-elevated: oklch(0.2364 0.0022 259.23);
+
+  --color-border: oklch(0.2867 0 0);
+
+  --color-primary: oklch(0.6 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.2972 0.0022 259.23);
+  --color-secondary-foreground: oklch(0.982 0 0);
+
+  --color-destructive: oklch(0.6 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.2664 0.0022 259.23);
+}
+
+@theme inline {
+  --color-foreground: var(--color-foreground);
+  --color-background: var(--color-background);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+  --color-border: var(--color-border);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+  --color-accent: var(--color-accent);
+
+  --radius: var(--radius);
+  --radius-outer: var(--radius-outer);
+}
+```
+
+The `@theme inline` block exposes the variables to Tailwind so utilities like `bg-background` and `text-foreground` resolve correctly. To retune the kit, override the variables in `:root` or `.dark`. Every component rounds with `rounded-md`, so changing `--radius` once reshapes the whole kit.
+
+## Add a Component
+
+With the setup in place, copy any component you want into your project. Open the source for the part you need from the sidebar, drop the file into `src/components/ai/`, and import it from your app:
+
+```tsx
+import { Message, MessageAvatar, MessageContent } from "#/components/ai/message";
+
+export function Reply() {
+  return (
+    <Message>
+      <MessageAvatar />
+      <MessageContent>Hi there.</MessageContent>
+    </Message>
+  );
+}
+```
+
+The file lives in your repo from that point on. Edit it, rename parts, or strip out the bits you don't need. There is no package to update, and no upstream to fight when your design changes.
+
+## What's next
+
+Browse the sidebar to pick the first component you want to bring in. Each page lists the parts, runnable demos, and a copy-as-markdown button so you can paste the docs into a model and have it scaffold the wiring for you.

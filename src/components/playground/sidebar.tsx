@@ -4,6 +4,7 @@ import { Collapsible } from "@base-ui/react/collapsible";
 import {
   BookOpenIcon,
   ChevronRight,
+  DownloadIcon,
   Folder,
   FolderOpen,
   SidebarCloseIcon,
@@ -116,6 +117,22 @@ export function Sidebar() {
               >
                 <BookOpenIcon className="size-4 shrink-0 text-muted-foreground" />
                 <span className="truncate">Introduction</span>
+              </Link>
+            </li>
+            <li className="mb-0.5">
+              <Link
+                to="/installation"
+                onClick={closeOnMobile}
+                className={cn(
+                  "flex items-center gap-2 pl-5.5 pr-2 py-1 rounded text-sm",
+                  "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  "data-[status=active]:bg-accent data-[status=active]:text-foreground",
+                  "outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "transition-colors duration-150",
+                )}
+              >
+                <DownloadIcon className="size-4 shrink-0 text-muted-foreground" />
+                <span className="truncate">Installation</span>
               </Link>
             </li>
           </ul>
