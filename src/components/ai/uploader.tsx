@@ -20,6 +20,7 @@ export type UploadItem = {
   progress: number;
   file?: File;
   previewUrl?: string;
+  preview?: string;
   result?: unknown;
   error?: { code: string; message: string };
 };
@@ -93,6 +94,9 @@ export function Uploader({
   itemsRef.current = items;
 
   const [liveProgress, setLiveProgress] = useState<Record<string, number>>({});
+  const [blobUrls, setBlobUrls] = useState<Record<string, string>>({});
+  const blobUrlsRef = useRef(blobUrls);
+  blobUrlsRef.current = blobUrls;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const controllersRef = useRef<Map<string, AbortController>>(new Map());
   const startedRef = useRef<Set<string>>(new Set());
@@ -158,13 +162,18 @@ export function Uploader({
       const limit = multiple ? remaining : 1;
       const accepted = incoming.slice(0, limit);
 
+      const newBlobs: Record<string, string> = {};
       const newItems: UploadItem[] = accepted.map((file) => {
         const error = validate(file);
+        const id =
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        if (!error && file.type.startsWith("image/")) {
+          newBlobs[id] = URL.createObjectURL(file);
+        }
         return {
-          id:
-            typeof crypto !== "undefined" && "randomUUID" in crypto
-              ? crypto.randomUUID()
-              : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          id,
           name: file.name,
           size: file.size,
           type: file.type,
@@ -176,6 +185,10 @@ export function Uploader({
       });
 
       if (newItems.length === 0) return;
+
+      if (Object.keys(newBlobs).length > 0) {
+        setBlobUrls((prev) => ({ ...prev, ...newBlobs }));
+      }
 
       if (maxFiles === 1) {
         mutate(() => newItems);
@@ -317,13 +330,50 @@ export function Uploader({
     mutate(() => []);
   }, [mutate]);
 
+  useEffect(() => {
+    let mutated = false;
+    const next = { ...blobUrlsRef.current };
+    const liveIds = new Set(items.map((i) => i.id));
+
+    for (const id of Object.keys(next)) {
+      if (!liveIds.has(id)) {
+        URL.revokeObjectURL(next[id]);
+        delete next[id];
+        mutated = true;
+      }
+    }
+    for (const item of items) {
+      if (
+        item.file &&
+        item.file.type.startsWith("image/") &&
+        !next[item.id]
+      ) {
+        next[item.id] = URL.createObjectURL(item.file);
+        mutated = true;
+      }
+    }
+
+    if (mutated) setBlobUrls(next);
+  }, [items]);
+
+  useEffect(
+    () => () => {
+      for (const url of Object.values(blobUrlsRef.current)) {
+        URL.revokeObjectURL(url);
+      }
+    },
+    [],
+  );
+
   const mergedItems = useMemo(
     () =>
       items.map((i) => {
         const live = liveProgress[i.id];
-        return live !== undefined ? { ...i, progress: live } : i;
+        const progress = live !== undefined ? live : i.progress;
+        const preview = i.previewUrl ?? blobUrls[i.id];
+        return { ...i, progress, preview };
       }),
-    [items, liveProgress],
+    [items, liveProgress, blobUrls],
   );
 
   const ctxValue = useMemo<UploaderContextValue>(
@@ -464,48 +514,6 @@ export function UploaderList({
   );
 }
 
-type UploaderPreviewProps = Omit<React.ComponentProps<"img">, "src"> & {
-  itemId: string;
-  fallback?: React.ReactNode;
-};
-
-export function UploaderPreview({
-  itemId,
-  fallback,
-  className,
-  ...props
-}: UploaderPreviewProps) {
-  const { items } = useUploader();
-  const item = items.find((i) => i.id === itemId);
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!item?.file || item.previewUrl) {
-      setBlobUrl(null);
-      return;
-    }
-    if (!item.file.type.startsWith("image/")) {
-      setBlobUrl(null);
-      return;
-    }
-    const url = URL.createObjectURL(item.file);
-    setBlobUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [item?.file, item?.previewUrl]);
-
-  const src = item?.previewUrl ?? blobUrl;
-  if (!src) return <>{fallback}</>;
-
-  return (
-    <img
-      data-slot="attachment-media-img"
-      src={src}
-      alt=""
-      className={cn(className)}
-      {...props}
-    />
-  );
-}
 
 export function useUploaderAttach(
   target: React.RefObject<HTMLElement | null>,

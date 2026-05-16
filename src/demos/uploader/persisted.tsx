@@ -9,7 +9,6 @@ import {
 } from "#/components/ai/attachment";
 import {
   Uploader,
-  UploaderPreview,
   useUploader,
   type UploaderFn,
   type UploadItem,
@@ -96,11 +95,10 @@ function AvatarTile() {
       }
     >
       <AttachmentMedia className="rounded-full">
-        {item ? (
-          <UploaderPreview
-            itemId={item.id}
-            fallback={<UserIcon className="size-10" />}
-          />
+        {item?.preview ? (
+          <img data-slot="attachment-media-img" src={item.preview} alt="" />
+        ) : item ? (
+          <UserIcon className="size-10" />
         ) : (
           <div className="flex size-full items-center justify-center bg-surface-elevated text-muted-foreground">
             <CameraIcon className="size-9" />

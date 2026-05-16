@@ -15,7 +15,6 @@ import {
   Uploader,
   UploaderDropzone,
   UploaderList,
-  UploaderPreview,
   UploaderTrigger,
   type UploaderFn,
 } from "#/components/ai/uploader";
@@ -68,14 +67,17 @@ export default function Dropzone() {
               state={item.status === "error" ? "error" : "default"}
             >
               <AttachmentMedia>
-                <UploaderPreview
-                  itemId={item.id}
-                  fallback={
-                    <AttachmentIcon>
-                      <UploadCloudIcon />
-                    </AttachmentIcon>
-                  }
-                />
+                {item.preview ? (
+                  <img
+                    data-slot="attachment-media-img"
+                    src={item.preview}
+                    alt=""
+                  />
+                ) : (
+                  <AttachmentIcon>
+                    <UploadCloudIcon />
+                  </AttachmentIcon>
+                )}
                 {item.status === "uploading" && (
                   <AttachmentOverlay>
                     <AttachmentProgress className="size-5" />

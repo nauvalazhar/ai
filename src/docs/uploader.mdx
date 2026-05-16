@@ -4,16 +4,16 @@ parts:
     props:
       - name: uploader
         type: "(input: { id, file, signal, onProgress }) => Promise<unknown>"
-        description: "The function that actually uploads. Receives the item id, the file, an abort signal, and a progress reporter. Resolves with whatever the backend returns. If the resolved value has a string `url` field, the kit copies it into `previewUrl` on the item, so reloaded items can rehydrate their thumbnail without a blob URL."
+        description: "The function that actually uploads. Receives the item id, the file, an abort signal, and a progress reporter. Resolves with whatever the backend returns. If the resolved value has a string `url` field, the kit copies it into `previewUrl` on the item, so reloaded items have a durable thumbnail source without holding a `File`."
       - name: accept
         type: string
-        description: "Comma-separated MIME or extension filter, forwarded to the hidden file input and validated on drop and paste. Items that fail validation land in the queue with `status: \"error\"`, so the user can see and dismiss them."
+        description: 'Comma-separated MIME or extension filter, forwarded to the hidden file input and validated on drop and paste. Items that fail validation land in the queue with `status: "error"`, so the user can see and dismiss them.'
       - name: maxFiles
         type: number
         description: "Cap on live items in the queue. When set to 1 the queue is replace-on-add, which is the avatar mode."
       - name: maxSize
         type: number
-        description: "Per-file size cap in bytes. Rejected files appear with `status: \"error\"`."
+        description: 'Per-file size cap in bytes. Rejected files appear with `status: "error"`.'
       - name: multiple
         type: boolean
         default: "true"
@@ -21,13 +21,13 @@ parts:
       - name: autoUpload
         type: boolean
         default: "true"
-        description: "When true, every item that enters with `status: \"pending\"` and a `file` starts uploading immediately. Turn off to gate uploads behind a confirm step. Items added with no `file` (rehydrated from storage) are never auto-started."
+        description: 'When true, every item that enters with `status: "pending"` and a `file` starts uploading immediately. Turn off to gate uploads behind a confirm step. Items added with no `file` (rehydrated from storage) are never auto-started.'
       - name: items
         type: UploadItem[]
         description: "Controlled queue. When set, the kit reflects this value and calls `onItemsChange` for every structural mutation it wants to make. Pair with state in the parent."
       - name: defaultItems
         type: UploadItem[]
-        description: "Initial queue on mount when uncontrolled. Use this to rehydrate previously uploaded items from storage. Items with `status: \"success\"` show as completed without re-uploading."
+        description: 'Initial queue on mount when uncontrolled. Use this to rehydrate previously uploaded items from storage. Items with `status: "success"` show as completed without re-uploading.'
       - name: onItemsChange
         type: "(items: UploadItem[]) => void"
         description: "Fires on every structural change: add, remove, status transition, retry, clear. Does not fire on every progress tick, so a localStorage write inside this handler is safe."
@@ -36,10 +36,10 @@ parts:
         description: "Fires on every progress update. Use this for per-tick side effects like analytics. The current progress is also surfaced through `items[n].progress` if you only need to render it."
       - name: onSuccess
         type: "(item: UploadItem) => void"
-        description: "Fires once an item resolves successfully. The item passed in already reflects the final state with `status: \"success\"` and any `previewUrl` derived from the uploader response."
+        description: 'Fires once an item resolves successfully. The item passed in already reflects the final state with `status: "success"` and any `previewUrl` derived from the uploader response.'
       - name: onError
         type: "(item: UploadItem) => void"
-        description: "Fires once an item fails. The item passed in already has `status: \"error\"` and an `error` object."
+        description: 'Fires once an item fails. The item passed in already has `status: "error"` and an `error` object.'
   - name: UploaderTrigger
     passThrough:
       type: useRender.ComponentProps<"button">
@@ -61,17 +61,6 @@ parts:
       - name: children
         type: "(item: UploadItem, actions) => ReactNode"
         description: "Render-prop called once per item. Receives the merged item with live progress, plus `cancel`, `retry`, and `remove` actions already bound to that item id. Compose Attachment and friends inside."
-  - name: UploaderPreview
-    passThrough:
-      type: Omit<React.ComponentProps<"img">, "src">
-      to: <img>
-    props:
-      - name: itemId
-        type: string
-        description: "The id of the item to preview. Renders an image when the item has either a `previewUrl` or a `file` with an image MIME type, preferring `previewUrl` so reloaded items show without ever creating a blob URL."
-      - name: fallback
-        type: ReactNode
-        description: "Rendered when the item has no source to show, for example a PDF that has no thumbnail or a placeholder before the first file is added."
   - name: UploadItem
     props:
       - name: id
@@ -97,7 +86,10 @@ parts:
         description: "The original file. Present in the session that picked it; absent after a reload. The kit never auto-starts an item that lacks `file`."
       - name: previewUrl
         type: string
-        description: "Durable image source for `UploaderPreview`. Set automatically when the uploader's resolved value has a string `url` field, so reloaded items show a thumbnail without holding a `File`."
+        description: "Durable image source. Set automatically when the uploader's resolved value has a string `url` field, so reloaded items show a thumbnail without holding a `File`. Mirrors into `preview` on the merged item."
+      - name: preview
+        type: string
+        description: "Resolved image source for rendering. Equals `previewUrl` when set, otherwise a blob URL the kit manages for the live `File` (image types only). The kit revokes the blob URL when the item is removed or the root unmounts."
       - name: result
         type: unknown
         description: "The uploader function's resolved value, surfaced verbatim. Use it to read whatever the backend returned (asset id, url, metadata)."
@@ -145,20 +137,37 @@ A controller that pairs with `<Attachment>` to handle picking, validating, dragg
 
 ## Anatomy
 
-The root owns the queue, the hidden file input, and the abort wiring. Triggers, dropzones, lists, and previews live anywhere underneath and read the queue through `useUploader()`. You bring the trigger, the dropzone, and the rows.
+The root owns the queue, the hidden file input, the abort wiring, and the blob URL lifecycle for image previews. Triggers, dropzones, and lists live anywhere underneath and read the queue through `useUploader()`. You bring the trigger, the dropzone, the rows, and the image element.
 
 ```tsx
 <Uploader uploader={upload}>
-  <UploaderTrigger render={<Button><PaperclipIcon /> Attach</Button>} />
+  <UploaderTrigger
+    render={
+      <Button>
+        <PaperclipIcon /> Attach
+      </Button>
+    }
+  />
   <UploaderList>
     {(item, actions) => (
-      <Attachment progress={item.status === "uploading" ? item.progress : undefined}>
+      <Attachment
+        progress={item.status === "uploading" ? item.progress : undefined}
+      >
+        <AttachmentMedia>
+          {item.preview ? (
+            <img data-slot="attachment-media-img" src={item.preview} alt="" />
+          ) : (
+            <AttachmentIcon><FileTextIcon /></AttachmentIcon>
+          )}
+        </AttachmentMedia>
         ...
       </Attachment>
     )}
   </UploaderList>
 </Uploader>
 ```
+
+The kit does not ship its own image part. Every item carries a resolved `preview` string (`previewUrl` if the server set one, otherwise a blob URL the kit manages and revokes on remove). Drop in a plain `<img>`, a framework image (Next/Astro), or any project-owned image component. Tag it `data-slot="attachment-media-img"` so the surrounding `AttachmentMedia` sizes it.
 
 The dropzone is optional. Drop it in for a drag target, leave it out for a button-only flow. The dropzone exposes `data-drag-over` while a file drag is over the element, so the consumer can tone the surface through a Tailwind variant.
 
@@ -185,8 +194,16 @@ function AvatarTile() {
       render={<button type="button" onClick={open} aria-label="Change photo" />}
     >
       <AttachmentMedia>
-        {item ? <UploaderPreview itemId={item.id} /> : <img data-slot="attachment-media-img" src={defaultSrc} alt="" />}
-        {item?.status === "uploading" && <AttachmentOverlay><AttachmentProgress /></AttachmentOverlay>}
+        <img
+          data-slot="attachment-media-img"
+          src={item?.preview ?? defaultSrc}
+          alt=""
+        />
+        {item?.status === "uploading" && (
+          <AttachmentOverlay>
+            <AttachmentProgress />
+          </AttachmentOverlay>
+        )}
       </AttachmentMedia>
     </Attachment>
   );
@@ -241,12 +258,15 @@ type UploadItem = {
   progress: number;
   file?: File;
   previewUrl?: string;
+  preview?: string;
   result?: unknown;
   error?: { code: string; message: string };
 };
 ```
 
-The `file` field is the volatile half. It exists in the session the file was picked in and is gone after a reload. Everything else is durable. To restore a previous queue, hydrate items with the durable fields, `status: "success"`, and `progress: 100`. The kit does not auto-start items that have no `file`.
+`file` is the volatile half. It exists in the session the file was picked in and is gone after a reload. Everything else is durable. To restore a previous queue, hydrate items with the durable fields, `status: "success"`, and `progress: 100`. The kit does not auto-start items that have no `file`.
+
+`previewUrl` is what the consumer or server owns. `preview` is the rendered source the kit derives from it: equal to `previewUrl` when set, otherwise a managed blob URL for an image-typed `File`. Render `preview` directly; don't try to construct your own blob URL on top of `file`.
 
 ## Persistence
 
@@ -269,7 +289,7 @@ const [initial] = useState(() => {
       .map(({ file, ...rest }) => rest);
     localStorage.setItem("files", JSON.stringify(persistable));
   }}
-/>
+/>;
 ```
 
 For an avatar that survives reload, the same pattern with `maxFiles={1}` and a single-item store works.
@@ -304,7 +324,11 @@ const upload: UploaderFn = async ({ id, file, signal, onProgress }) => {
   } else {
     const res = await fetch("/api/upload", { method: "POST", signal });
     uploadUrl = res.headers.get("Location")!;
-    sessions.set(id, { fingerprint: fingerprint(file), uploadUrl, bytesUploaded: 0 });
+    sessions.set(id, {
+      fingerprint: fingerprint(file),
+      uploadUrl,
+      bytesUploaded: 0,
+    });
     persistSessions();
   }
 
@@ -403,19 +427,6 @@ A render-prop wrapper that maps over the queue and gives you per-item actions. T
 
 <Props name="UploaderList" />
 
-### UploaderPreview
-
-An image element keyed by item id. Prefers `previewUrl` when set, so reloaded items render their remote thumbnail directly. Falls back to a blob URL from the live `file` when the file is an image, with revoke-on-unmount. Renders the `fallback` node when there is no source available, useful for a PDF row or an empty avatar slot.
-
-```tsx
-<UploaderPreview
-  itemId={item.id}
-  fallback={<AttachmentIcon><FileTextIcon /></AttachmentIcon>}
-/>
-```
-
-<Props name="UploaderPreview" />
-
 ### useUploader
 
 Read the queue and act on it from any descendant. Returns the same shape regardless of controlled or uncontrolled mode.
@@ -464,10 +475,6 @@ The signature you pass to `Uploader`'s `uploader` prop. See [The uploader functi
 ### createXhrUploader
 
 A factory that returns an `UploaderFn` for the common case of one HTTP request per file with a multipart body. Wires upload progress via `xhr.upload.onprogress`, aborts on `signal`, and parses a JSON response (falling back to `{ body: text }` for non-JSON). The resolved value is returned verbatim, so a server that responds with `{ url: "..." }` lights up `item.previewUrl` automatically.
-
-```ts
-function createXhrUploader(options: CreateXhrUploaderOptions): UploaderFn;
-```
 
 ```ts
 import { createXhrUploader } from "#/components/ai/uploader";

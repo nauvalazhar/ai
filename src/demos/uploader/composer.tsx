@@ -18,7 +18,6 @@ import {
 import {
   Uploader,
   UploaderList,
-  UploaderPreview,
   UploaderTrigger,
   useUploaderAttach,
   type UploaderFn,
@@ -68,14 +67,17 @@ function ComposerWithUpload() {
               state={item.status === "error" ? "error" : "default"}
             >
               <AttachmentMedia>
-                <UploaderPreview
-                  itemId={item.id}
-                  fallback={
-                    <AttachmentIcon>
-                      <PaperclipIcon />
-                    </AttachmentIcon>
-                  }
-                />
+                {item.preview ? (
+                  <img
+                    data-slot="attachment-media-img"
+                    src={item.preview}
+                    alt=""
+                  />
+                ) : (
+                  <AttachmentIcon>
+                    <PaperclipIcon />
+                  </AttachmentIcon>
+                )}
                 {item.status === "uploading" && (
                   <AttachmentOverlay>
                     <AttachmentProgress />
