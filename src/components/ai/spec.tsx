@@ -1,5 +1,4 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { ChevronDownIcon } from "lucide-react";
 import { createContext, useContext } from "react";
 import { cn } from "#/lib/utils";
 
@@ -96,14 +95,24 @@ export function SpecTrigger({
       <div className={cn("flex-1 grid items-center gap-3", cols)}>
         {children}
       </div>
-      <ChevronDownIcon
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden
         className={cn(
           "size-4 shrink-0",
           "text-muted-foreground transition-transform duration-200",
           "group-data-open:rotate-180",
         )}
-      />
+      >
+        <path d="m6 9 6 6 6-6" />
+      </svg>
     </Collapsible.Trigger>
   );
 }

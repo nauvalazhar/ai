@@ -1,5 +1,4 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { ChevronRightIcon, LoaderCircleIcon } from "lucide-react";
 import { cn } from "#/lib/utils";
 
 type ToolState = "running" | "success" | "error";
@@ -43,13 +42,23 @@ export function ToolTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden
         className={cn(
           "ml-auto size-4 shrink-0 transition-transform duration-200",
           "group-data-open/tool:rotate-90",
         )}
-      />
+      >
+        <path d="m9 18 6-6-6-6" />
+      </svg>
     </Collapsible.Trigger>
   );
 }
@@ -73,7 +82,20 @@ export function ToolIcon({
       <span className="contents group-data-[state=running]/tool:hidden">
         {children}
       </span>
-      <LoaderCircleIcon className="hidden animate-spin group-data-[state=running]/tool:block" />
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className="hidden animate-spin group-data-[state=running]/tool:block"
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
     </span>
   );
 }

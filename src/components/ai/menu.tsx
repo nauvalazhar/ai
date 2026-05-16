@@ -2,7 +2,6 @@
 
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ChevronRightIcon } from "lucide-react";
 import { cn } from "#/lib/utils";
 
 export function Menu({ ...props }: React.ComponentProps<typeof BaseMenu.Root>) {
@@ -129,7 +128,20 @@ export function MenuSubmenuTrigger({
       className={cn(menuItemClassName, props.className)}
     >
       {children}
-      <ChevronRightIcon className="size-4 ml-auto" />
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className="size-4 ml-auto"
+      >
+        <path d="m9 18 6-6-6-6" />
+      </svg>
     </BaseMenu.SubmenuTrigger>
   );
 }
