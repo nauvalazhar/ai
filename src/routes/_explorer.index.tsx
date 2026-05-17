@@ -26,9 +26,12 @@ function Landing() {
   return (
     <>
       <SidebarOpenToggle />
-      <div className="mx-auto w-full max-w-6xl px-6 pb-24 pt-16">
-        <Hero />
-        <Features />
+      <div className="relative isolate overflow-hidden">
+        <HeroBackground />
+        <div className="pointer-events-none mx-auto w-full max-w-6xl px-6 pb-24 pt-16">
+          <Hero />
+          <Features />
+        </div>
       </div>
     </>
   );
@@ -36,8 +39,8 @@ function Landing() {
 
 function Hero() {
   return (
-    <section className="flex flex-col items-center text-center py-20">
-      <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tighter text-foreground md:text-6xl">
+    <section className="pointer-events-none relative flex flex-col items-center text-center py-20 lg:py-40">
+      <h1 className="mt-6 max-w-3xl text-balance text-5xl font-semibold tracking-tight text-foreground md:text-7xl">
         The interface for your favorite AI SDK
       </h1>
 
@@ -46,7 +49,7 @@ function Hero() {
         and work with any AI SDK in React.
       </p>
 
-      <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+      <div className="pointer-events-auto mt-7 flex flex-wrap items-center justify-center gap-2">
         <Button render={<Link to="/installation/{-$framework}" />}>
           Get Started
         </Button>
@@ -58,9 +61,47 @@ function Hero() {
   );
 }
 
+const HERO_GRID_COLS = 32;
+const HERO_GRID_ROWS = 12;
+const HERO_CELL_SIZE = 60;
+
+function HeroBackground() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-x-0 top-0 -z-10 h-170 overflow-hidden"
+      style={{
+        maskImage:
+          "radial-gradient(ellipse 75% 95% at 50% 0%, black 30%, transparent 80%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse 75% 95% at 50% 0%, black 30%, transparent 80%)",
+      }}
+    >
+      <div
+        className="mx-auto grid"
+        style={{
+          gridTemplateColumns: `repeat(${HERO_GRID_COLS}, ${HERO_CELL_SIZE}px)`,
+          gridTemplateRows: `repeat(${HERO_GRID_ROWS}, ${HERO_CELL_SIZE}px)`,
+          width: HERO_GRID_COLS * HERO_CELL_SIZE,
+          height: HERO_GRID_ROWS * HERO_CELL_SIZE,
+        }}
+      >
+        {Array.from({ length: HERO_GRID_COLS * HERO_GRID_ROWS }).map(
+          (_, idx) => (
+            <div
+              key={idx}
+              className="border border-foreground/3 transition-colors duration-1200 ease-out hover:bg-foreground/3 hover:duration-0"
+            />
+          ),
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Features() {
   return (
-    <section className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <section className="pointer-events-auto mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <FeatureCard
         icon={BlocksIcon}
         title="Composable"
