@@ -5,19 +5,25 @@ import {
   installationFrameworks,
 } from "#/components/playground/registry";
 
-export const Route = createFileRoute("/_explorer/installation/$framework")({
-  component: InstallationFrameworkDocs,
+export const Route = createFileRoute("/_explorer/installation/{-$framework}")({
+  component: InstallationDocs,
   head: ({ params }) => {
-    const fw = installationFrameworks.find((f) => f.slug === params.framework);
-    const title = fw ? `Install on ${fw.label}` : "Installation";
+    const fw = params.framework
+      ? installationFrameworks.find((f) => f.slug === params.framework)
+      : undefined;
+    const title = fw
+      ? (fw.title ?? `Install on ${fw.label}`)
+      : "Installation";
     return { meta: [{ title: `${title} — nauvalazhar/ai` }] };
   },
 });
 
-function InstallationFrameworkDocs() {
+function InstallationDocs() {
   const { framework } = Route.useParams();
   const entry = findInstallationDoc(framework);
-  const fw = installationFrameworks.find((f) => f.slug === framework);
+  const fw = framework
+    ? installationFrameworks.find((f) => f.slug === framework)
+    : undefined;
 
   if (!entry) {
     return (
@@ -27,7 +33,9 @@ function InstallationFrameworkDocs() {
     );
   }
 
-  const title = fw ? `Install on ${fw.label}` : "Installation";
+  const title = fw
+    ? (fw.title ?? `Install on ${fw.label}`)
+    : "Installation";
 
   return (
     <div className="md:p-8 py-8 max-sm:px-4">

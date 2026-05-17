@@ -47,7 +47,9 @@ function Hero() {
       </p>
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-        <Button render={<Link to="/installation" />}>Get Started</Button>
+        <Button render={<Link to="/installation/{-$framework}" />}>
+          Get Started
+        </Button>
         <Button render={<Link to="/introduction" />} variant="ghost">
           Introduction
         </Button>

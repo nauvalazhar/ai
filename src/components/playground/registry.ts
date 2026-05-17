@@ -87,11 +87,15 @@ export function findInstallationDoc(framework?: string): DocsEntry | undefined {
   return componentDocs[`installation/${framework}`];
 }
 
-export const installationFrameworks: Array<{ slug: string; label: string }> = [
+export const installationFrameworks: Array<{
+  slug: string;
+  label: string;
+  title?: string;
+}> = [
   { slug: "vite", label: "Vite" },
   { slug: "next", label: "Next.js" },
   { slug: "react-router", label: "React Router" },
   { slug: "tanstack-start", label: "TanStack Start" },
-  { slug: "shadcn", label: "shadcn CLI" },
-  { slug: "manual", label: "Manual" },
+  { slug: "shadcn", label: "shadcn CLI", title: "Install with shadcn CLI" },
+  { slug: "manual", label: "Manual", title: "Manual installation" },
 ];

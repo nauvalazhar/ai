@@ -209,7 +209,7 @@ export function Sidebar() {
                       return (
                         <li key={fw.slug}>
                           <Link
-                            to="/installation/$framework"
+                            to="/installation/{-$framework}"
                             params={{ framework: fw.slug }}
                             onClick={closeOnMobile}
                             className={cn(
