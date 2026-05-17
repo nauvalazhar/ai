@@ -16,6 +16,15 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setTheme(readTheme());
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    function onChange(e: MediaQueryListEvent) {
+      if (localStorage.getItem("aikit-theme")) return;
+      const next: Theme = e.matches ? "dark" : "light";
+      setTheme(next);
+      document.documentElement.classList.toggle("dark", e.matches);
+    }
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
   }, []);
 
   function toggle() {
