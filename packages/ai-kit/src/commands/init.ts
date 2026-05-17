@@ -1,0 +1,152 @@
+import { Command } from 'commander';
+import { intro, outro, log, spinner, note, confirm } from '@clack/prompts';
+import picocolors from 'picocolors';
+import { fetchSetup } from '~/lib/fetch-setup';
+import {
+  executeSetup,
+  executeSetupActions,
+  previewSetupActions,
+} from '~/lib/setup-executor';
+import { defaultConfig } from '~/lib/default-config';
+import { resolveRegistry } from '~/lib/resolve-registry';
+import { writeConfig } from '~/lib/write-config';
+import { Config } from '~/schemas/config-schema';
+import { abortIfCancel } from '~/lib/utils';
+import { CLI_NAME, CONFIG_FILE, REGISTRY_SOURCE_KEY } from '~/lib/constants';
+
+export const initCommand = new Command()
+  .name('init')
+  .description('Initialize ai-kit in your project')
+  .option('-r, --registry <url>', 'Registry URL')
+  .option('-y, --yes', 'Skip confirmation')
+  .action(async (options) => {
+    console.log();
+    intro(picocolors.bgBlue(picocolors.blackBright(' Initialize ai-kit ')));
+
+    log.warn(
+      picocolors.yellow(
+        'The CLI is still experimental, report any issues on GitHub!',
+      ),
+    );
+
+    try {
+      const { runtimeUrl, persist } = await resolveRegistry(
+        process.cwd(),
+        options.registry,
+      );
+
+      const registryUrl = runtimeUrl;
+      if (!registryUrl) {
+        outro('Cancelled.');
+        return;
+      }
+
+      const registrySource = persist
+        ? {
+            registries: {
+              sources: {
+                [REGISTRY_SOURCE_KEY]: {
+                  name: 'ai-kit',
+                  url: registryUrl,
+                },
+              },
+            },
+          }
+        : null;
+
+      const s = spinner();
+
+      // Try to fetch setup.json
+      let setup;
+      try {
+        s.start('Fetching setup configuration...');
+        setup = await fetchSetup(registryUrl as string);
+        s.stop('Setup configuration loaded');
+      } catch (error) {
+        if (error instanceof Error) {
+          s.stop(error.message);
+          return;
+        }
+
+        s.stop('No setup configuration found');
+
+        const finalConfig = {
+          ...defaultConfig,
+          ...(registrySource ?? {}),
+        } as Config;
+
+        await writeConfig(finalConfig);
+
+        outro(picocolors.green('Config created ✓'));
+        log.info(
+          'Run ' +
+          picocolors.cyan(`${CLI_NAME} add <items>`) +
+          ' to add items to your project.',
+        );
+        console.log();
+        return;
+      }
+
+      // Execute setup prompts (Phase 1: Collect info)
+      const context = await executeSetup(setup);
+
+      // Preview actions
+      const actions = await previewSetupActions(setup, context);
+
+      // Always add config creation action
+      actions.push(`Create \`${CONFIG_FILE}\``);
+
+      // Show what will be done
+      log.info('I will now perform the following actions:');
+      actions.forEach((action) => {
+        console.log(picocolors.dim('   • ') + action);
+      });
+
+      // Confirm
+      if (!options.yes) {
+        const shouldContinue = await confirm({
+          message: 'Is this okay?',
+          initialValue: true,
+        });
+
+        abortIfCancel(shouldContinue);
+
+        if (!shouldContinue) {
+          outro('Cancelled. Nothing was done.');
+          process.exit(0);
+        }
+      }
+
+      // Execute actions (Phase 2: Do the work)
+      await executeSetupActions(setup, context);
+
+      // Build final config — merge the registry source so subsequent
+      // `add` calls pick it up without needing the --registry flag again.
+      const config = {
+        ...(context as Config),
+        ...(registrySource ?? {}),
+      } as Config;
+
+      // Write config file
+      s.start('Creating config file...');
+      await writeConfig(config);
+      s.stop('Config file created');
+
+      // Show summary
+      note(picocolors.dim('Config saved to: ') + picocolors.cyan(CONFIG_FILE));
+
+      log.info(picocolors.green('ai-kit initialized successfully! ✓'));
+      outro(
+        'Run ' +
+        picocolors.cyan(`${CLI_NAME} add <items>`) +
+        ' to add items to your project.',
+      );
+      console.log();
+    } catch (error) {
+      log.error(
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
+      console.log();
+      process.exit(1);
+    }
+  });

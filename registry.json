@@ -1,0 +1,410 @@
+{
+  "$schema": "https://ai.nauv.al/schemas/registry.v1.json",
+  "name": "ai-kit",
+  "homepage": "https://ai.nauv.al",
+  "docs": "src/docs",
+  "setup": {
+    "steps": [
+      {
+        "type": "assert",
+        "name": "tailwind-installed",
+        "check": {
+          "type": "dependency",
+          "packages": ["tailwindcss"]
+        },
+        "onFail": {
+          "exit": true,
+          "message": [
+            "Tailwind CSS is not installed.",
+            "Refer to https://tailwindcss.com/docs/installation for more information."
+          ]
+        }
+      },
+      {
+        "type": "dependencies",
+        "packages": {
+          "@base-ui/react": "^1.4.1",
+          "class-variance-authority": "^0.7.1",
+          "clsx": "^2.1.1",
+          "tailwind-merge": "^3.5.0"
+        }
+      },
+      {
+        "type": "detect-framework",
+        "name": "framework"
+      },
+      {
+        "type": "detect-workdir",
+        "name": "workdir",
+        "saveAs": "paths.workdir"
+      },
+
+      {
+        "type": "file-append",
+        "target": "{{paths.workdir}}index.css",
+        "contentPath": "src/styles/tokens.css",
+        "condition": {
+          "if": { "type": "framework", "value": "vite" },
+          "unless": {
+            "any": [
+              {
+                "type": "file-contains",
+                "path": "{{paths.workdir}}index.css",
+                "pattern": "--color-surface-elevated"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "file-append",
+        "target": "{{paths.workdir}}app/globals.css",
+        "contentPath": "src/styles/tokens.css",
+        "condition": {
+          "if": { "type": "framework", "value": "next" },
+          "unless": {
+            "any": [
+              {
+                "type": "file-contains",
+                "path": "{{paths.workdir}}app/globals.css",
+                "pattern": "--color-surface-elevated"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "file-append",
+        "target": "{{paths.workdir}}app/app.css",
+        "contentPath": "src/styles/tokens.css",
+        "condition": {
+          "if": { "type": "framework", "value": "react-router" },
+          "unless": {
+            "any": [
+              {
+                "type": "file-contains",
+                "path": "{{paths.workdir}}app/app.css",
+                "pattern": "--color-surface-elevated"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "file-append",
+        "target": "{{paths.workdir}}styles.css",
+        "contentPath": "src/styles/tokens.css",
+        "condition": {
+          "if": {
+            "any": [
+              { "type": "framework", "value": "tanstack-start" },
+              { "type": "framework", "value": "tanstack-router" }
+            ]
+          },
+          "unless": {
+            "any": [
+              {
+                "type": "file-contains",
+                "path": "{{paths.workdir}}styles.css",
+                "pattern": "--color-surface-elevated"
+              }
+            ]
+          }
+        }
+      },
+
+      {
+        "type": "file-create",
+        "target": "{{paths.workdir}}lib/utils.ts",
+        "contentPath": "src/lib/utils.ts",
+        "saveTargetAs": ["paths.utils"],
+        "condition": {
+          "if": {
+            "any": [
+              { "type": "framework", "value": "next" },
+              { "type": "framework", "value": "vite" },
+              { "type": "framework", "value": "tanstack-start" },
+              { "type": "framework", "value": "tanstack-router" }
+            ]
+          },
+          "unless": {
+            "any": [
+              {
+                "type": "file-exists",
+                "path": "{{paths.workdir}}lib/utils.ts"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "file-create",
+        "target": "{{paths.workdir}}app/lib/utils.ts",
+        "contentPath": "src/lib/utils.ts",
+        "saveTargetAs": ["paths.utils"],
+        "condition": {
+          "if": { "type": "framework", "value": "react-router" },
+          "unless": {
+            "any": [
+              {
+                "type": "file-exists",
+                "path": "{{paths.workdir}}app/lib/utils.ts"
+              }
+            ]
+          }
+        }
+      },
+
+      {
+        "type": "context-update",
+        "name": "next-vite-tanstack-paths",
+        "data": {
+          "paths.components": "{{paths.workdir}}components/ai",
+          "imports.lib": "@/lib",
+          "imports.components/ai": "@/components/ai"
+        },
+        "condition": {
+          "if": {
+            "any": [
+              { "type": "framework", "value": "next" },
+              { "type": "framework", "value": "vite" },
+              { "type": "framework", "value": "tanstack-start" },
+              { "type": "framework", "value": "tanstack-router" }
+            ]
+          }
+        }
+      },
+      {
+        "type": "context-update",
+        "name": "react-router-paths",
+        "data": {
+          "paths.components": "{{paths.workdir}}app/components/ai",
+          "imports.lib": "~/lib",
+          "imports.components/ai": "~/components/ai"
+        },
+        "condition": {
+          "if": { "type": "framework", "value": "react-router" }
+        }
+      }
+    ]
+  },
+  "items": [
+    {
+      "name": "action",
+      "type": "component",
+      "files": [
+        { "name": "action.tsx", "path": "src/components/ai/action.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "attachment",
+      "type": "component",
+      "files": [
+        { "name": "attachment.tsx", "path": "src/components/ai/attachment.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "component",
+      "files": [
+        { "name": "button.tsx", "path": "src/components/ai/button.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "callout",
+      "type": "component",
+      "files": [
+        { "name": "callout.tsx", "path": "src/components/ai/callout.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "chain-of-thought",
+      "type": "component",
+      "files": [
+        { "name": "chain-of-thought.tsx", "path": "src/components/ai/chain-of-thought.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "chip",
+      "type": "component",
+      "files": [
+        { "name": "chip.tsx", "path": "src/components/ai/chip.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "citation",
+      "type": "component",
+      "files": [
+        { "name": "citation.tsx", "path": "src/components/ai/citation.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "component",
+      "files": [
+        { "name": "code-block.tsx", "path": "src/components/ai/code-block.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "composer",
+      "type": "component",
+      "files": [
+        { "name": "composer.tsx", "path": "src/components/ai/composer.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "composer-rich",
+      "type": "component",
+      "dependencies": {
+        "npm": {
+          "@tiptap/core": "^3.23.4",
+          "@tiptap/pm": "^3.23.4",
+          "@tiptap/react": "^3.23.4",
+          "@tiptap/starter-kit": "^3.23.4",
+          "@tiptap/extension-placeholder": "^3.23.4",
+          "@tiptap/suggestion": "^3.23.4"
+        },
+        "items": ["composer"]
+      },
+      "files": [
+        { "name": "composer-rich.tsx", "path": "src/components/ai/composer-rich.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "confirmation",
+      "type": "component",
+      "files": [
+        { "name": "confirmation.tsx", "path": "src/components/ai/confirmation.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "conversation",
+      "type": "component",
+      "files": [
+        { "name": "conversation.tsx", "path": "src/components/ai/conversation.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "document",
+      "type": "component",
+      "files": [
+        { "name": "document.tsx", "path": "src/components/ai/document.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "loader",
+      "type": "component",
+      "files": [
+        { "name": "loader.tsx", "path": "src/components/ai/loader.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "menu",
+      "type": "component",
+      "files": [
+        { "name": "menu.tsx", "path": "src/components/ai/menu.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "component",
+      "files": [
+        { "name": "message.tsx", "path": "src/components/ai/message.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "prompt",
+      "type": "component",
+      "files": [
+        { "name": "prompt.tsx", "path": "src/components/ai/prompt.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "reasoning",
+      "type": "component",
+      "files": [
+        { "name": "reasoning.tsx", "path": "src/components/ai/reasoning.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "component",
+      "files": [
+        { "name": "scroll-area.tsx", "path": "src/components/ai/scroll-area.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "component",
+      "dependencies": {
+        "items": ["chip"]
+      },
+      "files": [
+        { "name": "select.tsx", "path": "src/components/ai/select.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "source",
+      "type": "component",
+      "files": [
+        { "name": "source.tsx", "path": "src/components/ai/source.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "spec",
+      "type": "component",
+      "files": [
+        { "name": "spec.tsx", "path": "src/components/ai/spec.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "suggestion",
+      "type": "component",
+      "files": [
+        { "name": "suggestion.tsx", "path": "src/components/ai/suggestion.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "component",
+      "files": [
+        { "name": "switch.tsx", "path": "src/components/ai/switch.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "task",
+      "type": "component",
+      "files": [
+        { "name": "task.tsx", "path": "src/components/ai/task.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "todo",
+      "type": "component",
+      "files": [
+        { "name": "todo.tsx", "path": "src/components/ai/todo.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "tool",
+      "type": "component",
+      "files": [
+        { "name": "tool.tsx", "path": "src/components/ai/tool.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "component",
+      "files": [
+        { "name": "tooltip.tsx", "path": "src/components/ai/tooltip.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "uploader",
+      "type": "component",
+      "files": [
+        { "name": "uploader.tsx", "path": "src/components/ai/uploader.tsx", "target": "components" }
+      ]
+    }
+  ]
+}

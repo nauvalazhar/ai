@@ -1,13 +1,18 @@
 {
-  "name": "ai-kit",
+  "name": "ai-kit-site",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "imports": {
     "#/*": "./src/*"
   },
   "scripts": {
     "dev": "vite dev --port 3300",
-    "build": "vite build",
+    "build": "bun run build:cli && bun run build:registry && vite build",
+    "build:cli": "cd packages/ai-kit && bun run build",
+    "build:registry": "ai-kit build",
     "preview": "vite preview",
     "test": "vitest run",
     "deploy": "bun run build && wrangler deploy"
@@ -23,8 +28,10 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "@tiptap/core": "^3.23.4",
     "@tiptap/extension-mention": "^3.23.4",
     "@tiptap/extension-placeholder": "^3.23.4",
+    "@tiptap/pm": "^3.23.4",
     "@tiptap/react": "^3.23.4",
     "@tiptap/starter-kit": "^3.23.4",
     "@tiptap/suggestion": "^3.23.4",
@@ -45,6 +52,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "ai-kit": "workspace:*",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
