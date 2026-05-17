@@ -1,6 +1,12 @@
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
 import { Check, ChevronDownIcon, Copy } from "lucide-react";
-import { useState } from "react";
+import {
+  useMemo,
+  useState,
+  type ComponentType,
+  type SVGProps,
+} from "react";
+import { SiBun, SiNpm, SiPnpm, SiYarn } from "react-icons/si";
 import { cn } from "#/lib/utils";
 import { Button } from "../ai/button";
 import {
@@ -10,11 +16,25 @@ import {
   CodeBlockHeader,
   CodeBlockTrigger,
 } from "../ai/code-block";
+import {
+  Select,
+  SelectItem,
+  SelectList,
+  SelectPopup,
+  SelectTrigger,
+  SelectValue,
+} from "../ai/select";
 import { findComponentSource } from "./registry";
 import { Syntax } from "./syntax";
 
 type Method = "cli" | "shadcn" | "manual";
 type PM = "bun" | "npm" | "pnpm" | "yarn";
+
+type PmItem = {
+  value: PM;
+  label: string;
+  icon: React.ReactNode;
+};
 
 const METHODS: { value: Method; label: string }[] = [
   { value: "cli", label: "CLI" },
@@ -22,29 +42,20 @@ const METHODS: { value: Method; label: string }[] = [
   { value: "manual", label: "Manual" },
 ];
 
-const PMS: { value: PM; label: string }[] = [
-  { value: "bun", label: "bun" },
-  { value: "npm", label: "npm" },
-  { value: "pnpm", label: "pnpm" },
-  { value: "yarn", label: "yarn" },
-];
+const PMS: PM[] = ["bun", "npm", "pnpm", "yarn"];
 
-function cliCommand(pm: PM, slug: string): string {
-  const args = `@nauvalazhar/ai@latest add ${slug}`;
-  switch (pm) {
-    case "bun":
-      return `bunx ${args}`;
-    case "npm":
-      return `npx ${args}`;
-    case "pnpm":
-      return `pnpm dlx ${args}`;
-    case "yarn":
-      return `yarn dlx ${args}`;
-  }
-}
+const PM_ICONS: Record<PM, ComponentType<SVGProps<SVGSVGElement>>> = {
+  bun: SiBun,
+  npm: SiNpm,
+  pnpm: SiPnpm,
+  yarn: SiYarn,
+};
 
-function shadcnCommand(pm: PM, slug: string): string {
-  const args = `shadcn@latest add @aikit/${slug}`;
+function buildCommand(method: "cli" | "shadcn", pm: PM, slug: string): string {
+  const args =
+    method === "cli"
+      ? `@nauvalazhar/ai@latest add ${slug}`
+      : `shadcn@latest add @aikit/${slug}`;
   switch (pm) {
     case "bun":
       return `bunx ${args}`;
@@ -59,15 +70,26 @@ function shadcnCommand(pm: PM, slug: string): string {
 
 export function InstallBlock({ slug }: { slug: string }) {
   const [method, setMethod] = useState<Method>("cli");
-  const [pm, setPm] = useState<PM>("bun");
+  const pmItems = useMemo<PmItem[]>(
+    () =>
+      PMS.map((p) => {
+        const Icon = PM_ICONS[p];
+        return {
+          value: p,
+          label: p,
+          icon: <Icon className="size-3.5" />,
+        };
+      }),
+    [],
+  );
+  const [pmValue, setPmValue] = useState<PmItem>(() => pmItems[0]);
+  const pm = pmValue.value;
   const source = findComponentSource(slug);
 
   const isManual = method === "manual";
   const text = isManual
     ? (source ?? `// Source for "${slug}" not found.`)
-    : method === "cli"
-      ? cliCommand(pm, slug)
-      : shadcnCommand(pm, slug);
+    : buildCommand(method, pm, slug);
   const language = isManual ? "tsx" : "bash";
 
   return (
@@ -104,39 +126,41 @@ export function InstallBlock({ slug }: { slug: string }) {
         </BaseTabs.Root>
 
         {!isManual && (
-          <BaseTabs.Root
-            value={pm}
-            onValueChange={(v) => setPm(String(v) as PM)}
-            className="ml-auto"
-          >
-            <BaseTabs.List className="relative flex items-stretch gap-2.5">
-              {PMS.map((p) => (
-                <BaseTabs.Tab
-                  key={p.value}
-                  value={p.value}
-                  className={cn(
-                    "h-8 inline-flex items-center text-[11px] font-mono",
-                    "text-muted-foreground hover:text-foreground",
-                    "data-active:text-foreground",
-                    "outline-none focus-visible:text-foreground",
-                    "transition-colors cursor-pointer",
-                  )}
-                >
-                  {p.label}
-                </BaseTabs.Tab>
-              ))}
-              <BaseTabs.Indicator
-                className={cn(
-                  "absolute bottom-0 left-0 h-px w-(--active-tab-width)",
-                  "translate-x-(--active-tab-left) bg-foreground/60 rounded-full",
-                  "transition-all duration-200 ease-out",
-                )}
-              />
-            </BaseTabs.List>
-          </BaseTabs.Root>
+          <>
+            <span
+              aria-hidden
+              className="h-4 w-px bg-border"
+            />
+            <Select
+              items={pmItems}
+              value={pmValue}
+              onValueChange={(v) => setPmValue(v as PmItem)}
+            >
+              <SelectTrigger
+                variant="plain"
+                className="h-7 px-2 w-auto text-xs text-muted-foreground hover:text-foreground"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectPopup align="start" sideOffset={4}>
+                <SelectList>
+                  {pmItems.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item}
+                      className="text-xs"
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </SelectItem>
+                  ))}
+                </SelectList>
+              </SelectPopup>
+            </Select>
+          </>
         )}
 
-        <CodeBlockAction className={cn(isManual && "ml-auto")}>
+        <CodeBlockAction className="ml-auto">
           <CopyButton key={`${method}-${pm}`} text={text} />
         </CodeBlockAction>
       </CodeBlockHeader>
