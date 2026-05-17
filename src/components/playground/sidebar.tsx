@@ -178,7 +178,8 @@ export function Sidebar() {
                     <ChevronRight className="size-3.5 transition-transform group-data-open:rotate-90" />
                   </Collapsible.Trigger>
                   <Link
-                    to="/installation"
+                    to="/installation/{-$framework}"
+                    params={{ framework: undefined }}
                     onClick={() => {
                       setInstallationOpen(true);
                       closeOnMobile();
