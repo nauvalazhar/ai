@@ -13,7 +13,7 @@ export const suggestionVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "bg-muted ring ring-border px-3.5 py-1.5 text-foreground",
+          "bg-surface-elevated ring ring-border px-3.5 py-1.5 text-foreground",
           "hover:bg-accent",
           "[&>svg]:size-4 rounded-full",
         ),

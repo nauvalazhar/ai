@@ -30,8 +30,8 @@ export const selectTriggerVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-surface ring ring-border hover:not-[[data-disabled]]:not-[:focus-visible]:bg-accent shadow-sm",
-        subtle: "bg-surface/60 ring ring-border shadow-sm",
+          "bg-surface ring ring-border hover:not-[[data-disabled]]:not-[:focus-visible]:bg-accent shadow-xs",
+        subtle: "bg-surface/60 ring ring-border shadow-xs",
         plain: "bg-transparent hover:not-[[data-disabled]]:bg-accent",
       },
     },
@@ -175,7 +175,7 @@ export function SelectPopup({
           data-slot="select-popup"
           {...props}
           className={cn(
-            "group origin-(--transform-origin) bg-surface-elevated ring ring-border rounded-outer shadow-lg",
+            "group origin-(--transform-origin) bg-surface ring ring-border rounded-outer shadow-lg",
             "p-1 outline-none max-lg:w-(--anchor-width) text-sm",
             "transition-[transform,scale,opacity]",
             "data-ending-style:opacity-0 data-ending-style:scale-90",
@@ -200,7 +200,7 @@ export function SelectList({
     <BaseSelect.List
       data-slot="select-list"
       className={cn(
-        "max-h-(--available-height) overflow-y-auto relative",
+        "max-h-(--available-height) overflow-y-auto relative space-y-0.5",
         className,
       )}
       {...props}

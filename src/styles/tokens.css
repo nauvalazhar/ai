@@ -1,3 +1,31 @@
+:root {
+  --radius: 0.75rem;
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+
+  --color-foreground: oklch(0.205 0.0022 259.23);
+  --color-background: oklch(0.97 0.0022 259.23);
+  --color-muted: oklch(0.94 0.0022 259.23);
+  --color-muted-foreground: oklch(0.5 0 0);
+
+  --color-surface: oklch(1 0 0);
+  --color-surface-elevated: oklch(0.9781 0.0022 259.23);
+
+  --color-border: oklch(0.9421 0.0022 259.23);
+
+  --scrollbar: oklch(0.7 0.0092 248.03);
+
+  --color-primary: oklch(0.55 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.95 0.0022 259.23);
+  --color-secondary-foreground: oklch(0.205 0.0022 259.23);
+
+  --color-destructive: oklch(0.55 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.94 0.0022 259.23);
+}
+
 .dark {
   --color-foreground: oklch(0.982 0 0);
   --color-background: oklch(0.1985 0.0022 259.23);
@@ -5,7 +33,6 @@
   --color-muted-foreground: oklch(0.65 0 0);
 
   --color-surface: oklch(0.2065 0.0022 259.23);
-  --color-card-foreground: oklch(0.18 0 0);
   --color-surface-elevated: oklch(0.2364 0.0022 259.23);
 
   --color-border: oklch(0.2867 0 0);
@@ -22,9 +49,6 @@
   --color-destructive-foreground: oklch(1 0 0);
 
   --color-accent: oklch(0.2664 0.0022 259.23);
-
-  --radius: 0.75rem;
-  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
 }
 
 @theme {

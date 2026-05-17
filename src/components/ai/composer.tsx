@@ -119,7 +119,7 @@ export function Composer({
           className={cn(
             "relative flex flex-col gap-1 rounded-outer border border-border bg-surface p-2",
             "focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary/60",
-            "transition-[box-shadow,border-color]",
+            "transition-[box-shadow,border-color] shadow-xs",
             "data-[disabled=true]:opacity-60 data-[disabled=true]:cursor-not-allowed",
             className,
           )}
@@ -284,8 +284,7 @@ export function ComposerSubmit({
 }: useRender.ComponentProps<"button">) {
   const ctx = useComposerContext();
   const blocked = ctx.isEmpty || ctx.disabled || !!disabledProp;
-  const ariaLabel =
-    (props as { "aria-label"?: string })["aria-label"] ?? "Send";
+  const ariaLabel = props["aria-label"] ?? "Send";
 
   return useRender({
     render,

@@ -104,7 +104,7 @@ export function CitationTrigger({
       className={cn(
         "inline-flex items-center gap-1.5 cursor-pointer select-none no-underline",
         "px-2 py-0.5 rounded text-xs",
-        "bg-muted text-muted-foreground ring ring-border",
+        "bg-surface-elevated text-muted-foreground ring ring-border",
         "hover:bg-accent hover:text-foreground",
         "data-popup-open:bg-accent data-popup-open:text-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",

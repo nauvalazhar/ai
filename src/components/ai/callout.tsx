@@ -12,8 +12,8 @@ export const calloutVariants = cva(
   {
     variants: {
       tone: {
-        info: "bg-muted/40 ring-border",
-        warning: "bg-muted/40 ring-amber-500/30",
+        info: "bg-surface ring-border",
+        warning: "bg-amber/5 ring-amber-500/30",
         danger: "bg-destructive/5 ring-destructive/40",
       },
     },
@@ -70,10 +70,7 @@ export function CalloutContent({
   return (
     <div
       data-slot="callout-content"
-      className={cn(
-        "min-w-0 flex-1 text-sm text-muted-foreground",
-        className,
-      )}
+      className={cn("min-w-0 flex-1 text-sm text-muted-foreground", className)}
       {...props}
     />
   );

@@ -15,7 +15,7 @@ export function MenuTrigger({
 }
 
 const menuPopupClassName = [
-  "origin-(--transform-origin) bg-surface-elevated ring ring-border rounded-outer shadow-lg",
+  "origin-(--transform-origin) bg-surface ring ring-border rounded-outer shadow-lg",
   "p-1 outline-none transition-[transform,scale,opacity]",
   "data-[ending-style]:opacity-0 data-[ending-style]:scale-90",
   "data-[starting-style]:opacity-0 data-[starting-style]:scale-90",

@@ -4,7 +4,7 @@ import { cn } from "#/lib/utils";
 
 export const chipVariants = cva(
   cn(
-    "inline-flex items-center gap-1.5 rounded bg-muted text-muted-foreground",
+    "inline-flex items-center gap-1.5 rounded bg-surface-elevated text-muted-foreground",
     "ring ring-border",
     "[&>svg]:shrink-0",
     "[&:is(button,a)]:cursor-pointer",

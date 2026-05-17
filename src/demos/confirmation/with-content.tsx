@@ -31,7 +31,7 @@ export default function WithContent() {
         </ConfirmationDescription>
 
         <ConfirmationContent>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 rounded bg-surface-elevated px-3 py-2.5 text-sm">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 rounded bg-surface-elevated ring ring-border px-3 py-2.5 text-sm">
             <dt className="text-muted-foreground">Client</dt>
             <dd className="text-foreground">Helio Studios</dd>
             <dt className="text-muted-foreground">Amount</dt>
