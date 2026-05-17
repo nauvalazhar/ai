@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Check, Copy, Info } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Check, ChevronDownIcon, Copy, Info } from "lucide-react";
 import { cn } from "#/lib/utils";
 import { Callout, CalloutContent, CalloutIcon } from "../ai/callout";
 import {
@@ -8,6 +8,7 @@ import {
   CodeBlockContent,
   CodeBlockHeader,
   CodeBlockTitle,
+  CodeBlockTrigger,
 } from "../ai/code-block";
 import {
   Spec,
@@ -38,6 +39,12 @@ export function DocsView({
 
   const components = {
     pre: PreBlock,
+    h2: (props: { children?: ReactNode }) => (
+      <SluggedHeading level={2} {...props} />
+    ),
+    h3: (props: { children?: ReactNode }) => (
+      <SluggedHeading level={3} {...props} />
+    ),
     Props: ({ name }: { name: string }) => {
       const part = partsByName.get(name);
       if (!part) return null;
@@ -52,6 +59,8 @@ export function DocsView({
       </Callout>
     ),
   };
+
+  useHashScroll(entry);
 
   return (
     <div className="relative max-w-3xl mx-auto">
@@ -68,8 +77,8 @@ export function DocsView({
           "prose prose-sm dark:prose-invert max-w-none py-12",
           "prose-headings:font-medium",
           "prose-h1:mb-3 prose-h1:text-2xl",
-          "prose-h2:text-xl prose-h2:mt-14",
-          "prose-h3:text-base prose-h3:font-mono prose-h3:mt-14",
+          "prose-h2:text-xl prose-h2:mt-14 prose-h2:scroll-mt-6",
+          "prose-h3:text-base prose-h3:font-mono prose-h3:mt-14 prose-h3:scroll-mt-6",
           // Lead paragraph: first <p> right after the <h1>.
           "[&>h1+p]:text-base [&>h1+p]:mt-3 [&>h1+p]:mb-8",
           // Collapse the gap when an <h3> sits directly under an <h2>.
@@ -83,26 +92,99 @@ export function DocsView({
   );
 }
 
+function SluggedHeading({
+  level,
+  children,
+}: {
+  level: 2 | 3;
+  children?: ReactNode;
+}) {
+  const id = slugify(extractText(children));
+  const Tag = `h${level}` as const;
+  return <Tag id={id || undefined}>{children}</Tag>;
+}
+
+function extractText(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (typeof node === "object" && "props" in node) {
+    const props = (node as { props?: { children?: ReactNode } }).props;
+    return extractText(props?.children);
+  }
+  return "";
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function useHashScroll(dep: unknown) {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function scrollToHash() {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return;
+      const el = document.getElementById(decodeURIComponent(hash));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    const id = window.requestAnimationFrame(scrollToHash);
+    window.addEventListener("hashchange", scrollToHash);
+    return () => {
+      window.cancelAnimationFrame(id);
+      window.removeEventListener("hashchange", scrollToHash);
+    };
+  }, [dep]);
+}
+
 function PreBlock({ children }: { children?: ReactNode }) {
   // MDX renders fenced code as <pre><code className="language-xxx">…</code></pre>.
+  // Meta after the language (e.g. `title="src/utils.ts"`) is promoted to props
+  // on the inner <code> by the `remarkCodeMeta` plugin in vite.config.ts.
   const codeEl = children as
-    | { props?: { className?: string; children?: string } }
+    | { props?: { className?: string; children?: string; title?: string } }
     | undefined;
   const className = codeEl?.props?.className ?? "";
   const lang = /language-(\w+)/.exec(className)?.[1] ?? "tsx";
+  const title = codeEl?.props?.title?.trim();
   const content = String(codeEl?.props?.children ?? "").replace(/\n$/, "");
 
   return (
-    <CodeBlock className="not-prose">
+    <CodeBlock className="not-prose relative" clip>
       <CodeBlockHeader>
-        <CodeBlockTitle>{lang.toUpperCase()}</CodeBlockTitle>
+        <CodeBlockTitle>{title || lang.toUpperCase()}</CodeBlockTitle>
         <CodeBlockAction>
           <CopyCodeButton text={content} />
         </CodeBlockAction>
       </CodeBlockHeader>
-      <CodeBlockContent className="overflow-auto">
+      <CodeBlockContent>
         <Syntax language={lang}>{content}</Syntax>
       </CodeBlockContent>
+      <CodeBlockTrigger
+        render={
+          <Button
+            variant="ghost"
+            className={cn(
+              "text-foreground/80 hover:text-foreground",
+              "absolute bottom-3 left-1/2 -translate-x-1/2",
+              "hover:bg-transparent",
+            )}
+          >
+            <ChevronDownIcon className="group-data-open/code-block:rotate-180" />
+            <span className="group-data-open/code-block:inline hidden">
+              Show Less
+            </span>
+            <span className="group-data-open/code-block:hidden inline">
+              Show More
+            </span>
+          </Button>
+        }
+      />
     </CodeBlock>
   );
 }
@@ -265,14 +347,15 @@ function CopyCodeButton({ text }: { text: string }) {
   }
 
   return (
-    <button
-      type="button"
+    <Button
       onClick={handleCopy}
       aria-label="Copy code"
       className="text-muted-foreground hover:text-foreground"
+      variant="ghost"
+      iconOnly
     >
       {copied ? <Check /> : <Copy />}
-    </button>
+    </Button>
   );
 }
 
