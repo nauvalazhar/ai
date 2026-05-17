@@ -4,6 +4,25 @@ parts:
     passThrough:
       type: React.ComponentProps<"div">
       to: <div>
+    props:
+      - name: clip
+        type: boolean
+        default: "false"
+        description: When true, constrains the body to maxHeight and shows a bottom fade. The trigger expands and collapses the body. When false, the body always renders at its natural height.
+      - name: maxHeight
+        type: number
+        default: "240"
+        description: Height in pixels of the body when clipped. Has no effect unless clip is enabled.
+      - name: open
+        type: boolean
+        description: Controlled open state. Pair with onOpenChange.
+      - name: defaultOpen
+        type: boolean
+        default: "false"
+        description: Initial open state when uncontrolled.
+      - name: onOpenChange
+        type: "(open: boolean) => void"
+        description: Fires when the open state changes from either the trigger or a controlled update.
   - name: CodeBlockHeader
     passThrough:
       type: React.ComponentProps<"header">
@@ -20,6 +39,17 @@ parts:
     passThrough:
       type: React.ComponentProps<"div">
       to: <div>
+  - name: CodeBlockTrigger
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's Button or any custom button to bring the visual styling.
+      - name: children
+        type: ReactNode
+        description: Content of the rendered element. Typically a chevron icon. The trigger ships no default icon, so pass one explicitly.
 ---
 
 A framed container for displaying source code.
@@ -44,13 +74,38 @@ The header is optional. Bring your own syntax highlighter and drop the rendered 
 </CodeBlock>
 ```
 
+## Clipping
+
+Long snippets can be capped to a maximum height with a fade and a trigger to expand. Set `clip` on the root and tune the cap with `maxHeight`. The trigger is headless and only renders when the content actually exceeds the cap, so short snippets stay frictionless.
+
+The root carries `data-open` when expanded and `data-clipped` when the body is currently being hidden. Both attributes are also forwarded to `CodeBlockContent`, and the trigger receives `data-open`. Style off these to rotate a chevron, swap a label, or react to the clipped state.
+
+```tsx
+<CodeBlock clip maxHeight={200}>
+  <CodeBlockHeader>
+    <CodeBlockTitle>hooks.ts</CodeBlockTitle>
+    <CodeBlockAction>
+      <CodeBlockTrigger
+        aria-label="Toggle code"
+        render={<Button iconOnly variant="ghost" />}
+      >
+        <ChevronDownIcon className="group-data-open/code-block:rotate-180" />
+      </CodeBlockTrigger>
+    </CodeBlockAction>
+  </CodeBlockHeader>
+  <CodeBlockContent>
+    <pre>{code}</pre>
+  </CodeBlockContent>
+</CodeBlock>
+```
+
 ## API
 
 Reference for each part of the component, including its available props and behavior.
 
 ### CodeBlock
 
-Root container. A padded, ringed surface that stacks its children vertically. No layout concerns beyond the outer frame. The header and content render as independent rows.
+Root container. A padded, ringed surface that stacks its children vertically. Owns the optional clip state and the collapsed height. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror state. Sets `data-open` when expanded and `data-clipped` when the body is currently being hidden so descendants can style off the parent.
 
 <Props name="CodeBlock" />
 
@@ -80,7 +135,7 @@ Right-aligned slot for header controls like copy, expand, or open in editor. App
 
 ### CodeBlockContent
 
-The code surface. An inset, framed panel sized for monospaced text. Render a `<pre>` directly or the output of a syntax highlighter. Nested `pre` elements inherit a small text size so highlighted output blends in.
+The code surface. An inset, framed panel sized for monospaced text. Render a `<pre>` directly or the output of a syntax highlighter. Nested `pre` elements inherit a small text size so highlighted output blends in. When `clip` is enabled on the root, the panel measures its content, animates the height between `maxHeight` and the natural height, and fades the bottom while clipped.
 
 ```tsx
 <CodeBlockContent>
@@ -89,3 +144,9 @@ The code surface. An inset, framed panel sized for monospaced text. Render a `<p
 ```
 
 <Props name="CodeBlockContent" />
+
+### CodeBlockTrigger
+
+Headless toggle for the clipped state. Wires the open state, `aria-expanded`, and `aria-controls` to a rendered element of the caller's choice. Pass `render` to provide the styled button and `children` for the icon. The trigger has no default styling and no default icon, so it composes with whatever button family the call site already uses. Renders nothing when `clip` is disabled or when the content fits inside `maxHeight`, so it can sit in the action slot without leaving a hole for short snippets.
+
+<Props name="CodeBlockTrigger" />

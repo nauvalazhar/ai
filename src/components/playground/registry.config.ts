@@ -153,6 +153,11 @@ export const registry: Group[] = [
             slug: "terminal",
             Component: lazy(() => import("#/demos/code-block/terminal")),
           },
+          {
+            name: "Clip",
+            slug: "clip",
+            Component: lazy(() => import("#/demos/code-block/clip")),
+          },
         ],
       },
       {
