@@ -41,7 +41,8 @@ export function DocsView({
   const { Component, frontmatter, source } = entry;
   const partsByName = new Map(frontmatter.parts.map((p) => [p.name, p]));
 
-  let paragraphCount = 0;
+  const leadText = componentSlug ? extractLeadParagraph(source) : "";
+
   const components = {
     pre: PreBlock,
     h2: (props: { children?: ReactNode }) => (
@@ -51,8 +52,11 @@ export function DocsView({
       <SluggedHeading level={3} {...props} />
     ),
     p: (props: { children?: ReactNode }) => {
-      paragraphCount += 1;
-      if (componentSlug && paragraphCount === 1) {
+      if (
+        componentSlug &&
+        leadText &&
+        normalizeWhitespace(extractText(props.children)) === leadText
+      ) {
         return (
           <>
             <p {...props} />
@@ -108,6 +112,22 @@ export function DocsView({
       </article>
     </div>
   );
+}
+
+function extractLeadParagraph(source: string): string {
+  const body = source.replace(/^---[\s\S]*?---\s*/, "");
+  const match = body.match(/^([^\n#].*?)(?=\n\s*\n|\n\s*#|$)/s);
+  if (!match) return "";
+  let lead = match[1].replace(/\s+/g, " ").trim();
+  lead = lead.replace(/`([^`]+)`/g, "$1");
+  lead = lead.replace(/\*\*([^*]+)\*\*/g, "$1");
+  lead = lead.replace(/\*([^*]+)\*/g, "$1");
+  lead = lead.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+  return lead;
+}
+
+function normalizeWhitespace(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
 }
 
 function SluggedHeading({
