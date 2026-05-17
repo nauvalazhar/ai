@@ -8,7 +8,7 @@ parts:
       - name: tone
         type: '"info" | "warning" | "danger"'
         default: '"info"'
-        description: Paints the icon and the ring color. `info` is the muted default, `warning` is amber, `danger` uses the destructive color.
+        description: Paints the icon and the ring color. `info` is the surface default, `warning` is amber, `danger` uses the destructive color.
       - name: render
         type: ReactElement
         description: Render the root as another element, like a link or a list item.
@@ -30,7 +30,9 @@ A box with an icon on the left and content on the right. Use it for short contex
 
 ```tsx
 <Callout>
-  <CalloutIcon><Info /></CalloutIcon>
+  <CalloutIcon>
+    <Info />
+  </CalloutIcon>
   <CalloutContent>
     The root is engine-agnostic. It tracks empty and focus state and exposes a
     registration hook that any input can hand its submit handler to.
@@ -42,7 +44,9 @@ Tone tints the icon and the ring. The same parts cover an info note, a warning, 
 
 ```tsx
 <Callout tone="warning">
-  <CalloutIcon><AlertTriangle /></CalloutIcon>
+  <CalloutIcon>
+    <AlertTriangle />
+  </CalloutIcon>
   <CalloutContent>Async items are cached per query.</CalloutContent>
 </Callout>
 ```
