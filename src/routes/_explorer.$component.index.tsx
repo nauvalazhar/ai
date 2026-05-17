@@ -33,7 +33,7 @@ function ComponentDocs() {
 
   return (
     <div className="md:p-8 py-8 max-sm:px-4">
-      <DocsView title={name} entry={entry} />
+      <DocsView title={name} entry={entry} componentSlug={component} />
     </div>
   );
 }

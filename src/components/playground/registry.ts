@@ -22,6 +22,12 @@ const sources = import.meta.glob("/src/demos/**/*.tsx", {
   eager: true,
 }) as Record<string, string>;
 
+const componentSources = import.meta.glob("/src/components/ai/*.tsx", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
 const mdxModules = import.meta.glob<MdxModule>("/src/docs/**/*.mdx", {
   eager: true,
 });
@@ -70,6 +76,10 @@ export function findDemoSource(
 
 export function findComponentDocs(component: string): DocsEntry | undefined {
   return componentDocs[component];
+}
+
+export function findComponentSource(slug: string): string | undefined {
+  return componentSources[`/src/components/ai/${slug}.tsx`];
 }
 
 export function findInstallationDoc(framework?: string): DocsEntry | undefined {

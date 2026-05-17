@@ -27,17 +27,21 @@ import { CodeTabs } from "./code-tabs";
 import { Button } from "../ai/button";
 import { SiMarkdown } from "react-icons/si";
 import { SidebarOpenToggle } from "./sidebar-toggle";
+import { InstallBlock } from "./install-block";
 
 export function DocsView({
   title,
   entry,
+  componentSlug,
 }: {
   title: string;
   entry: DocsEntry;
+  componentSlug?: string;
 }) {
   const { Component, frontmatter, source } = entry;
   const partsByName = new Map(frontmatter.parts.map((p) => [p.name, p]));
 
+  let paragraphCount = 0;
   const components = {
     pre: PreBlock,
     h2: (props: { children?: ReactNode }) => (
@@ -46,6 +50,18 @@ export function DocsView({
     h3: (props: { children?: ReactNode }) => (
       <SluggedHeading level={3} {...props} />
     ),
+    p: (props: { children?: ReactNode }) => {
+      paragraphCount += 1;
+      if (componentSlug && paragraphCount === 1) {
+        return (
+          <>
+            <p {...props} />
+            <InstallBlock slug={componentSlug} />
+          </>
+        );
+      }
+      return <p {...props} />;
+    },
     Props: ({ name }: { name: string }) => {
       const part = partsByName.get(name);
       if (!part) return null;
