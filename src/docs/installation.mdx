@@ -4,12 +4,7 @@ parts: []
 
 Pick the install path for your framework.
 
-## Frameworks
-
-- **[Vite](/installation/vite)** — token CSS appended to `src/index.css`, `@/` alias for `./src/*`.
-- **[Next.js](/installation/next)** — token CSS appended to `app/globals.css`, `@/` alias for the project root.
-- **[React Router](/installation/react-router)** — token CSS appended to `app/app.css`, `~/` alias for `./app/*`.
-- **[TanStack Start](/installation/tanstack-start)** — token CSS appended to `src/styles.css`, `@/` alias for `./src/*`.
+<FrameworkCards />
 
 ## Quickstart
 
@@ -39,11 +34,3 @@ yarn dlx @nauvalazhar/ai@latest add message
 </CodeTabs>
 
 `init` writes `aikit.json` and sets up tokens, deps, and the `cn` helper. `add <name>` copies a component into your project with imports rewritten to your alias. Run `add` for each component you want.
-
-## Manual
-
-If you can't run the CLI, or you're on a framework outside the list, [Manual setup](/installation/manual) walks through every file by hand.
-
-## Shadcn CLI
-
-Already using shadcn for the rest of your UI? The kit ships as a shadcn-compatible registry too. [Install with shadcn](/installation/shadcn) walks through the namespace setup and the `shadcn add` flow.

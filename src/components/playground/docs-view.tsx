@@ -28,6 +28,7 @@ import { Button } from "../ai/button";
 import { SiMarkdown } from "react-icons/si";
 import { SidebarOpenToggle } from "./sidebar-toggle";
 import { InstallBlock } from "./install-block";
+import { FrameworkCards } from "./framework-cards";
 
 export function DocsView({
   title,
@@ -80,6 +81,7 @@ export function DocsView({
       </Callout>
     ),
     CodeTabs,
+    FrameworkCards,
   };
 
   useHashScroll(entry);

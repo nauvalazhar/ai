@@ -96,12 +96,3 @@ bunx shadcn@latest add https://ai.nauv.al/shadcn/r/message.json
 ```
 
 Transitive dependencies (e.g. `composer-rich` requiring `composer`) resolve automatically.
-
-## What's the difference
-
-The shadcn distribution is a transform of the same `registry.config.ts`. Output lives at `https://ai.nauv.al/shadcn/r/*.json`. Behavior diverges in two places:
-
-- **No Tailwind check.** Shadcn assumes your project is already set up. Run `shadcn init` first if you're starting fresh.
-- **No conditional CSS append.** The token CSS ships as `cssVars`, which shadcn merges into your existing CSS file based on `components.json`. It does not append a separate block.
-
-Components, tokens, and behavior are otherwise identical.
