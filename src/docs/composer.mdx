@@ -57,6 +57,10 @@ parts:
       - name: render
         type: "ReactElement | (props, state) => ReactElement"
         description: The element used to render the submit. Defaults to a plain `<button>`. Pass your own button (e.g. `render={<Button iconOnly className=\"rounded-full\" />}`) to control the styling.
+      - name: disabled
+        type: boolean
+        default: "false"
+        description: Extra disabled condition layered on top of the built-in empty and root-disabled guards. The button stays disabled when the input is empty or the root is disabled regardless of this prop, so the consumer can only tighten, never loosen.
 ---
 
 A chat-style prompt input that grows with content, paired with a toolbar and a submit button.
@@ -129,6 +133,19 @@ A headless trigger wired to the registered input's submit action. Renders a plai
 </ComposerSubmit>
 ```
 
+Pass `disabled` to layer extra conditions on top of the built-in guards, like a quota check or an unmet form requirement. The button only flips on when every guard agrees: input non-empty, root not disabled, and the consumer's `disabled` is falsy.
+
+```tsx
+<ComposerSubmit
+  disabled={!agreedToTerms || quotaExceeded}
+  render={<Button iconOnly className="rounded-full" />}
+>
+  <ArrowUpIcon />
+</ComposerSubmit>
+```
+
+When even that isn't enough (a fully custom button shape, a different trigger element, etc.), reach for `useComposer` and build your own.
+
 <Props name="ComposerSubmit" />
 
 ### useComposer
@@ -139,5 +156,21 @@ Hook for reading root state and triggering submit from a custom part. Returns `{
 function WordCount() {
   const { isEmpty } = useComposer();
   return <span>{isEmpty ? "Type to start" : "Ready"}</span>;
+}
+```
+
+The hook is also the escape hatch for a fully custom submit. When `ComposerSubmit` doesn't fit (you want a split button, a different element, or your own disabled logic without the built-in guards), wire your own trigger.
+
+```tsx
+function CustomSubmit() {
+  const { isEmpty, disabled, submit } = useComposer();
+  return (
+    <Button
+      onClick={submit}
+      disabled={isEmpty || disabled /* + your conditions */}
+    >
+      Send
+    </Button>
+  );
 }
 ```
