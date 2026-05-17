@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "loader",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/loader.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/loader.tsx",
+      "content": "import { useRender } from \"@base-ui/react/use-render\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nexport const loaderVariants = cva(\n  \"inline-flex items-baseline text-muted-foreground\",\n  {\n    variants: {\n      variant: {\n        pulse:\n          \"animate-[text-pulse_var(--loader-duration,1.4s)_ease-in-out_infinite_both]\",\n        shimmer:\n          \"bg-clip-text [-webkit-text-fill-color:transparent] bg-[linear-gradient(90deg,color-mix(in_oklch,currentColor_40%,transparent)_0%,color-mix(in_oklch,currentColor_40%,transparent)_calc(50%_-_var(--loader-spread,40%)/2),currentColor_50%,color-mix(in_oklch,currentColor_40%,transparent)_calc(50%_+_var(--loader-spread,40%)/2),color-mix(in_oklch,currentColor_40%,transparent)_100%)] bg-size-[200%_100%] animate-[text-shimmer_var(--loader-duration,2.2s)_linear_infinite]\",\n      },\n    },\n  },\n);\n\ntype LoaderProps = useRender.ComponentProps<\"span\"> &\n  VariantProps<typeof loaderVariants> & {\n    dots?: boolean;\n    duration?: number;\n    spread?: number;\n  };\n\nexport function Loader({\n  variant,\n  dots = false,\n  duration,\n  spread,\n  className,\n  children,\n  render,\n  style,\n  ...props\n}: LoaderProps) {\n  const label = typeof children === \"string\" ? children : \"Loading\";\n\n  const cssVars: React.CSSProperties = {};\n  if (duration !== undefined) {\n    (cssVars as Record<string, string>)[\"--loader-duration\"] = `${duration}s`;\n  }\n  if (spread !== undefined) {\n    (cssVars as Record<string, string>)[\"--loader-spread\"] = `${spread}%`;\n  }\n\n  return useRender({\n    render,\n    defaultTagName: \"span\",\n    props: {\n      role: \"status\",\n      \"aria-label\": label,\n      ...props,\n      \"data-slot\": \"loader\",\n      \"data-variant\": variant,\n      \"data-dots\": dots ? \"\" : undefined,\n      style: { ...cssVars, ...style },\n      className: cn(loaderVariants({ variant, className })),\n      children: (\n        <>\n          {children}\n          {dots && (\n            <span\n              aria-hidden\n              className=\"ml-0.5 inline-flex [-webkit-text-fill-color:currentColor]\"\n            >\n              <span className=\"animate-[loading-dot_var(--loader-duration,1.4s)_ease-in-out_infinite_both]\">\n                .\n              </span>\n              <span className=\"animate-[loading-dot_var(--loader-duration,1.4s)_ease-in-out_infinite_both] [animation-delay:calc(var(--loader-duration,1.4s)*0.14)]\">\n                .\n              </span>\n              <span className=\"animate-[loading-dot_var(--loader-duration,1.4s)_ease-in-out_infinite_both] [animation-delay:calc(var(--loader-duration,1.4s)*0.28)]\">\n                .\n              </span>\n            </span>\n          )}\n        </>\n      ),\n    },\n  });\n}"
+    }
+  ]
+}

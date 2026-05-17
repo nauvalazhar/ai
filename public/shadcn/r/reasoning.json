@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "reasoning",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/reasoning.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/reasoning.tsx",
+      "content": "import { Collapsible } from \"@base-ui/react/collapsible\";\nimport { cn } from \"@/lib/utils\";\n\nexport function Reasoning({ className, ...props }: Collapsible.Root.Props) {\n  return (\n    <Collapsible.Root\n      data-slot=\"reasoning\"\n      className={cn(\n        \"group grid grid-cols-[1fr_auto] items-center gap-x-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function ReasoningTrigger({\n  className,\n  children,\n  ...props\n}: Collapsible.Trigger.Props) {\n  return (\n    <Collapsible.Trigger\n      data-slot=\"reasoning-trigger\"\n      className={cn(\n        \"justify-self-start cursor-pointer select-none bg-transparent\",\n        \"inline-flex items-center gap-1.5 -ml-2 px-2 py-1 rounded text-sm\",\n        \"text-muted-foreground hover:text-foreground hover:bg-accent\",\n        \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary\",\n        \"transition-colors\",\n        className,\n      )}\n      {...props}\n    >\n      <svg\n        width=\"24\"\n        height=\"24\"\n        viewBox=\"0 0 24 24\"\n        fill=\"none\"\n        stroke=\"currentColor\"\n        strokeWidth=\"2\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n        aria-hidden\n        className={cn(\n          \"size-4 shrink-0 transition-transform duration-200\",\n          \"group-data-open:rotate-90\",\n        )}\n      >\n        <path d=\"m9 18 6-6-6-6\" />\n      </svg>\n      {children}\n    </Collapsible.Trigger>\n  );\n}\n\nexport function ReasoningContent({\n  className,\n  children,\n  ...props\n}: Collapsible.Panel.Props) {\n  return (\n    <Collapsible.Panel\n      data-slot=\"reasoning-content\"\n      className={cn(\n        \"col-span-2 overflow-hidden\",\n        \"h-(--collapsible-panel-height)\",\n        \"transition-[height] duration-150 ease-out\",\n        \"data-starting-style:h-0 data-ending-style:h-0\",\n        className,\n      )}\n      {...props}\n    >\n      <div className=\"pl-6 py-2 text-sm text-muted-foreground\">{children}</div>\n    </Collapsible.Panel>\n  );\n}"
+    }
+  ]
+}

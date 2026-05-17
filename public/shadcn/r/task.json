@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "task",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/task.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/task.tsx",
+      "content": "import { cn } from \"@/lib/utils\";\n\nexport function Task({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"task\"\n      className={cn(\"flex flex-col text-sm\", className)}\n      {...props}\n    />\n  );\n}\n\nexport function TaskItem({\n  className,\n  children,\n  ...props\n}: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"task-item\"\n      className={cn(\n        \"flex flex-col\",\n        \"last:**:data-rail-connector:hidden\",\n        className,\n      )}\n      {...props}\n    >\n      <div className=\"inline-flex items-center self-start gap-2 px-2 py-1 text-muted-foreground\">\n        {children}\n      </div>\n      <span\n        aria-hidden\n        data-rail-connector\n        className=\"w-px h-4 ml-4 bg-border\"\n      />\n    </div>\n  );\n}\n\nexport function TaskIcon({\n  className,\n  children,\n  ...props\n}: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"task-icon\"\n      aria-hidden\n      className={cn(\n        \"size-4 inline-flex items-center justify-center shrink-0\",\n        className,\n      )}\n      {...props}\n    >\n      {children ?? <span className=\"size-2 rounded-full bg-current\" />}\n    </span>\n  );\n}\n\nexport function TaskLabel({\n  className,\n  ...props\n}: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"task-label\"\n      className={cn(\"text-foreground\", className)}\n      {...props}\n    />\n  );\n}"
+    }
+  ]
+}

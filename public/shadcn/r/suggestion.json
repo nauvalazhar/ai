@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "suggestion",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/suggestion.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/suggestion.tsx",
+      "content": "import { useRender } from \"@base-ui/react/use-render\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nexport const suggestionVariants = cva(\n  cn(\n    \"group/suggestion inline-flex items-center gap-2 text-sm text-left select-none cursor-pointer\",\n    \"transition-colors\",\n    \"[&>svg]:shrink-0\",\n    \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary\",\n  ),\n  {\n    variants: {\n      variant: {\n        default: cn(\n          \"bg-surface-elevated ring ring-border px-3.5 py-1.5 text-foreground\",\n          \"hover:bg-accent\",\n          \"[&>svg]:size-4 rounded-full\",\n        ),\n        plain: \"hover:bg-accent px-3.5 py-1.5 [&>svg]:size-4 rounded-full\",\n        list: cn(\n          \"rounded px-3.5 py-1.5 text-muted-foreground bg-transparent\",\n          \"hover:bg-accent\",\n          \"[&>svg]:size-4\",\n        ),\n      },\n    },\n    defaultVariants: { variant: \"default\" },\n  },\n);\n\ntype SuggestionProps = Omit<useRender.ComponentProps<\"button\">, \"children\"> &\n  VariantProps<typeof suggestionVariants> & {\n    highlight?: React.ReactNode;\n    children?: React.ReactNode;\n  };\n\nexport function Suggestion({\n  variant = \"default\",\n  highlight,\n  children,\n  className,\n  render,\n  ...props\n}: SuggestionProps) {\n  return useRender({\n    render,\n    defaultTagName: \"button\",\n    props: {\n      type: \"button\",\n      ...props,\n      \"data-slot\": \"suggestion\",\n      \"data-variant\": variant,\n      className: cn(suggestionVariants({ variant, className })),\n      children,\n    },\n  });\n}"
+    }
+  ]
+}

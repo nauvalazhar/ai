@@ -1,0 +1,127 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "ai",
+  "homepage": "https://ai.nauv.al",
+  "items": [
+    {
+      "name": "init",
+      "type": "registry:style"
+    },
+    {
+      "name": "action",
+      "type": "registry:ui"
+    },
+    {
+      "name": "attachment",
+      "type": "registry:ui"
+    },
+    {
+      "name": "button",
+      "type": "registry:ui"
+    },
+    {
+      "name": "callout",
+      "type": "registry:ui"
+    },
+    {
+      "name": "chain-of-thought",
+      "type": "registry:ui"
+    },
+    {
+      "name": "chip",
+      "type": "registry:ui"
+    },
+    {
+      "name": "citation",
+      "type": "registry:ui"
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui"
+    },
+    {
+      "name": "composer",
+      "type": "registry:ui"
+    },
+    {
+      "name": "composer-rich",
+      "type": "registry:ui"
+    },
+    {
+      "name": "confirmation",
+      "type": "registry:ui"
+    },
+    {
+      "name": "conversation",
+      "type": "registry:ui"
+    },
+    {
+      "name": "document",
+      "type": "registry:ui"
+    },
+    {
+      "name": "loader",
+      "type": "registry:ui"
+    },
+    {
+      "name": "menu",
+      "type": "registry:ui"
+    },
+    {
+      "name": "message",
+      "type": "registry:ui"
+    },
+    {
+      "name": "prompt",
+      "type": "registry:ui"
+    },
+    {
+      "name": "reasoning",
+      "type": "registry:ui"
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui"
+    },
+    {
+      "name": "select",
+      "type": "registry:ui"
+    },
+    {
+      "name": "source",
+      "type": "registry:ui"
+    },
+    {
+      "name": "spec",
+      "type": "registry:ui"
+    },
+    {
+      "name": "suggestion",
+      "type": "registry:ui"
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui"
+    },
+    {
+      "name": "task",
+      "type": "registry:ui"
+    },
+    {
+      "name": "todo",
+      "type": "registry:ui"
+    },
+    {
+      "name": "tool",
+      "type": "registry:ui"
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui"
+    },
+    {
+      "name": "uploader",
+      "type": "registry:ui"
+    }
+  ]
+}

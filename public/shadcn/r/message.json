@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/message.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/message.tsx",
+      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\ntype MessageProps = React.ComponentProps<\"div\"> & {\n  type?: \"incoming\" | \"outgoing\";\n};\n\nexport function Message({\n  type = \"outgoing\",\n  className,\n  ...props\n}: MessageProps) {\n  return (\n    <div\n      data-slot=\"message\"\n      data-type={type}\n      className={cn(\n        \"group/message flex w-full gap-3\",\n        \"data-[type=outgoing]:flex-row-reverse\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function MessageAvatar({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-avatar\"\n      className={cn(\n        \"relative flex size-9.5 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-muted text-xs font-medium text-muted-foreground\",\n        \"[&>img]:size-full [&>img]:object-cover\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport function MessageContent({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-content\"\n      className={cn(\n        \"flex min-w-0 flex-1 flex-col gap-1.5\",\n        \"group-data-[type=outgoing]/message:items-end\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport const messageTextVariants = cva(\"min-w-0 text-sm/6.5\", {\n  variants: {\n    variant: {\n      plain:\n        \"[[data-slot=message-avatar]+[data-slot=message-content]>&:first-child]:pt-2\",\n      bubble:\n        \"w-fit max-w-[75%] rounded-outer bg-surface-elevated px-3.5 py-2.5 ring ring-border\",\n    },\n  },\n  defaultVariants: { variant: \"plain\" },\n});\n\ntype MessageTextProps = React.ComponentProps<\"div\"> &\n  VariantProps<typeof messageTextVariants>;\n\nexport function MessageText({\n  variant,\n  className,\n  ...props\n}: MessageTextProps) {\n  return (\n    <div\n      data-slot=\"message-text\"\n      data-variant={variant ?? \"plain\"}\n      className={cn(messageTextVariants({ variant, className }))}\n      {...props}\n    />\n  );\n}\n\nexport function MessageAction({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"message-action\"\n      className={cn(\n        \"flex items-center gap-0.5\",\n        \"[[data-slot=message-text][data-variant=plain]~&]:-mx-2\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}"
+    }
+  ]
+}

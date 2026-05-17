@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "action",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/action.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/action.tsx",
+      "content": "import { Collapsible } from \"@base-ui/react/collapsible\";\nimport { cn } from \"@/lib/utils\";\n\nexport function Action({ className, ...props }: Collapsible.Root.Props) {\n  return (\n    <Collapsible.Root\n      data-slot=\"action\"\n      className={cn(\"group/action flex flex-col text-sm\", className)}\n      {...props}\n    />\n  );\n}\n\nexport function ActionTrigger({\n  className,\n  children,\n  ...props\n}: Collapsible.Trigger.Props) {\n  return (\n    <Collapsible.Trigger\n      data-slot=\"action-trigger\"\n      className={cn(\n        \"inline-flex items-center self-start gap-2 cursor-pointer select-none text-left bg-transparent\",\n        \"px-2 py-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent\",\n        \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary\",\n        \"transition-colors\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      <svg\n        width=\"24\"\n        height=\"24\"\n        viewBox=\"0 0 24 24\"\n        fill=\"none\"\n        stroke=\"currentColor\"\n        strokeWidth=\"2\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n        aria-hidden\n        className={cn(\n          \"size-4 shrink-0 transition-transform duration-200\",\n          \"group-data-open/action:rotate-90\",\n        )}\n      >\n        <path d=\"m9 18 6-6-6-6\" />\n      </svg>\n    </Collapsible.Trigger>\n  );\n}\n\nexport function ActionIcon({\n  className,\n  children,\n  ...props\n}: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"action-icon\"\n      aria-hidden\n      className={cn(\n        \"size-4 inline-flex items-center justify-center shrink-0\",\n        className,\n      )}\n      {...props}\n    >\n      {children ?? <span className=\"size-2 rounded-full bg-current\" />}\n    </span>\n  );\n}\n\nexport function ActionLabel({\n  className,\n  ...props\n}: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      data-slot=\"action-label\"\n      className={cn(\"text-foreground\", className)}\n      {...props}\n    />\n  );\n}\n\nexport function ActionContent({\n  className,\n  children,\n  ...props\n}: Collapsible.Panel.Props) {\n  return (\n    <Collapsible.Panel\n      data-slot=\"action-content\"\n      className={cn(\n        \"overflow-hidden\",\n        \"h-(--collapsible-panel-height)\",\n        \"transition-[height] duration-150 ease-out\",\n        \"data-starting-style:h-0 data-ending-style:h-0\",\n        className,\n      )}\n      {...props}\n    >\n      <div className=\"pl-2.5 py-2 text-muted-foreground\">{children}</div>\n    </Collapsible.Panel>\n  );\n}"
+    }
+  ]
+}

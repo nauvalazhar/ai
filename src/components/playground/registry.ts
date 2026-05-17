@@ -82,5 +82,6 @@ export const installationFrameworks: Array<{ slug: string; label: string }> = [
   { slug: "next", label: "Next.js" },
   { slug: "react-router", label: "React Router" },
   { slug: "tanstack-start", label: "TanStack Start" },
+  { slug: "shadcn", label: "shadcn CLI" },
   { slug: "manual", label: "Manual" },
 ];

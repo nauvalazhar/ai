@@ -18,6 +18,7 @@ import {
   SiNextdotjs,
   SiReact,
   SiReactrouter,
+  SiShadcnui,
   SiVite,
 } from "react-icons/si";
 
@@ -41,6 +42,7 @@ const frameworkIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   next: SiNextdotjs,
   "react-router": SiReactrouter,
   "tanstack-start": TanStackIcon,
+  shadcn: SiShadcnui,
   manual: SiReact,
 };
 import { Button } from "../ai/button";

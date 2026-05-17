@@ -1,0 +1,107 @@
+---
+parts: []
+---
+
+The kit also ships as a shadcn-compatible registry, so you can install components with the shadcn CLI instead of ours. Same source, same components, different distribution.
+
+## When to use it
+
+Use the shadcn flow if your project already runs `shadcn init` and you want every UI source (shadcn primitives, our kit, any third-party registry) installed through one tool. Use the [native CLI](/installation) if you want framework auto-detection, conditional CSS token appending, and dependency assertions out of the box.
+
+## Setup
+
+If you haven't already, initialize shadcn in your project. This creates `components.json` and the path aliases the registry uses.
+
+<CodeTabs>
+```bash title="bun"
+bunx shadcn@latest init
+```
+
+```bash title="npm"
+npx shadcn@latest init
+```
+
+```bash title="pnpm"
+pnpm dlx shadcn@latest init
+```
+
+```bash title="yarn"
+yarn dlx shadcn@latest init
+```
+
+</CodeTabs>
+
+Then install the base item once. It seeds the design tokens (`cssVars`), keyframes, and base dependencies.
+
+<CodeTabs>
+```bash title="bun"
+bunx shadcn@latest add https://ai.nauv.al/shadcn/r/init.json
+```
+
+```bash title="npm"
+npx shadcn@latest add https://ai.nauv.al/shadcn/r/init.json
+```
+
+```bash title="pnpm"
+pnpm dlx shadcn@latest add https://ai.nauv.al/shadcn/r/init.json
+```
+
+```bash title="yarn"
+yarn dlx shadcn@latest add https://ai.nauv.al/shadcn/r/init.json
+```
+
+</CodeTabs>
+
+## Namespace (recommended)
+
+Register the kit as a namespace in `components.json` so you can install by short name.
+
+```json title="components.json"
+{
+  "registries": {
+    "@aikit": "https://ai.nauv.al/shadcn/r/{name}.json"
+  }
+}
+```
+
+Then add any component with the namespace prefix.
+
+<CodeTabs>
+```bash title="bun"
+bunx shadcn@latest add @aikit/message
+```
+
+```bash title="npm"
+npx shadcn@latest add @aikit/message
+```
+
+```bash title="pnpm"
+pnpm dlx shadcn@latest add @aikit/message
+```
+
+```bash title="yarn"
+yarn dlx shadcn@latest add @aikit/message
+```
+
+</CodeTabs>
+
+The file lands at `<aliases.components>/ai/message.tsx` with imports rewritten to your project's `@/lib/utils` and `@/components/ai/*` aliases.
+
+## Without a namespace
+
+If you don't want to edit `components.json`, you can pass the full URL each time.
+
+```bash
+bunx shadcn@latest add https://ai.nauv.al/shadcn/r/message.json
+```
+
+Transitive dependencies (e.g. `composer-rich` requiring `composer`) resolve automatically.
+
+## What's the difference
+
+The shadcn distribution is a transform of the same `registry.config.ts`. Output lives at `https://ai.nauv.al/shadcn/r/*.json`. Behavior diverges in two places:
+
+- **No Tailwind check.** Shadcn assumes your project is already set up. Run `shadcn init` first if you're starting fresh.
+- **No conditional CSS append.** The token CSS ships as `cssVars`, which shadcn merges into your existing CSS file based on `components.json`. It does not append a separate block.
+
+Components, tokens, and behavior are otherwise identical.

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/button.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/button.tsx",
+      "content": "import { Button as BaseButton } from \"@base-ui/react/button\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nexport const buttonVariants = cva(\n  cn(\n    \"relative inline-flex items-center justify-center gap-1.5\",\n    \"h-7.5 rounded text-sm font-medium select-none cursor-pointer\",\n    \"transition-[color,background-color,translate] duration-150\",\n    \"active:translate-y-0.25\",\n    \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary\",\n    \"data-disabled:cursor-not-allowed data-disabled:opacity-60 data-disabled:active:translate-x-0\",\n    \"[&>svg]:size-4 [&>svg]:shrink-0\",\n    \"[&>svg]:transition-all\",\n    \"[&>[data-slot=button-spinner]]:-mr-[22px]\",\n    \"[&>[data-slot=button-spinner]]:scale-0\",\n    \"[&>[data-slot=button-spinner]]:opacity-0\",\n  ),\n  {\n    variants: {\n      variant: {\n        primary: \"bg-primary text-primary-foreground hover:bg-primary/90\",\n        secondary: \"bg-secondary text-secondary-foreground hover:bg-accent\",\n        ghost: \"bg-transparent text-foreground hover:bg-accent\",\n        outline: \"bg-surface text-foreground ring ring-border hover:bg-accent\",\n      },\n      iconOnly: {\n        true: \"size-7.5 px-0\",\n        false: \"px-3\",\n      },\n      loading: {\n        true: cn(\n          \"cursor-progress opacity-70\",\n          \"[&>svg:not([data-slot=button-spinner])]:scale-0\",\n          \"[&>svg:not([data-slot=button-spinner])]:opacity-0\",\n          \"[&>svg:not([data-slot=button-spinner])]:-mr-[22px]\",\n          \"[&>[data-slot=button-spinner]]:mr-0\",\n          \"[&>[data-slot=button-spinner]]:scale-100\",\n          \"[&>[data-slot=button-spinner]]:opacity-100\",\n          \"[&>[data-slot=button-spinner]]:animate-spin\",\n        ),\n      },\n    },\n    defaultVariants: { variant: \"primary\", iconOnly: false, loading: false },\n  },\n);\n\ntype ButtonProps = React.ComponentProps<typeof BaseButton> &\n  Omit<VariantProps<typeof buttonVariants>, \"loading\"> & {\n    loading?: boolean;\n  };\n\nexport function Button({\n  variant = \"primary\",\n  iconOnly,\n  loading,\n  disabled,\n  className,\n  children,\n  ...props\n}: ButtonProps) {\n  return (\n    <BaseButton\n      data-slot=\"button\"\n      disabled={disabled || loading}\n      aria-busy={loading}\n      data-variant={variant}\n      className={cn(buttonVariants({ variant, iconOnly, loading, className }))}\n      {...props}\n    >\n      {loading !== undefined && (\n        <svg\n          width=\"24\"\n          height=\"24\"\n          viewBox=\"0 0 24 24\"\n          fill=\"none\"\n          stroke=\"currentColor\"\n          strokeLinecap=\"round\"\n          strokeLinejoin=\"round\"\n          data-slot=\"button-spinner\"\n          strokeWidth={2.5}\n          aria-hidden\n        >\n          <path d=\"M21 12a9 9 0 1 1-6.219-8.56\" />\n        </svg>\n      )}\n      {children}\n    </BaseButton>\n  );\n}"
+    }
+  ]
+}

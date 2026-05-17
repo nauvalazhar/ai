@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scroll-area",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/scroll-area.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/scroll-area.tsx",
+      "content": "\"use client\";\n\nimport { ScrollArea as BaseScrollArea } from \"@base-ui/react/scroll-area\";\nimport { cn } from \"@/lib/utils\";\n\nexport function ScrollArea({\n  ref,\n  children,\n  className,\n  scrollbar = \"both\",\n  fitContent = false,\n  ...props\n}: React.ComponentProps<typeof BaseScrollArea.Viewport> & {\n  scrollbar?: \"horizontal\" | \"vertical\" | \"both\" | false;\n  fitContent?: boolean;\n}) {\n  return (\n    <BaseScrollArea.Root\n      data-slot=\"scroll-area\"\n      className={cn(\"overflow-hidden\", className)}\n    >\n      <BaseScrollArea.Viewport\n        ref={ref}\n        data-slot=\"scroll-area-viewport\"\n        className={cn(\n          \"overscroll-contain outline-none w-full\",\n          fitContent ? \"max-h-[inherit]\" : \"h-full\",\n        )}\n        {...props}\n      >\n        {children}\n      </BaseScrollArea.Viewport>\n      {scrollbar === \"horizontal\" && (\n        <ScrollAreaScrollbar orientation=\"horizontal\" />\n      )}\n      {scrollbar === \"vertical\" && (\n        <ScrollAreaScrollbar orientation=\"vertical\" />\n      )}\n      {scrollbar === \"both\" && (\n        <>\n          <ScrollAreaScrollbar orientation=\"horizontal\" />\n          <ScrollAreaScrollbar orientation=\"vertical\" />\n        </>\n      )}\n      <BaseScrollArea.Corner />\n    </BaseScrollArea.Root>\n  );\n}\n\nfunction ScrollAreaScrollbar({\n  className,\n  orientation = \"vertical\",\n  ...props\n}: React.ComponentProps<typeof BaseScrollArea.Scrollbar>) {\n  return (\n    <BaseScrollArea.Scrollbar\n      {...props}\n      data-slot=\"scroll-area-scrollbar\"\n      className={cn(\n        \"flex touch-none select-none transition-opacity delay-300 pointer-events-none opacity-0\",\n        \"data-[hovering]:opacity-100 data-[hovering]:delay-0 data-[hovering]:duration-75 data-[hovering]:pointer-events-auto\",\n        \"data-[scrolling]:opacity-100 data-[scrolling]:delay-0 data-[scrolling]:duration-75 data-[scrolling]:pointer-events-auto\",\n        orientation === \"vertical\" ? \"flex-col w-1.5\" : \"flex-row h-1.5\",\n        className,\n      )}\n      orientation={orientation}\n      style={{\n        position: \"absolute\",\n        ...(orientation === \"vertical\"\n          ? {\n              right: \"0.25rem\",\n              top: \"0.25rem\",\n              height: \"calc(100% - 1rem)\",\n            }\n          : {\n              bottom: \"0.25rem\",\n              left: \"0.25rem\",\n              width: \"calc(100% - 1rem)\",\n            }),\n      }}\n    >\n      <BaseScrollArea.Thumb\n        data-slot=\"scroll-area-thumb\"\n        className={cn(\n          \"rounded-full bg-scrollbar cursor-grab active:cursor-grabbing\",\n          orientation === \"vertical\" ? \"w-full\" : \"h-full\",\n        )}\n      />\n    </BaseScrollArea.Scrollbar>\n  );\n}"
+    }
+  ]
+}

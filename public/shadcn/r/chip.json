@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chip",
+  "type": "registry:ui",
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json"
+  ],
+  "files": [
+    {
+      "path": "ai/chip.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/chip.tsx",
+      "content": "import { useRender } from \"@base-ui/react/use-render\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nexport const chipVariants = cva(\n  cn(\n    \"inline-flex items-center gap-1.5 rounded bg-surface-elevated text-muted-foreground\",\n    \"ring ring-border\",\n    \"[&>svg]:shrink-0\",\n    \"[&:is(button,a)]:cursor-pointer\",\n    \"[&:is(button,a)]:transition-colors\",\n    \"[&:is(button,a):hover]:bg-accent\",\n    \"[&:is(button,a):hover]:text-foreground\",\n    \"[&:is(a)]:no-underline [&:is(a)]:text-muted-foreground\",\n    \"[&:is(button,a):focus-visible]:outline-none\",\n    \"[&:is(button,a):focus-visible]:ring-2\",\n    \"[&:is(button,a):focus-visible]:ring-primary\",\n  ),\n  {\n    variants: {\n      size: {\n        default: \"px-1.5 py-0.5 text-sm [&>svg]:size-4\",\n        sm: \"px-1.5 py-0.5 text-xs [&>svg]:size-3\",\n      },\n    },\n    defaultVariants: { size: \"default\" },\n  },\n);\n\ntype ChipProps = useRender.ComponentProps<\"span\"> &\n  VariantProps<typeof chipVariants>;\n\nexport function Chip({\n  size = \"default\",\n  className,\n  render,\n  ...props\n}: ChipProps) {\n  return useRender({\n    render,\n    defaultTagName: \"span\",\n    props: {\n      ...props,\n      \"data-slot\": \"chip\",\n      \"data-size\": size,\n      className: cn(chipVariants({ size, className })),\n    },\n  });\n}"
+    }
+  ]
+}
