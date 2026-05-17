@@ -279,10 +279,11 @@ export function ComposerToolbarSpacer({
 
 export function ComposerSubmit({
   render,
+  disabled: disabledProp,
   ...props
 }: useRender.ComponentProps<"button">) {
   const ctx = useComposerContext();
-  const blocked = ctx.isEmpty || ctx.disabled;
+  const blocked = ctx.isEmpty || ctx.disabled || !!disabledProp;
   const ariaLabel =
     (props as { "aria-label"?: string })["aria-label"] ?? "Send";
 
