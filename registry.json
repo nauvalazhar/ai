@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai.nauv.al/schemas/registry.v1.json",
-  "name": "ai-kit",
+  "name": "ai",
   "homepage": "https://ai.nauv.al",
   "docs": "src/docs",
   "setup": {

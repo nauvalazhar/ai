@@ -6,8 +6,8 @@ import { buildCommand } from '~/commands/build';
 import { docsCommand } from '~/commands/docs';
 
 program
-  .name('ai-kit')
-  .description('CLI for the ai-kit component registry')
+  .name('ai')
+  .description('CLI for the kit')
   .version('0.0.1');
 
 program.addCommand(initCommand);

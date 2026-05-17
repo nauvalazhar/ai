@@ -15,7 +15,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "ai-kit",
+        title: "ai",
       },
     ],
     links: [
@@ -46,7 +46,7 @@ export const Route = createRootRoute({
   notFoundComponent: () => <h1>Not Found</h1>,
 });
 
-const themeScript = `(function(){try{var s=localStorage.getItem("aikit-theme");var m=window.matchMedia("(prefers-color-scheme: dark)");var isDark=s==="dark"||(s!=="light"&&m.matches);if(isDark)document.documentElement.classList.add("dark");window.addEventListener("storage",function(e){if(e.key!=="aikit-theme")return;var v=e.newValue;var d=v==="dark"||(v!=="light"&&m.matches);document.documentElement.classList.toggle("dark",d);});m.addEventListener("change",function(e){if(localStorage.getItem("aikit-theme"))return;document.documentElement.classList.toggle("dark",e.matches);});}catch(e){}})();`;
+const themeScript = `(function(){try{var s=localStorage.getItem("ai-theme");var m=window.matchMedia("(prefers-color-scheme: dark)");var isDark=s==="dark"||(s!=="light"&&m.matches);if(isDark)document.documentElement.classList.add("dark");window.addEventListener("storage",function(e){if(e.key!=="ai-theme")return;var v=e.newValue;var d=v==="dark"||(v!=="light"&&m.matches);document.documentElement.classList.toggle("dark",d);});m.addEventListener("change",function(e){if(localStorage.getItem("ai-theme"))return;document.documentElement.classList.toggle("dark",e.matches);});}catch(e){}})();`;
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

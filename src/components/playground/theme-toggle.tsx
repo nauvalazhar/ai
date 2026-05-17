@@ -6,7 +6,7 @@ type Theme = "light" | "dark";
 
 function readTheme(): Theme {
   if (typeof document === "undefined") return "light";
-  const saved = localStorage.getItem("aikit-theme");
+  const saved = localStorage.getItem("ai-theme");
   if (saved === "dark" || saved === "light") return saved;
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
@@ -18,7 +18,7 @@ export function ThemeToggle() {
     setTheme(readTheme());
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     function onChange(e: MediaQueryListEvent) {
-      if (localStorage.getItem("aikit-theme")) return;
+      if (localStorage.getItem("ai-theme")) return;
       const next: Theme = e.matches ? "dark" : "light";
       setTheme(next);
       document.documentElement.classList.toggle("dark", e.matches);
@@ -31,11 +31,17 @@ export function ThemeToggle() {
     const next: Theme = theme === "light" ? "dark" : "light";
     setTheme(next);
     document.documentElement.classList.toggle("dark", next === "dark");
-    localStorage.setItem("aikit-theme", next);
+    localStorage.setItem("ai-theme", next);
   }
 
   return (
-    <Button onClick={toggle} variant="ghost" iconOnly aria-label="Toggle theme">
+    <Button
+      onClick={toggle}
+      variant="ghost"
+      iconOnly
+      aria-label="Toggle theme"
+      className="text-muted-foreground hover:text-foreground"
+    >
       {theme === "light" ? (
         <Moon className="size-4.5" />
       ) : (

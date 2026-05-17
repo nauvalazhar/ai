@@ -1,4 +1,4 @@
-# ai-kit
+# About
 
 React components for building AI chat interfaces. Messages, streaming, prompt, reasoning blocks, tool calls, citations, and the rest of the pieces a modern AI app needs.
 

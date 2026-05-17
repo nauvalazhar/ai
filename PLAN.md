@@ -1,4 +1,4 @@
-# aikit component plan
+# Component plan
 
 The roadmap of components for this AI app UI kit. Use this as the source of truth for what to build, what each piece does, and how its parts compose. Read `CONVENTIONS.md` for the rules every component follows (compound parts, `data-slot`, tokens, etc.) — this file is *what to build*, not *how*.
 

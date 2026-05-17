@@ -12,16 +12,17 @@ import { resolveRegistry } from '~/lib/resolve-registry';
 import { writeConfig } from '~/lib/write-config';
 import { Config } from '~/schemas/config-schema';
 import { abortIfCancel } from '~/lib/utils';
-import { CLI_NAME, CONFIG_FILE, REGISTRY_SOURCE_KEY } from '~/lib/constants';
+import { CONFIG_FILE, REGISTRY_SOURCE_KEY } from '~/lib/constants';
+import { dlxCommand } from '~/lib/dlx-command';
 
 export const initCommand = new Command()
   .name('init')
-  .description('Initialize ai-kit in your project')
+  .description('Initialize the kit in your project')
   .option('-r, --registry <url>', 'Registry URL')
   .option('-y, --yes', 'Skip confirmation')
   .action(async (options) => {
     console.log();
-    intro(picocolors.bgBlue(picocolors.blackBright(' Initialize ai-kit ')));
+    intro(picocolors.bgBlue(picocolors.blackBright(' Initialize ')));
 
     log.warn(
       picocolors.yellow(
@@ -46,7 +47,7 @@ export const initCommand = new Command()
             registries: {
               sources: {
                 [REGISTRY_SOURCE_KEY]: {
-                  name: 'ai-kit',
+                  name: 'aikit',
                   url: registryUrl,
                 },
               },
@@ -80,7 +81,7 @@ export const initCommand = new Command()
         outro(picocolors.green('Config created ✓'));
         log.info(
           'Run ' +
-          picocolors.cyan(`${CLI_NAME} add <items>`) +
+          picocolors.cyan(await dlxCommand('add <items>')) +
           ' to add items to your project.',
         );
         console.log();
@@ -135,10 +136,10 @@ export const initCommand = new Command()
       // Show summary
       note(picocolors.dim('Config saved to: ') + picocolors.cyan(CONFIG_FILE));
 
-      log.info(picocolors.green('ai-kit initialized successfully! ✓'));
+      log.info(picocolors.green('Kit initialized successfully! ✓'));
       outro(
         'Run ' +
-        picocolors.cyan(`${CLI_NAME} add <items>`) +
+        picocolors.cyan(await dlxCommand('add <items>')) +
         ' to add items to your project.',
       );
       console.log();

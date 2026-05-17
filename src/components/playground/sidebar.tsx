@@ -62,7 +62,7 @@ export function Sidebar() {
           )}
         >
           <img src="/logo.webp" alt="Logo" className="size-5.5 mr-2.5" />
-          ai-kit
+          nauvalazhar/ai
         </Link>
         <div className="flex items-center ml-auto gap-0.5">
           <ThemeToggle />
@@ -83,7 +83,7 @@ export function Sidebar() {
         <Chip
           render={
             <a
-              href="https://github.com/nauvalazhar/ai-kit"
+              href="https://github.com/nauvalazhar/ai"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs"

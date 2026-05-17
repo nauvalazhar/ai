@@ -25,7 +25,7 @@ export async function resolveRegistry(
   } catch {}
 
   const isDev =
-    process.env.AI_KIT_DEV === '1' || process.env.NODE_ENV === 'development';
+    process.env.AI_DEV === '1' || process.env.NODE_ENV === 'development';
 
   const defaultRegistry = isDev
     ? DEFAULT_REGISTRY_URL_DEV

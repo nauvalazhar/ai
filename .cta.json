@@ -1,5 +1,5 @@
 {
-  "projectName": "aikit",
+  "projectName": "ai",
   "mode": "file-router",
   "typescript": true,
   "packageManager": "bun",

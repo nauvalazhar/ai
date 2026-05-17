@@ -5,7 +5,7 @@ import { findComponentDocs } from "#/components/playground/registry";
 export const Route = createFileRoute("/_explorer/introduction")({
   component: IntroductionDocs,
   head: () => ({
-    meta: [{ title: "Introduction — ai-kit" }],
+    meta: [{ title: "Introduction — nauvalazhar/ai" }],
   }),
 });
 

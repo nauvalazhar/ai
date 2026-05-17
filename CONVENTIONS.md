@@ -1,4 +1,4 @@
-# aikit conventions
+# Conventions
 
 Rules every component in `src/components/ai/` follows. Read this before adding or editing a component.
 

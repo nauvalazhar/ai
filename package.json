@@ -1,5 +1,5 @@
 {
-  "name": "ai-kit-site",
+  "name": "ai-site",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -11,8 +11,8 @@
   "scripts": {
     "dev": "vite dev --port 3300",
     "build": "bun run build:cli && bun run build:registry && vite build",
-    "build:cli": "cd packages/ai-kit && bun run build",
-    "build:registry": "node packages/ai-kit/dist/index.js build",
+    "build:cli": "cd packages/ai && bun run build",
+    "build:registry": "node packages/ai/dist/index.js build",
     "preview": "vite preview",
     "test": "vitest run",
     "deploy": "bun run build && wrangler deploy"
@@ -52,7 +52,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "ai-kit": "workspace:*",
+    "@nauvalazhar/ai": "workspace:*",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",

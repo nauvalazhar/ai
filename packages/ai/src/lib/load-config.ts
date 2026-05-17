@@ -5,9 +5,10 @@ import { defaultConfig } from '~/lib/default-config';
 import defu from 'defu';
 import { log } from '@clack/prompts';
 import z from 'zod';
+import { CONFIG_FILE } from '~/lib/constants';
 
 export async function loadConfig(cwd: string = process.cwd()): Promise<Config> {
-  const configPath = path.join(cwd, 'aikit.json');
+  const configPath = path.join(cwd, CONFIG_FILE);
 
   try {
     const content = await fs.readFile(configPath, 'utf-8');

@@ -8,7 +8,7 @@ import {
   CodeBlockTitle,
 } from "#/components/ai/code-block";
 
-const code = `import { CodeBlock } from "@aikit/code-block";
+const code = `import { CodeBlock } from "@/components/ai/code-block";
 
 <CodeBlock>
   <CodeBlockContent>

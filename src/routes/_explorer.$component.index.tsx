@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_explorer/$component/")({
   head: ({ params }) => ({
     meta: [
       {
-        title: `${findComponent(params.component)?.name ?? params.component} — ai-kit`,
+        title: `${findComponent(params.component)?.name ?? params.component} — nauvalazhar/ai`,
       },
     ],
   }),

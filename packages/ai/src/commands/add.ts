@@ -13,7 +13,8 @@ import picocolors from 'picocolors';
 
 import { existsSync } from 'fs';
 import { resolveRegistry } from '~/lib/resolve-registry';
-import { CLI_NAME, CONFIG_FILE } from '~/lib/constants';
+import { CONFIG_FILE } from '~/lib/constants';
+import { dlxCommand } from '~/lib/dlx-command';
 
 export const addCommand = new Command()
   .name('add')
@@ -35,7 +36,7 @@ export const addCommand = new Command()
     if (itemNames.length === 0) {
       log.info('You must provide at least one item.');
       log.info(
-        `Run ${picocolors.cyan(`${CLI_NAME} add <items>`)} to add items to your project.`,
+        `Run ${picocolors.cyan(await dlxCommand('add <items>'))} to add items to your project.`,
       );
       console.log();
       return;
@@ -45,7 +46,7 @@ export const addCommand = new Command()
     if (!existsSync(path.join(process.cwd(), CONFIG_FILE))) {
       log.error(
         picocolors.red(
-          `You can only use this command in an ai-kit project. Run ${CLI_NAME} init first.`,
+          `No ${CONFIG_FILE} found. Run ${await dlxCommand('init')} first.`,
         ),
       );
       console.log();

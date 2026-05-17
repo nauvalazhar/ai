@@ -4,9 +4,10 @@ import defu from 'defu';
 import { Config, ConfigSchema } from '../schemas/config-schema';
 import { log } from '@clack/prompts';
 import picocolors from 'picocolors';
+import { CONFIG_FILE } from './constants';
 
 export async function getConfig(): Promise<Config> {
-  const configPath = './aikit.json';
+  const configPath = `./${CONFIG_FILE}`;
 
   if (
     !(await fs

@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AccessibilityIcon,
   ActivityIcon,
-  ArrowRightIcon,
   BlocksIcon,
   BracesIcon,
   GitForkIcon,
@@ -13,6 +12,13 @@ import { Button } from "#/components/ai/button";
 import { SidebarOpenToggle } from "#/components/playground/sidebar-toggle";
 
 export const Route = createFileRoute("/_explorer/")({
+  head: () => ({
+    meta: [
+      {
+        title: "The interface for your favorite AI SDK – nauvalazhar/ai",
+      },
+    ],
+  }),
   component: Landing,
 });
 
@@ -80,7 +86,7 @@ function Features() {
       />
       <FeatureCard
         icon={GitForkIcon}
-        title="Copy, don't install"
+        title="Own the code"
         description="Components live in your repo. Edit them, fork them, and own the surface area you ship."
       />
     </section>
