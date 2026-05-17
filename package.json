@@ -12,7 +12,7 @@
     "dev": "vite dev --port 3300",
     "build": "bun run build:cli && bun run build:registry && vite build",
     "build:cli": "cd packages/ai-kit && bun run build",
-    "build:registry": "ai-kit build",
+    "build:registry": "node packages/ai-kit/dist/index.js build",
     "preview": "vite preview",
     "test": "vitest run",
     "deploy": "bun run build && wrangler deploy"
