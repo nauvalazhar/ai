@@ -182,7 +182,7 @@ async function buildDocs(
   output: string,
 ): Promise<number> {
   const docsDir = path.resolve(docsPath);
-  const mdFiles = await glob('*.{md,mdx}', { cwd: docsDir });
+  const mdFiles = await glob('**/*.{md,mdx}', { cwd: docsDir });
 
   if (mdFiles.length === 0) return 0;
 
@@ -192,11 +192,14 @@ async function buildDocs(
   const docsIndex: Array<{ name: string }> = [];
 
   for (const file of mdFiles.sort()) {
-    const name = file.replace(/\.mdx?$/, '');
+    // Use slash-separated relative path as the canonical name, then flatten
+    // to dots for the filename so the docs dir stays flat.
+    const name = file.replace(/\.mdx?$/, '').replace(/\\/g, '/');
+    const fileName = `${name.replace(/\//g, '.')}.json`;
     const content = await fs.readFile(path.join(docsDir, file), 'utf-8');
 
     await fs.writeFile(
-      path.join(docsOutput, `${name}.json`),
+      path.join(docsOutput, fileName),
       JSON.stringify({ name, content: content.trim() }, null, 2),
       'utf-8',
     );

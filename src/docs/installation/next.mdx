@@ -1,0 +1,152 @@
+---
+parts: []
+---
+
+Install the kit in a Next.js project (App Router).
+
+## Create project
+
+Scaffold a Next.js project. The `--yes` flag accepts the defaults, which include TypeScript, Tailwind, App Router, and the `@/*` alias.
+
+<CodeTabs>
+```bash title="bun"
+bun create next-app --yes
+```
+
+```bash title="npm"
+npx create-next-app@latest --yes
+```
+
+```bash title="pnpm"
+pnpm create next-app --yes
+```
+
+```bash title="yarn"
+yarn create next-app --yes
+```
+</CodeTabs>
+
+If you opted out of Tailwind during setup, add it before running init. The CLI exits if Tailwind isn't installed.
+
+## Initialize
+
+Run init to install base deps, append the token CSS, and create the `cn` helper.
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai init
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai init
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai init
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai init
+```
+</CodeTabs>
+
+The CLI prompts to confirm before touching any files. Pass `-y` to skip.
+
+## What init does
+
+- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
+- Token CSS appended to `app/globals.css` (or `src/app/globals.css` if you use `src/`)
+- `cn` helper created at `lib/utils.ts` (or `src/lib/utils.ts`)
+- `aikit.json` written with `paths.components: "components/ai"` and `imports: { "components/ai": "@/components/ai", "lib": "@/lib" }`
+
+Most Next.js setups already alias `@/*` to the project root in `tsconfig.json`. If yours doesn't, add it:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
+```
+
+## Add a component
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai add message
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai add message
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai add message
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai add message
+```
+</CodeTabs>
+
+The file lands at `components/ai/message.tsx` with imports rewritten to your alias. Use it from a server or client component:
+
+```tsx title="app/page.tsx"
+import { Message, MessageAvatar, MessageContent } from "@/components/ai/message";
+
+export default function Page() {
+  return (
+    <Message>
+      <MessageAvatar />
+      <MessageContent>Hi there.</MessageContent>
+    </Message>
+  );
+}
+```
+
+## Dark mode
+
+`next-themes` is the simplest way. Wrap your `app/layout.tsx` with the provider and set the `class` attribute on `<html>`:
+
+```tsx title="app/layout.tsx"
+import { ThemeProvider } from "next-themes";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+The kit picks up `.dark` from any ancestor.
+
+## Font family (recommended)
+
+The kit was designed around Inter and JetBrains Mono. Add the following to `app/globals.css`:
+
+```css title="app/globals.css"
+@theme inline {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+```
+
+## Icons (optional)
+
+Components ship without a bundled icon library. Use any set you like. The demos on this site use `lucide-react`.
+
+## Skipping the CLI
+
+Prefer to copy files by hand? See [Manual setup](/installation/manual).

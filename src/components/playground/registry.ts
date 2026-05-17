@@ -22,11 +22,11 @@ const sources = import.meta.glob("/src/demos/**/*.tsx", {
   eager: true,
 }) as Record<string, string>;
 
-const mdxModules = import.meta.glob<MdxModule>("/src/docs/*.mdx", {
+const mdxModules = import.meta.glob<MdxModule>("/src/docs/**/*.mdx", {
   eager: true,
 });
 
-const mdxSources = import.meta.glob("/src/docs/*.mdx", {
+const mdxSources = import.meta.glob("/src/docs/**/*.mdx", {
   query: "?raw",
   import: "default",
   eager: true,
@@ -36,7 +36,7 @@ const componentDocs: Record<string, DocsEntry> = Object.entries(
   mdxModules,
 ).reduce(
   (acc, [path, mod]) => {
-    const match = path.match(/\/src\/docs\/([^/]+)\.mdx$/);
+    const match = path.match(/\/src\/docs\/(.+)\.mdx$/);
     if (!match) return acc;
     acc[match[1]] = {
       Component: mod.default,
@@ -71,3 +71,16 @@ export function findDemoSource(
 export function findComponentDocs(component: string): DocsEntry | undefined {
   return componentDocs[component];
 }
+
+export function findInstallationDoc(framework?: string): DocsEntry | undefined {
+  if (!framework) return componentDocs["installation"];
+  return componentDocs[`installation/${framework}`];
+}
+
+export const installationFrameworks: Array<{ slug: string; label: string }> = [
+  { slug: "vite", label: "Vite" },
+  { slug: "next", label: "Next.js" },
+  { slug: "react-router", label: "React Router" },
+  { slug: "tanstack-start", label: "TanStack Start" },
+  { slug: "manual", label: "Manual" },
+];

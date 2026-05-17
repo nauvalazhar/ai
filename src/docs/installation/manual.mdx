@@ -1,0 +1,259 @@
+---
+parts: []
+---
+
+Add components by hand if you can't use the CLI.
+
+## Tailwind CSS
+
+The kit styles itself with Tailwind utilities and CSS variables. Make sure Tailwind is installed before you start. If you don't have it yet, follow the [Tailwind installation guide](https://tailwindcss.com/docs/installation) for your bundler.
+
+## Dependencies
+
+Install the packages every kit component relies on.
+
+<CodeTabs>
+```bash title="npm"
+npm install @base-ui/react class-variance-authority clsx tailwind-merge
+```
+
+```bash title="pnpm"
+pnpm add @base-ui/react class-variance-authority clsx tailwind-merge
+```
+
+```bash title="yarn"
+yarn add @base-ui/react class-variance-authority clsx tailwind-merge
+```
+
+```bash title="bun"
+bun add @base-ui/react class-variance-authority clsx tailwind-merge
+```
+</CodeTabs>
+
+Base UI powers the interactive parts like collapsibles, popovers, and scroll areas. `class-variance-authority` drives visual variants. `clsx` and `tailwind-merge` back the `cn` helper.
+
+Some components have their own extras. The Code Block uses `react-shiki` for syntax highlighting. The Message family pairs with `react-markdown` for streamed prose. The rich Composer is built on `@tiptap/react` and its starter kit. Install these only when you pull in the component that needs them.
+
+## Path Aliases
+
+The kit imports its utility helper with `@/lib/utils`. Add the alias to `tsconfig.json`:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+React Router projects conventionally use `~/*` instead of `@/*`. Pick the prefix that fits your bundler, then update the imports in the files you copy in to match.
+
+## Utility
+
+The kit relies on a single `cn` helper to merge Tailwind classes. Create it at `src/lib/utils.ts`:
+
+```ts title="src/lib/utils.ts"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+Every component imports `cn` from this file. If you move it, update the import paths to match.
+
+## Theme Tokens
+
+Components style themselves with CSS variables. Names match the shadcn and Selia conventions, so an existing theme will drop in unchanged. Add the following to your global stylesheet:
+
+```css title="style.css"
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.75rem;
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+
+  --color-foreground: oklch(0.205 0.0022 259.23);
+  --color-background: oklch(0.97 0.0022 259.23);
+  --color-muted: oklch(0.94 0.0022 259.23);
+  --color-muted-foreground: oklch(0.5 0 0);
+
+  --color-surface: oklch(1 0 0);
+  --color-surface-elevated: oklch(0.9781 0.0022 259.23);
+
+  --color-border: oklch(0.9421 0.0022 259.23);
+
+  --scrollbar: oklch(0.7 0.0092 248.03);
+
+  --color-primary: oklch(0.55 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.95 0.0022 259.23);
+  --color-secondary-foreground: oklch(0.205 0.0022 259.23);
+
+  --color-destructive: oklch(0.55 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.94 0.0022 259.23);
+}
+
+.dark {
+  --color-foreground: oklch(0.982 0 0);
+  --color-background: oklch(0.1985 0.0022 259.23);
+  --color-muted: oklch(0.22 0 0);
+  --color-muted-foreground: oklch(0.65 0 0);
+
+  --color-surface: oklch(0.2065 0.0022 259.23);
+  --color-surface-elevated: oklch(0.2364 0.0022 259.23);
+
+  --color-border: oklch(0.2867 0 0);
+
+  --scrollbar: oklch(0.4625 0.0092 248.03);
+
+  --color-primary: oklch(0.6 0.1906 259.23);
+  --color-primary-foreground: oklch(1 0 0);
+
+  --color-secondary: oklch(0.2972 0.0022 259.23);
+  --color-secondary-foreground: oklch(0.982 0 0);
+
+  --color-destructive: oklch(0.6 0.2055 24.2);
+  --color-destructive-foreground: oklch(1 0 0);
+
+  --color-accent: oklch(0.2664 0.0022 259.23);
+}
+
+@theme {
+  --color-foreground: var(--color-foreground);
+  --color-background: var(--color-background);
+
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-surface: var(--color-surface);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-surface-elevated: var(--color-surface-elevated);
+
+  --color-border: var(--color-border);
+
+  --color-scrollbar: var(--scrollbar);
+
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+
+  --color-accent: var(--color-accent);
+
+  --radius: var(--radius);
+  --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
+}
+
+@keyframes text-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes text-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes loading-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes citation-enter-next {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes citation-enter-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+```
+
+The `@theme` block exposes the variables to Tailwind so utilities like `bg-background` and `text-foreground` resolve correctly. To retune the kit, override the variables in `:root` or `.dark`. Every component rounds with `rounded-md`, so changing `--radius` once reshapes the whole kit.
+
+## Add a Component
+
+With the setup in place, copy any component you want into your project. Open the source for the part you need from the sidebar, drop the file into `src/components/ai/`, and import it from your app:
+
+```tsx
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+} from "@/components/ai/message";
+
+export function Reply() {
+  return (
+    <Message>
+      <MessageAvatar />
+      <MessageContent>Hi there.</MessageContent>
+    </Message>
+  );
+}
+```
+
+The file lives in your repo from that point on. Edit it, rename parts, or strip out the bits you don't need. There is no package to update, and no upstream to fight when your design changes.
+
+## Font family (recommended)
+
+The kit was designed around Inter and JetBrains Mono. Add the following to your global stylesheet:
+
+```css title="style.css"
+@theme inline {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+```
+
+## Icons (optional)
+
+Components ship without a bundled icon library. Use any set you like. The demos on this site use `lucide-react`.
+
+## What's next
+
+Browse the sidebar to pick the first component you want to bring in. Each page lists the parts, runnable demos, and a copy-as-markdown button so you can paste the docs into a model and have it scaffold the wiring for you.

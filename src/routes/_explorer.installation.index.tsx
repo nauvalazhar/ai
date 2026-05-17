@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DocsView } from "#/components/playground/docs-view";
 import { findComponentDocs } from "#/components/playground/registry";
 
-export const Route = createFileRoute("/_explorer/installation")({
+export const Route = createFileRoute("/_explorer/installation/")({
   component: InstallationDocs,
   head: () => ({
     meta: [{ title: "Installation — nauvalazhar/ai" }],

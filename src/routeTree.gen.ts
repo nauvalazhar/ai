@@ -12,9 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ExplorerRouteImport } from './routes/_explorer'
 import { Route as ExplorerIndexRouteImport } from './routes/_explorer.index'
 import { Route as ExplorerIntroductionRouteImport } from './routes/_explorer.introduction'
-import { Route as ExplorerInstallationRouteImport } from './routes/_explorer.installation'
+import { Route as ExplorerInstallationIndexRouteImport } from './routes/_explorer.installation.index'
 import { Route as ExplorerComponentIndexRouteImport } from './routes/_explorer.$component.index'
 import { Route as DemoComponentDemoRouteImport } from './routes/demo.$component.$demo'
+import { Route as ExplorerInstallationFrameworkRouteImport } from './routes/_explorer.installation.$framework'
 import { Route as ExplorerComponentDemoRouteImport } from './routes/_explorer.$component.$demo'
 
 const ExplorerRoute = ExplorerRouteImport.update({
@@ -31,11 +32,12 @@ const ExplorerIntroductionRoute = ExplorerIntroductionRouteImport.update({
   path: '/introduction',
   getParentRoute: () => ExplorerRoute,
 } as any)
-const ExplorerInstallationRoute = ExplorerInstallationRouteImport.update({
-  id: '/installation',
-  path: '/installation',
-  getParentRoute: () => ExplorerRoute,
-} as any)
+const ExplorerInstallationIndexRoute =
+  ExplorerInstallationIndexRouteImport.update({
+    id: '/installation/',
+    path: '/installation/',
+    getParentRoute: () => ExplorerRoute,
+  } as any)
 const ExplorerComponentIndexRoute = ExplorerComponentIndexRouteImport.update({
   id: '/$component/',
   path: '/$component/',
@@ -46,6 +48,12 @@ const DemoComponentDemoRoute = DemoComponentDemoRouteImport.update({
   path: '/demo/$component/$demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExplorerInstallationFrameworkRoute =
+  ExplorerInstallationFrameworkRouteImport.update({
+    id: '/installation/$framework',
+    path: '/installation/$framework',
+    getParentRoute: () => ExplorerRoute,
+  } as any)
 const ExplorerComponentDemoRoute = ExplorerComponentDemoRouteImport.update({
   id: '/$component/$demo',
   path: '/$component/$demo',
@@ -54,56 +62,62 @@ const ExplorerComponentDemoRoute = ExplorerComponentDemoRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof ExplorerIndexRoute
-  '/installation': typeof ExplorerInstallationRoute
   '/introduction': typeof ExplorerIntroductionRoute
   '/$component/$demo': typeof ExplorerComponentDemoRoute
+  '/installation/$framework': typeof ExplorerInstallationFrameworkRoute
   '/demo/$component/$demo': typeof DemoComponentDemoRoute
   '/$component/': typeof ExplorerComponentIndexRoute
+  '/installation/': typeof ExplorerInstallationIndexRoute
 }
 export interface FileRoutesByTo {
-  '/installation': typeof ExplorerInstallationRoute
   '/introduction': typeof ExplorerIntroductionRoute
   '/': typeof ExplorerIndexRoute
   '/$component/$demo': typeof ExplorerComponentDemoRoute
+  '/installation/$framework': typeof ExplorerInstallationFrameworkRoute
   '/demo/$component/$demo': typeof DemoComponentDemoRoute
   '/$component': typeof ExplorerComponentIndexRoute
+  '/installation': typeof ExplorerInstallationIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_explorer': typeof ExplorerRouteWithChildren
-  '/_explorer/installation': typeof ExplorerInstallationRoute
   '/_explorer/introduction': typeof ExplorerIntroductionRoute
   '/_explorer/': typeof ExplorerIndexRoute
   '/_explorer/$component/$demo': typeof ExplorerComponentDemoRoute
+  '/_explorer/installation/$framework': typeof ExplorerInstallationFrameworkRoute
   '/demo/$component/$demo': typeof DemoComponentDemoRoute
   '/_explorer/$component/': typeof ExplorerComponentIndexRoute
+  '/_explorer/installation/': typeof ExplorerInstallationIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/installation'
     | '/introduction'
     | '/$component/$demo'
+    | '/installation/$framework'
     | '/demo/$component/$demo'
     | '/$component/'
+    | '/installation/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/installation'
     | '/introduction'
     | '/'
     | '/$component/$demo'
+    | '/installation/$framework'
     | '/demo/$component/$demo'
     | '/$component'
+    | '/installation'
   id:
     | '__root__'
     | '/_explorer'
-    | '/_explorer/installation'
     | '/_explorer/introduction'
     | '/_explorer/'
     | '/_explorer/$component/$demo'
+    | '/_explorer/installation/$framework'
     | '/demo/$component/$demo'
     | '/_explorer/$component/'
+    | '/_explorer/installation/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,11 +148,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExplorerIntroductionRouteImport
       parentRoute: typeof ExplorerRoute
     }
-    '/_explorer/installation': {
-      id: '/_explorer/installation'
+    '/_explorer/installation/': {
+      id: '/_explorer/installation/'
       path: '/installation'
-      fullPath: '/installation'
-      preLoaderRoute: typeof ExplorerInstallationRouteImport
+      fullPath: '/installation/'
+      preLoaderRoute: typeof ExplorerInstallationIndexRouteImport
       parentRoute: typeof ExplorerRoute
     }
     '/_explorer/$component/': {
@@ -155,6 +169,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoComponentDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_explorer/installation/$framework': {
+      id: '/_explorer/installation/$framework'
+      path: '/installation/$framework'
+      fullPath: '/installation/$framework'
+      preLoaderRoute: typeof ExplorerInstallationFrameworkRouteImport
+      parentRoute: typeof ExplorerRoute
+    }
     '/_explorer/$component/$demo': {
       id: '/_explorer/$component/$demo'
       path: '/$component/$demo'
@@ -166,19 +187,21 @@ declare module '@tanstack/react-router' {
 }
 
 interface ExplorerRouteChildren {
-  ExplorerInstallationRoute: typeof ExplorerInstallationRoute
   ExplorerIntroductionRoute: typeof ExplorerIntroductionRoute
   ExplorerIndexRoute: typeof ExplorerIndexRoute
   ExplorerComponentDemoRoute: typeof ExplorerComponentDemoRoute
+  ExplorerInstallationFrameworkRoute: typeof ExplorerInstallationFrameworkRoute
   ExplorerComponentIndexRoute: typeof ExplorerComponentIndexRoute
+  ExplorerInstallationIndexRoute: typeof ExplorerInstallationIndexRoute
 }
 
 const ExplorerRouteChildren: ExplorerRouteChildren = {
-  ExplorerInstallationRoute: ExplorerInstallationRoute,
   ExplorerIntroductionRoute: ExplorerIntroductionRoute,
   ExplorerIndexRoute: ExplorerIndexRoute,
   ExplorerComponentDemoRoute: ExplorerComponentDemoRoute,
+  ExplorerInstallationFrameworkRoute: ExplorerInstallationFrameworkRoute,
   ExplorerComponentIndexRoute: ExplorerComponentIndexRoute,
+  ExplorerInstallationIndexRoute: ExplorerInstallationIndexRoute,
 }
 
 const ExplorerRouteWithChildren = ExplorerRoute._addFileChildren(

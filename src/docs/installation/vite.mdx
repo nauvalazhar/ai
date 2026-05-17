@@ -1,0 +1,218 @@
+---
+parts: []
+---
+
+Install the kit in a Vite project.
+
+## Create project
+
+Start with a fresh Vite app, then pick the React + TypeScript template when prompted.
+
+<CodeTabs>
+```bash title="bun"
+bun create vite
+```
+
+```bash title="npm"
+npm create vite@latest
+```
+
+```bash title="pnpm"
+pnpm create vite
+```
+
+```bash title="yarn"
+yarn create vite
+```
+
+</CodeTabs>
+
+## Tailwind CSS
+
+The CLI exits if Tailwind isn't installed, so set it up first.
+
+<CodeTabs>
+```bash title="bun"
+bun add tailwindcss @tailwindcss/vite
+```
+
+```bash title="npm"
+npm install tailwindcss @tailwindcss/vite
+```
+
+```bash title="pnpm"
+pnpm add tailwindcss @tailwindcss/vite
+```
+
+```bash title="yarn"
+yarn add tailwindcss @tailwindcss/vite
+```
+
+</CodeTabs>
+
+Replace the contents of `src/index.css` with:
+
+```css title="src/index.css"
+@import "tailwindcss";
+```
+
+## Path aliases
+
+Add the `@/*` alias to both tsconfig files so editors and the type checker resolve imports.
+
+<CodeTabs>
+```json title="tsconfig.json"
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+```json title="tsconfig.app.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+</CodeTabs>
+
+## Vite config
+
+Wire the Tailwind plugin and the path alias resolver.
+
+```ts title="vite.config.ts"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
+```
+
+## Initialize
+
+Run init to install base deps, append the token CSS, and create the `cn` helper.
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai init
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai init
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai init
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai init
+```
+
+</CodeTabs>
+
+The CLI prompts to confirm before touching any files. Pass `-y` to skip.
+
+## What init does
+
+- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
+- Token CSS appended to `src/index.css`
+- `cn` helper created at `src/lib/utils.ts`
+- `aikit.json` written with `paths.components: "src/components/ai"` and `imports: { "components/ai": "@/components/ai", "lib": "@/lib" }`
+
+If your alias is different, edit `aikit.json` after init and adjust the `imports` map.
+
+## Add a component
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai add message
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai add message
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai add message
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai add message
+```
+
+</CodeTabs>
+
+The file lands at `src/components/ai/message.tsx` with imports rewritten to your alias. Use it:
+
+```tsx
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+} from "@/components/ai/message";
+
+export function Reply() {
+  return (
+    <Message>
+      <MessageAvatar />
+      <MessageContent>Hi there.</MessageContent>
+    </Message>
+  );
+}
+```
+
+## Dark mode
+
+The kit reads `.dark` on any ancestor. Toggle it on `<html>` from your theme code:
+
+```tsx
+document.documentElement.classList.toggle("dark");
+```
+
+Or render `<html class="dark">` in `index.html` to pin dark mode on.
+
+## Font family (recommended)
+
+The kit was designed around Inter and JetBrains Mono. Add the following to `src/index.css`:
+
+```css title="src/index.css"
+@theme inline {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+```
+
+## Icons (optional)
+
+Components ship without a bundled icon library. Use any set you like. The demos on this site use `lucide-react`.
+
+## Skipping the CLI
+
+Prefer to copy files by hand? See [Manual setup](/installation/manual).

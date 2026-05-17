@@ -23,6 +23,7 @@ import {
 import type { PassThrough, Part } from "./docs-types";
 import type { DocsEntry } from "./registry";
 import { Syntax } from "./syntax";
+import { CodeTabs } from "./code-tabs";
 import { Button } from "../ai/button";
 import { SiMarkdown } from "react-icons/si";
 import { SidebarOpenToggle } from "./sidebar-toggle";
@@ -58,6 +59,7 @@ export function DocsView({
         <CalloutContent>{children}</CalloutContent>
       </Callout>
     ),
+    CodeTabs,
   };
 
   useHashScroll(entry);
@@ -172,7 +174,7 @@ function PreBlock({ children }: { children?: ReactNode }) {
             className={cn(
               "text-foreground/80 hover:text-foreground",
               "absolute bottom-3 left-1/2 -translate-x-1/2",
-              "hover:bg-transparent",
+              "hover:bg-transparent text-xs",
             )}
           >
             <ChevronDownIcon className="group-data-open/code-block:rotate-180" />
@@ -382,7 +384,11 @@ function serializeMarkdown(
 ): string {
   const partsByName = new Map(parts.map((p) => [p.name, p]));
   const body = source.replace(/^---[\s\S]*?---\n*/, "");
-  const replaced = body.replace(
+  const unwrapped = body.replace(
+    /<CodeTabs[^>]*>\s*([\s\S]*?)\s*<\/CodeTabs>/g,
+    "$1",
+  );
+  const replaced = unwrapped.replace(
     /<Props\s+name="([^"]+)"\s*\/>/g,
     (_, name: string) => {
       const part = partsByName.get(name);

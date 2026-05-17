@@ -1,0 +1,156 @@
+---
+parts: []
+---
+
+Install the kit in a TanStack Start project. The same flow works for standalone TanStack Router.
+
+## Create project
+
+Scaffold a TanStack Start app with Tailwind. The `--tailwind` flag pre-wires the plugin and starter CSS.
+
+<CodeTabs>
+```bash title="bun"
+bun create @tanstack/start@latest --tailwind
+```
+
+```bash title="npm"
+npm create @tanstack/start@latest --tailwind
+```
+
+```bash title="pnpm"
+pnpm create @tanstack/start@latest --tailwind
+```
+
+```bash title="yarn"
+yarn create @tanstack/start@latest --tailwind
+```
+</CodeTabs>
+
+For a standalone Router project, swap the command for `create-tsrouter-app` and pass `--template file-router --tailwind`.
+
+If your template skips Tailwind, install it before running init. The CLI exits if Tailwind isn't installed.
+
+## Initialize
+
+Run init to install base deps, append the token CSS, and create the `cn` helper.
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai init
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai init
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai init
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai init
+```
+</CodeTabs>
+
+The CLI prompts to confirm before touching any files. Pass `-y` to skip.
+
+## What init does
+
+- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
+- Token CSS appended to `src/styles.css`
+- `cn` helper created at `src/lib/utils.ts`
+- `aikit.json` written with `paths.components: "src/components/ai"` and `imports: { "components/ai": "@/components/ai", "lib": "@/lib" }`
+
+Make sure `@/*` resolves to `./src/*` in your `tsconfig.json`:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+If your project imports its global CSS from somewhere other than `src/styles.css`, edit `aikit.json` and re-run init, or paste the tokens manually.
+
+## Add a component
+
+<CodeTabs>
+```bash title="bun"
+bunx @nauvalazhar/ai add message
+```
+
+```bash title="npm"
+npx @nauvalazhar/ai add message
+```
+
+```bash title="pnpm"
+pnpm dlx @nauvalazhar/ai add message
+```
+
+```bash title="yarn"
+yarn dlx @nauvalazhar/ai add message
+```
+</CodeTabs>
+
+The file lands at `src/components/ai/message.tsx` with imports rewritten to your alias. Use it from any route:
+
+```tsx title="src/routes/index.tsx"
+import { createFileRoute } from "@tanstack/react-router";
+import { Message, MessageAvatar, MessageContent } from "@/components/ai/message";
+
+export const Route = createFileRoute("/")({ component: Index });
+
+function Index() {
+  return (
+    <Message>
+      <MessageAvatar />
+      <MessageContent>Hi there.</MessageContent>
+    </Message>
+  );
+}
+```
+
+## Dark mode
+
+Set `.dark` on `<html>` in `src/routes/__root.tsx`, either statically or from a theme store:
+
+```tsx title="src/routes/__root.tsx"
+export const Route = createRootRoute({
+  component: () => (
+    <html lang="en" className="dark">
+      <head>{/* ... */}</head>
+      <body>
+        <Outlet />
+      </body>
+    </html>
+  ),
+});
+```
+
+The kit reads `.dark` from any ancestor, so a theme store paired with a `useEffect` toggling the class also works.
+
+## Font family (recommended)
+
+The kit was designed around Inter and JetBrains Mono. Add the following to `src/styles.css`:
+
+```css title="src/styles.css"
+@theme inline {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+```
+
+## Icons (optional)
+
+Components ship without a bundled icon library. Use any set you like. The demos on this site use `lucide-react`.
+
+## Skipping the CLI
+
+Prefer to copy files by hand? See [Manual setup](/installation/manual).
