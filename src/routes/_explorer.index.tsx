@@ -31,16 +31,7 @@ function Landing() {
 function Hero() {
   return (
     <section className="flex flex-col items-center text-center py-20">
-      <Link
-        to="/$component"
-        params={{ component: "prompt" }}
-        className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-medium text-foreground ring ring-border hover:bg-accent transition-colors"
-      >
-        Now with preset prompts
-        <ArrowRightIcon className="size-3.5 text-muted-foreground" />
-      </Link>
-
-      <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tight text-foreground md:text-6xl">
+      <h1 className="mt-6 max-w-3xl text-balance text-4xl font-light tracking-tighter text-foreground md:text-6xl">
         The interface for your favorite AI SDK
       </h1>
 
@@ -50,21 +41,9 @@ function Hero() {
       </p>
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-        <Button
-          render={<Link to="/$component" params={{ component: "action" }} />}
-        >
-          Browse Components
-        </Button>
-        <Button
-          render={
-            <Link
-              to="/$component/$demo"
-              params={{ component: "prompt", demo: "basic" }}
-            />
-          }
-          variant="ghost"
-        >
-          View Demos
+        <Button render={<Link to="/installation" />}>Get Started</Button>
+        <Button render={<Link to="/introduction" />} variant="ghost">
+          Introduction
         </Button>
       </div>
     </section>
@@ -119,7 +98,7 @@ function FeatureCard({
 }) {
   return (
     <div className="p-1 bg-surface ring ring-border rounded-outer">
-      <div className="flex flex-col gap-3 rounded bg-surface-elevated p-5 ring ring-border h-full">
+      <div className="flex flex-col gap-3 rounded dark:bg-surface-elevated p-5 ring ring-border h-full">
         <Icon className="size-5.5 mb-2" strokeWidth={1.5} />
         <div className="flex flex-col gap-1">
           <h3 className="font-medium text-foreground">{title}</h3>
