@@ -46,10 +46,13 @@ export const Route = createRootRoute({
   notFoundComponent: () => <h1>Not Found</h1>,
 });
 
+const themeScript = `(function(){try{var s=localStorage.getItem("aikit-theme");if(s==="dark")document.documentElement.classList.add("dark");window.addEventListener("storage",function(e){if(e.key!=="aikit-theme")return;document.documentElement.classList.toggle("dark",e.newValue==="dark");});}catch(e){}})();`;
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {process.env.NODE_ENV === "development" && (
           <script
             crossOrigin="anonymous"

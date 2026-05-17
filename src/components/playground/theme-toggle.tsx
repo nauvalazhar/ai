@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { Button } from "../ai/button";
 
 type Theme = "light" | "dark";
 
 function readTheme(): Theme {
   if (typeof document === "undefined") return "light";
+  const saved = localStorage.getItem("aikit-theme");
+  if (saved === "dark" || saved === "light") return saved;
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
@@ -23,16 +26,12 @@ export function ThemeToggle() {
   }
 
   return (
-    <button
-      onClick={toggle}
-      className="inline-flex items-center justify-center size-8 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-      aria-label="Toggle theme"
-    >
+    <Button onClick={toggle} variant="ghost" iconOnly aria-label="Toggle theme">
       {theme === "light" ? (
         <Moon className="size-4.5" />
       ) : (
         <Sun className="size-4.5" />
       )}
-    </button>
+    </Button>
   );
 }

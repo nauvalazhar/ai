@@ -16,6 +16,7 @@ import { Button } from "../ai/button";
 import { useSidebarStore } from "./sidebar-store";
 import { Chip } from "../ai/chip";
 import { ScrollArea } from "../ai/scroll-area";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Sidebar() {
   const toggle = useSidebarStore((s) => s.toggle);
@@ -61,22 +62,24 @@ export function Sidebar() {
           )}
         >
           <img src="/logo.webp" alt="Logo" className="size-5.5 mr-2.5" />
-          nauvalazhar/ai-kit
+          ai-kit
         </Link>
-        <Button
-          iconOnly
-          variant="ghost"
-          className="ml-auto text-muted-foreground hover:text-foreground"
-          onClick={toggle}
-        >
-          <SidebarCloseIcon className="size-4" />
-        </Button>
+        <div className="flex items-center ml-auto gap-0.5">
+          <ThemeToggle />
+          <Button
+            iconOnly
+            variant="ghost"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={toggle}
+          >
+            <SidebarCloseIcon className="size-4" />
+          </Button>
+        </div>
       </header>
       <div className="pb-2 px-6">
         <p className="text-xs leading-relaxed text-muted-foreground mb-4">
           React components for building agentic AI applications.
         </p>
-
         <Chip
           render={
             <a
