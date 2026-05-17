@@ -24,6 +24,7 @@ pnpm create react-router@latest
 ```bash title="yarn"
 yarn create react-router
 ```
+
 </CodeTabs>
 
 If your template skips Tailwind, install it before running init. The CLI exits if Tailwind isn't installed.
@@ -34,73 +35,57 @@ Run init to install base deps, append the token CSS, and create the `cn` helper.
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai init
+bunx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai init
+npx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai init
+pnpm dlx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai init
+yarn dlx @nauvalazhar/ai@latest init
 ```
+
 </CodeTabs>
 
 The CLI prompts to confirm before touching any files. Pass `-y` to skip.
-
-## What init does
-
-- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
-- Token CSS appended to `app/app.css`
-- `cn` helper created at `app/lib/utils.ts`
-- `aikit.json` written with `paths.components: "app/components/ai"` and `imports: { "components/ai": "~/components/ai", "lib": "~/lib" }`
-
-React Router projects use `~/*` as the alias for `./app/*`. Confirm it's wired in `tsconfig.json`:
-
-```json title="tsconfig.json"
-{
-  "compilerOptions": {
-    "paths": {
-      "~/*": ["./app/*"]
-    }
-  }
-}
-```
 
 ## Add a component
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai add message
+bunx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai add message
+npx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai add message
+pnpm dlx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai add message
+yarn dlx @nauvalazhar/ai@latest add message
 ```
+
 </CodeTabs>
 
 The file lands at `app/components/ai/message.tsx` with imports rewritten to `~/`. Use it from any route:
 
-```tsx title="app/routes/_index.tsx"
-import { Message, MessageAvatar, MessageContent } from "~/components/ai/message";
+```tsx title="app/routes/home.tsx"
+import { Message, MessageContent, MessageText } from "~/components/ai/message";
 
-export default function Index() {
+export default function Home() {
   return (
     <Message>
-      <MessageAvatar />
-      <MessageContent>Hi there.</MessageContent>
+      <MessageContent>
+        <MessageText variant="bubble">Hi, there!</MessageText>
+      </MessageContent>
     </Message>
   );
 }

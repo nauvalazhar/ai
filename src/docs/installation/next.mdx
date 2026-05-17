@@ -24,6 +24,7 @@ pnpm create next-app --yes
 ```bash title="yarn"
 yarn create next-app --yes
 ```
+
 </CodeTabs>
 
 If you opted out of Tailwind during setup, add it before running init. The CLI exits if Tailwind isn't installed.
@@ -34,74 +35,60 @@ Run init to install base deps, append the token CSS, and create the `cn` helper.
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai init
+bunx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai init
+npx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai init
+pnpm dlx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai init
+yarn dlx @nauvalazhar/ai@latest init
 ```
+
 </CodeTabs>
 
 The CLI prompts to confirm before touching any files. Pass `-y` to skip.
-
-## What init does
-
-- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
-- Token CSS appended to `app/globals.css` (or `src/app/globals.css` if you use `src/`)
-- `cn` helper created at `lib/utils.ts` (or `src/lib/utils.ts`)
-- `aikit.json` written with `paths.components: "components/ai"` and `imports: { "components/ai": "@/components/ai", "lib": "@/lib" }`
-
-Most Next.js setups already alias `@/*` to the project root in `tsconfig.json`. If yours doesn't, add it:
-
-```json title="tsconfig.json"
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
-}
-```
 
 ## Add a component
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai add message
+bunx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai add message
+npx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai add message
+pnpm dlx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai add message
+yarn dlx @nauvalazhar/ai@latest add message
 ```
+
 </CodeTabs>
 
 The file lands at `components/ai/message.tsx` with imports rewritten to your alias. Use it from a server or client component:
 
 ```tsx title="app/page.tsx"
-import { Message, MessageAvatar, MessageContent } from "@/components/ai/message";
+import { Message, MessageContent, MessageText } from "@/components/ai/message";
 
 export default function Page() {
   return (
-    <Message>
-      <MessageAvatar />
-      <MessageContent>Hi there.</MessageContent>
-    </Message>
+    <div className="max-w-lg mx-auto">
+      <Message>
+        <MessageContent>
+          <MessageText variant="bubble">Hi, there!</MessageText>
+        </MessageContent>
+      </Message>
+    </div>
   );
 }
 ```
@@ -113,7 +100,11 @@ export default function Page() {
 ```tsx title="app/layout.tsx"
 import { ThemeProvider } from "next-themes";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>

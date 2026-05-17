@@ -116,51 +116,42 @@ Run init to install base deps, append the token CSS, and create the `cn` helper.
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai init
+bunx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai init
+npx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai init
+pnpm dlx @nauvalazhar/ai@latest init
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai init
+yarn dlx @nauvalazhar/ai@latest init
 ```
 
 </CodeTabs>
 
 The CLI prompts to confirm before touching any files. Pass `-y` to skip.
 
-## What init does
-
-- `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge` added to `package.json`
-- Token CSS appended to `src/index.css`
-- `cn` helper created at `src/lib/utils.ts`
-- `aikit.json` written with `paths.components: "src/components/ai"` and `imports: { "components/ai": "@/components/ai", "lib": "@/lib" }`
-
-If your alias is different, edit `aikit.json` after init and adjust the `imports` map.
-
 ## Add a component
 
 <CodeTabs>
 ```bash title="bun"
-bunx @nauvalazhar/ai add message
+bunx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="npm"
-npx @nauvalazhar/ai add message
+npx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="pnpm"
-pnpm dlx @nauvalazhar/ai add message
+pnpm dlx @nauvalazhar/ai@latest add message
 ```
 
 ```bash title="yarn"
-yarn dlx @nauvalazhar/ai add message
+yarn dlx @nauvalazhar/ai@latest add message
 ```
 
 </CodeTabs>
@@ -168,18 +159,17 @@ yarn dlx @nauvalazhar/ai add message
 The file lands at `src/components/ai/message.tsx` with imports rewritten to your alias. Use it:
 
 ```tsx
-import {
-  Message,
-  MessageAvatar,
-  MessageContent,
-} from "@/components/ai/message";
+import { Message, MessageContent, MessageText } from "@/components/ai/message";
 
-export function Reply() {
+export default function App() {
   return (
-    <Message>
-      <MessageAvatar />
-      <MessageContent>Hi there.</MessageContent>
-    </Message>
+    <div className="max-w-lg mx-auto">
+      <Message>
+        <MessageContent>
+          <MessageText variant="bubble">Hi, there!</MessageText>
+        </MessageContent>
+      </Message>
+    </div>
   );
 }
 ```
@@ -188,7 +178,7 @@ export function Reply() {
 
 The kit reads `.dark` on any ancestor. Toggle it on `<html>` from your theme code:
 
-```tsx
+```js
 document.documentElement.classList.toggle("dark");
 ```
 
