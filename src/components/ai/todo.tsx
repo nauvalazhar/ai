@@ -109,7 +109,7 @@ export function TodoItemIcon({
       data-slot="todo-item-icon"
       aria-hidden
       className={cn(
-        "inline-flex size-5 shrink-0 items-center justify-center rounded-full ring ring-border",
+        "inline-flex size-4 shrink-0 items-center justify-center rounded-full ring ring-border",
         "in-data-[status=progress]:text-foreground in-data-[status=progress]:ring-transparent",
         "in-data-[status=completed]:bg-primary in-data-[status=completed]:text-primary-foreground in-data-[status=completed]:ring-primary",
         "transition-all duration-150",
@@ -137,7 +137,7 @@ function TodoStatusIcon() {
         strokeLinejoin="round"
         aria-hidden
         className={cn(
-          "animate-spin opacity-0 in-data-[status=progress]:opacity-100",
+          "animate-spin size-5 opacity-0 in-data-[status=progress]:opacity-100",
           "scale-0 in-data-[status=progress]:scale-100",
         )}
       >
@@ -154,7 +154,7 @@ function TodoStatusIcon() {
         strokeLinejoin="round"
         aria-hidden
         className={cn(
-          "size-3.5 opacity-0 in-data-[status=completed]:opacity-100",
+          "size-3 opacity-0 in-data-[status=completed]:opacity-100",
           "scale-0 in-data-[status=completed]:scale-100",
         )}
       >
