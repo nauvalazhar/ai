@@ -25,7 +25,7 @@ export function CodeView({
         type="button"
         onClick={handleCopy}
         variant="outline"
-        className="absolute top-3 right-3 text-xs text-muted-foreground hover:text-foreground"
+        className="absolute z-10 top-3 right-3 text-xs text-muted-foreground hover:text-foreground"
       >
         {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
         Copy

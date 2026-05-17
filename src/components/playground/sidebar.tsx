@@ -355,7 +355,7 @@ export function Sidebar() {
           Designed by{" "}
           <a
             href="https://nauv.al"
-            className="border-b border-foreground text-foreground"
+            className="border-b border-muted-foreground text-muted-foreground hover:text-foreground transition-colors hover:border-foreground"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -364,7 +364,7 @@ export function Sidebar() {
           at{" "}
           <a
             href="https://enterprise.kredibel.com"
-            className="border-b border-foreground text-foreground"
+            className="border-b border-muted-foreground text-muted-foreground hover:text-foreground transition-colors hover:border-foreground"
             target="_blank"
             rel="noopener noreferrer"
           >

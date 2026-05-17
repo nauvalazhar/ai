@@ -112,7 +112,7 @@ export function TodoItemIcon({
         "inline-flex size-4 shrink-0 items-center justify-center rounded-full ring ring-border",
         "in-data-[status=progress]:text-foreground in-data-[status=progress]:ring-transparent",
         "in-data-[status=completed]:bg-primary in-data-[status=completed]:text-primary-foreground in-data-[status=completed]:ring-primary",
-        "transition-all duration-150",
+        "transition-all duration-150 relative",
         "[&>svg]:absolute [&>svg]:transition-all",
         className,
       )}
