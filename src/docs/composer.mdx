@@ -41,6 +41,22 @@ parts:
         type: boolean
         default: "true"
         description: When true, Enter submits and Shift+Enter inserts a newline. When false, Enter inserts a newline and the only way to submit is the `ComposerSubmit` button.
+  - name: ComposerQuote
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ComposerQuoteIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ComposerQuoteContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ComposerQuoteDismiss
+    passThrough:
+      type: React.ComponentProps<"button">
+      to: <button>
   - name: ComposerToolbar
     passThrough:
       type: React.ComponentProps<"div">
@@ -110,6 +126,46 @@ A styled textarea that registers a submit handler with the root. Autosizes betwe
 The input runs in either mode. Leave `value` unset and the component manages its own state, optionally seeded by `defaultValue`, and clears itself after submit. Pass `value` together with `onValueChange` to hand state ownership to the parent. In that mode the parent decides when to clear, typically by setting `value` to an empty string after `onSubmit`.
 
 <Props name="ComposerInput" />
+
+### ComposerQuote
+
+A strip above the input that displays a chunk of text the user is responding to — a quoted message, a selected passage, an inline reply. Mount it conditionally based on consumer state. The part is purely visual and owns no state of its own, so wiring is a single piece of consumer state plus two handlers: one to set it, one to clear it.
+
+```tsx
+{quoted && (
+  <ComposerQuote>
+    <ComposerQuoteIcon>
+      <CornerDownRight />
+    </ComposerQuoteIcon>
+    <ComposerQuoteContent>{quoted}</ComposerQuoteContent>
+    <ComposerQuoteDismiss onClick={() => setQuoted(null)} aria-label="Remove quote">
+      <X />
+    </ComposerQuoteDismiss>
+  </ComposerQuote>
+)}
+```
+
+Pairs naturally with `Selection` — wire a `SelectionButton`'s `onSelect` to set the quoted state, and the dismiss to clear it. After submit, clear the state in the same `onSubmit` handler that ships the message, so the quote disappears with the cleared input.
+
+<Props name="ComposerQuote" />
+
+### ComposerQuoteIcon
+
+The leading icon slot. Sized small and tinted muted to match the quote content. Pass any icon as children.
+
+<Props name="ComposerQuoteIcon" />
+
+### ComposerQuoteContent
+
+The quoted text slot. Caps at three lines and hides the rest. When the content overflows the cap, the part exposes `data-overflows` and fades the truncated edge with a bottom mask gradient to signal that there is more. The full text stays in the DOM so copy, screen readers, and the submit handler all see the complete quote.
+
+<Props name="ComposerQuoteContent" />
+
+### ComposerQuoteDismiss
+
+The trailing close affordance. A plain unstyled button slot — pass an icon as children and your own `onClick` to clear the quoted state. The part does not own any close behavior of its own, so the consumer is in full control of when the quote leaves.
+
+<Props name="ComposerQuoteDismiss" />
 
 ### ComposerToolbar
 

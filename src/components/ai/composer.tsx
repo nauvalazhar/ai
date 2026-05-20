@@ -251,6 +251,93 @@ export function ComposerInput({
   );
 }
 
+export function ComposerQuote({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="composer-quote"
+      className={cn(
+        "mx-1 mt-1 flex items-start gap-2 rounded bg-surface-elevated px-3 py-2 text-xs text-muted-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ComposerQuoteIcon({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="composer-quote-icon"
+      aria-hidden
+      className={cn(
+        "mt-0.5 inline-flex shrink-0 items-center justify-center text-muted-foreground",
+        "[&>svg]:size-4",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ComposerQuoteContent({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [overflows, setOverflows] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      setOverflows(el.scrollHeight > el.clientHeight + 1);
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      data-slot="composer-quote-content"
+      data-overflows={overflows || undefined}
+      className={cn(
+        "min-w-0 flex-1 overflow-hidden italic max-h-[3lh] whitespace-pre-wrap",
+        "data-overflows:mask-[linear-gradient(to_bottom,black_55%,transparent)]",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ComposerQuoteDismiss({
+  className,
+  type,
+  ...props
+}: React.ComponentProps<"button">) {
+  return (
+    <button
+      type={type ?? "button"}
+      data-slot="composer-quote-dismiss"
+      className={cn(
+        "shrink-0 cursor-pointer text-muted-foreground transition-colors hover:text-foreground",
+        "[&>svg]:size-3.5",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function ComposerToolbar({
   className,
   ...props

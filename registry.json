@@ -372,6 +372,16 @@
       ]
     },
     {
+      "name": "selection",
+      "type": "component",
+      "dependencies": {
+        "items": ["button"]
+      },
+      "files": [
+        { "name": "selection.tsx", "path": "src/components/ai/selection.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "source",
       "type": "component",
       "files": [

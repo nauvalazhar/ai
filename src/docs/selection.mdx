@@ -1,0 +1,204 @@
+---
+parts:
+  - name: Selection
+    props:
+      - name: open
+        type: boolean
+        description: Controlled visibility of the toolbar. Pair with `onOpenChange`. Useful when the consumer wants to drive the toolbar from outside, for example to keep it open while a confirmation is pending.
+      - name: defaultOpen
+        type: boolean
+        default: "false"
+        description: Initial open state when uncontrolled. The toolbar normally opens itself in response to a finished selection, so this rarely needs to change.
+      - name: onOpenChange
+        type: "(open: boolean) => void"
+        description: Fires whenever the toolbar opens or closes, whether driven by selection, dismiss, outside click, or Escape.
+      - name: onSelect
+        type: "(text: string) => void"
+        description: Fires once on `pointerup` whenever a non-empty selection lives inside `SelectionContent`. Receives the selected text. Good place to hook analytics or a controlled toolbar.
+  - name: SelectionContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SelectionToolbar
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: side
+        type: '"top" | "bottom"'
+        default: '"top"'
+        description: Preferred side relative to the start of the selection. Flips to the other side automatically when the preferred side would render off-screen.
+      - name: align
+        type: '"start" | "center" | "end"'
+        default: '"start"'
+        description: Horizontal alignment against the first visual rect of the selection. `start` matches the beginning of the selection, `center` centers on it, `end` aligns to the trailing edge.
+      - name: sideOffset
+        type: number
+        default: "8"
+        description: Pixel gap between the toolbar and the selection rect along the chosen side.
+      - name: alignOffset
+        type: number
+        default: "0"
+        description: Pixel offset along the alignment axis. Positive nudges the toolbar in the direction of `end`.
+      - name: edgePadding
+        type: number
+        default: "8"
+        description: Minimum gap kept between the toolbar and the edges of the viewport when clamping or flipping.
+  - name: SelectionButton
+    passThrough:
+      type: React.ComponentProps<typeof Button>
+      to: <Button>
+    props:
+      - name: onSelect
+        type: "(text: string) => void"
+        description: Fires with the current selected text when the button is clicked. Call `event.preventDefault()` on `onClick` to block both `onSelect` and the default close behavior.
+      - name: closeOnSelect
+        type: boolean
+        default: "true"
+        description: Hides the toolbar after the action runs. Ignored when `clearOnSelect` is true, since clearing the selection closes the toolbar on its own.
+      - name: clearOnSelect
+        type: boolean
+        default: "true"
+        description: Clears the browser selection after the action runs. Set to `false` to keep the highlight visible after the action, for highlight/annotate flows where the marked text should persist.
+  - name: SelectionSeparator
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A floating toolbar that follows a text selection, anchored to the start of the highlight.
+
+## Anatomy
+
+A scoped root that listens for selection events inside a child region. When a non-empty selection settles after `pointerup`, the toolbar appears in a portal at the start of the first visual rect. The action buttons receive the selected text and decide what happens next.
+
+```tsx
+<Selection>
+  <SelectionContent>
+    <article>...</article>
+  </SelectionContent>
+  <SelectionToolbar>
+    <SelectionButton onSelect={(text) => navigator.clipboard.writeText(text)}>
+      <Copy />
+      Copy
+    </SelectionButton>
+    <SelectionButton onSelect={(text) => quote(text)}>
+      <Quote />
+      Quote
+    </SelectionButton>
+    <SelectionSeparator />
+    <SelectionButton onSelect={(text) => share(text)}>
+      <Share2 />
+      Share
+    </SelectionButton>
+  </SelectionToolbar>
+</Selection>
+```
+
+The component is unopinionated about actions. Add any combination of buttons — copy, quote, share, highlight, define, cite. Each button receives the selected text and decides what to do with it.
+
+## Behavior
+
+- The toolbar appears once a selection settles after `pointerup` or `touchend`, never during the drag. Following the cursor mid-selection feels wrong, so the toolbar waits for the user to release.
+- Selections that start or end outside `SelectionContent` are ignored. Two `Selection` roots on the same page do not interfere with each other.
+- When the preferred `side` will not fit, the toolbar flips to the other side. When it still does not fit either way, it clamps within `edgePadding` of the viewport edge. The actual rendered side lands on `data-side` for consumers who want to style it.
+- The toolbar repositions on scroll and resize, including the visual viewport, so the on-screen keyboard and pinch zoom keep things anchored.
+- Clicking the toolbar does not deselect the text. The toolbar disables its own mousedown so the highlight survives the click.
+
+## Dismiss
+
+The toolbar closes on any of these events. All of them fire `onOpenChange(false)` if the consumer is listening.
+
+- The selection collapses, either because the user clicks elsewhere or starts a new selection.
+- The user clicks outside both `SelectionContent` and the toolbar.
+- The user presses `Escape`.
+- A `SelectionButton` action runs with `clearOnSelect` or `closeOnSelect` (both true by default).
+
+## Mobile
+
+The native callout from iOS and Android shares the screen with the toolbar. The component does not try to suppress the OS menu — it sits below it and relies on the user dismissing whichever one they do not want. The toolbar repositions against `window.visualViewport`, so the on-screen keyboard does not push it off-screen.
+
+Selection still works through touch: long-press to start, drag the handles to adjust, lift to commit. The same `onSelect` and `SelectionButton` handlers fire that fire on desktop.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Selection
+
+The root. Owns selection state, attaches the document-level listeners scoped to `SelectionContent`, and renders nothing of its own. Pass it children including a `SelectionContent` and a `SelectionToolbar`.
+
+<Note>
+The root has no DOM. It only provides context. The actual selectable region is whatever `SelectionContent` wraps, and the toolbar is rendered through a portal to `document.body` so layout containers do not clip it.
+</Note>
+
+<Props name="Selection" />
+
+### SelectionContent
+
+The scope. Anchors the listeners to a specific subtree. Selections that touch any node outside this subtree are ignored, so the toolbar only opens for text the consumer marked as eligible.
+
+The element itself is unstyled. Add classes for whatever typography the content needs.
+
+<Props name="SelectionContent" />
+
+### SelectionToolbar
+
+The floating surface. Portals to `document.body`, fixes itself to the viewport, and anchors to the first visual rect of the current selection. Repositions on scroll and resize, flips to the opposite side when the preferred side does not fit, and clamps within the viewport's `edgePadding`.
+
+Toolbar size is taken from the rendered content, so widths can vary by how many actions the consumer drops in.
+
+<Props name="SelectionToolbar" />
+
+### SelectionButton
+
+An action button bound to the toolbar. Extends the kit's `Button` with a ghost default variant and tighter spacing, and adds `onSelect` to receive the selected text.
+
+```tsx
+<SelectionButton onSelect={(text) => quote(text)}>
+  <Quote />
+  Quote
+</SelectionButton>
+```
+
+Two flags control the post-click behavior. `clearOnSelect` clears the browser selection (the highlight disappears, the toolbar closes via the selectionchange listener). `closeOnSelect` only hides the toolbar without touching the highlight, useful for highlight-then-annotate flows. Both default to true.
+
+```tsx
+<SelectionButton clearOnSelect={false} onSelect={(text) => highlight(text)}>
+  <Highlighter />
+  Highlight
+</SelectionButton>
+```
+
+Call `event.preventDefault()` in `onClick` to block both the action and the close. The `onClick` runs before `onSelect`, so this is the place to gate the action behind a confirmation.
+
+<Props name="SelectionButton" />
+
+### SelectionSeparator
+
+A thin vertical divider for visual grouping inside the toolbar. Inert and aria-hidden.
+
+<Props name="SelectionSeparator" />
+
+### useSelection
+
+Hook for reading the current selection from a custom part inside the root. Use it when building a custom action that needs the selection but does not want the styling of `SelectionButton`, or to drive an outside affordance from the same state.
+
+```tsx
+function QuoteHint() {
+  const { text, open } = useSelection();
+  if (!open) return null;
+  return <span>{text.length} characters selected</span>;
+}
+```
+
+Returns:
+
+- `text` — the selected text as a string. Empty string when nothing is selected.
+- `range` — the live `Range` object backing the selection, or `null` when nothing is selected. Live, so it tracks edits the user makes to the same selection.
+- `rect` — the first visual `DOMRect` of the range (the start of the selection in viewport coordinates), or `null` when nothing is selected. Snapshot, so consumers anchoring their own UI to the selection should recompute from `range` on scroll.
+- `open` — whether the toolbar is currently visible. Reflects the controlled or uncontrolled state of the root.
+- `dismiss()` — closes the toolbar without clearing the highlight.
+- `clearSelection()` — clears the browser selection, which in turn closes the toolbar through the selectionchange listener.
+
+`dismiss` and `clearSelection` are exposed separately so consumers can compose either behavior. Most actions want both, which is the default for `SelectionButton`.
