@@ -340,6 +340,34 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Generated Image",
+        slug: "generated-image",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/generated-image/basic")),
+          },
+          {
+            name: "Generating",
+            slug: "generating",
+            Component: lazy(() => import("#/demos/generated-image/generating")),
+          },
+          {
+            name: "Overlay Bottom",
+            slug: "overlay-bottom",
+            Component: lazy(
+              () => import("#/demos/generated-image/overlay-bottom"),
+            ),
+          },
+          {
+            name: "Error",
+            slug: "error",
+            Component: lazy(() => import("#/demos/generated-image/error")),
+          },
+        ],
+      },
+      {
         name: "Document",
         slug: "document",
         demos: [

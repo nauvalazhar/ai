@@ -1,0 +1,168 @@
+---
+parts:
+  - name: GeneratedImage
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: state
+        type: '"generating" | "ready" | "error"'
+        default: '"ready"'
+        description: Drives the visible layers. In `generating`, the loading layer is opaque and the image, overlay, and action are hidden. In `ready`, the image, overlay, and action are visible. In `error`, the image is dimmed and the loading layer is hidden, so the author can render a fallback message in the same frame.
+      - name: aspectRatio
+        type: '"square" | "video" | "portrait" | "auto"'
+        default: '"square"'
+        description: Locks the frame to a steady shape so the layout does not jump when the model returns. `auto` lets the image set its own height.
+      - name: render
+        type: ReactElement
+        description: Render the root as another element, like a link or a button, when the whole surface should navigate or trigger an action.
+  - name: GeneratedImageTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: GeneratedImageOverlay
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: position
+        type: '"top" | "bottom" | "both"'
+        default: '"top"'
+        description: Where the dark gradient sits. Pair it with the action position so the buttons read against the gradient and not against the image.
+  - name: GeneratedImageAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: position
+        type: '"top-left" | "top-right" | "bottom-left" | "bottom-right"'
+        default: '"top-right"'
+        description: Which corner the action group anchors to. Buttons inside pick up white text and a soft white hover tint, so plain `ghost` buttons read against the gradient without extra props.
+  - name: GeneratedImageLoading
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A surface for a model-generated image.
+
+## Anatomy
+
+The component is agnostic about the image. It does not fetch or decode the file. Bring any image, a plain `<img>`, a framework-optimized image, or a project-specific one. Tag it with `data-slot="generated-image-content"` and the root sizes it to fill the frame and drives its opacity from the root state.
+
+```tsx
+<GeneratedImage state="ready">
+  <img
+    data-slot="generated-image-content"
+    src="..."
+    alt="A generated landscape"
+  />
+  <GeneratedImageLoading />
+  <GeneratedImageOverlay />
+  <GeneratedImageAction>
+    <Button iconOnly variant="ghost" aria-label="Edit">
+      <PencilIcon />
+    </Button>
+    <Button iconOnly variant="ghost" aria-label="Regenerate">
+      <RefreshCwIcon />
+    </Button>
+    <Button iconOnly variant="ghost" aria-label="Download">
+      <DownloadIcon />
+    </Button>
+  </GeneratedImageAction>
+</GeneratedImage>
+```
+
+Drive the request by flipping `state`. The loading layer snaps in instantly when the state turns to generating, so swapping the image source in the same render does not flash the new image before the loader covers it. When the state returns to ready, the loader fades out and the image, overlay, and action fade in.
+
+```tsx
+<GeneratedImage state={state}>
+  {state === "generating" && (
+    <GeneratedImageTitle>Creating image</GeneratedImageTitle>
+  )}
+  <img data-slot="generated-image-content" src={url} alt="..." />
+  <GeneratedImageLoading />
+  <GeneratedImageOverlay />
+  <GeneratedImageAction>
+    <Button
+      iconOnly
+      variant="ghost"
+      aria-label="Regenerate"
+      onClick={regenerate}
+    >
+      <RefreshCwIcon />
+    </Button>
+  </GeneratedImageAction>
+</GeneratedImage>
+```
+
+For a wider canvas, pair `aspectRatio="video"` with a bottom overlay so the buttons sit at the lower edge against the dark gradient.
+
+```tsx
+<GeneratedImage state="ready" aspectRatio="video">
+  <img data-slot="generated-image-content" src="..." alt="..." />
+  <GeneratedImageLoading />
+  <GeneratedImageOverlay position="bottom" />
+  <GeneratedImageAction position="bottom-right">
+    <Button iconOnly variant="ghost" aria-label="Download">
+      <DownloadIcon />
+    </Button>
+  </GeneratedImageAction>
+</GeneratedImage>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### GeneratedImage
+
+The root. Holds the frame, the aspect ratio, and the state. Sets `data-state` so descendants react to the current phase, and tags the content slot so a project image component fills the frame without restyling.
+
+The state is the single switch for the whole tree. `generating` shows the loader on top and hides the image, the overlay, and the action. `ready` shows the image and the overlay group and hides the loader. `error` keeps the image dimmed and hides the loader, so the author can render a fallback message inside the frame.
+
+The transition is asymmetric on purpose. Moving into `generating` is instant, so the loader covers the image before a new source has a chance to paint. Moving out of `generating` is smooth, so the image and the overlay group fade in together.
+
+<Props name="GeneratedImage" />
+
+### GeneratedImageTitle
+
+A small label anchored to the top left. Use it for the in-flight status, a short prompt summary, or a persistent caption. It is visible across states, so the author decides when to show it.
+
+<Props name="GeneratedImageTitle" />
+
+### GeneratedImageOverlay
+
+A dim gradient placed under the action group, used to lift white buttons off a bright image. The gradient covers the top third, the bottom third, or both ends, so it never washes out the center of the image.
+
+<Props name="GeneratedImageOverlay" />
+
+### GeneratedImageAction
+
+The floating action group. A simple inline row of project-owned buttons, anchored to one of the four corners. Pair the corner with the overlay position so the buttons sit on the dark band, not on the image.
+
+The group styles its descendants to read against the gradient, so a plain `<Button variant="ghost">` works without any extra colors on each button.
+
+```tsx
+<GeneratedImageAction position="bottom-right">
+  <Button iconOnly variant="ghost" aria-label="Variation">
+    <SparklesIcon />
+  </Button>
+  <Button iconOnly variant="ghost" aria-label="Share">
+    <Share2Icon />
+  </Button>
+  <Button iconOnly variant="ghost" aria-label="Download">
+    <DownloadIcon />
+  </Button>
+</GeneratedImageAction>
+```
+
+<Props name="GeneratedImageAction" />
+
+### GeneratedImageLoading
+
+The dot field that fills the frame while the model is working. A dark canvas with a soft, breathing dot grid, masked so the dots brighten toward the center and fade at the edges. It is the same in light and dark themes, since the surface stands in for a canvas about to be painted on.
+
+The loader snaps in when the state turns to generating and fades out when the state turns to ready. There is no input to wire on the loader itself, the root state drives it.
+
+<Props name="GeneratedImageLoading" />

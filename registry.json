@@ -292,6 +292,13 @@
       ]
     },
     {
+      "name": "generated-image",
+      "type": "component",
+      "files": [
+        { "name": "generated-image.tsx", "path": "src/components/ai/generated-image.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "loader",
       "type": "component",
       "files": [
