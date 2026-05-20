@@ -292,6 +292,13 @@
       ]
     },
     {
+      "name": "feedback-bar",
+      "type": "component",
+      "files": [
+        { "name": "feedback-bar.tsx", "path": "src/components/ai/feedback-bar.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "generated-image",
       "type": "component",
       "files": [

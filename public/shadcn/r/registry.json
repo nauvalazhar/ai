@@ -60,6 +60,14 @@
       "type": "registry:ui"
     },
     {
+      "name": "feedback-bar",
+      "type": "registry:ui"
+    },
+    {
+      "name": "generated-image",
+      "type": "registry:ui"
+    },
+    {
       "name": "loader",
       "type": "registry:ui"
     },
@@ -69,6 +77,14 @@
     },
     {
       "name": "message",
+      "type": "registry:ui"
+    },
+    {
+      "name": "model-selector",
+      "type": "registry:ui"
+    },
+    {
+      "name": "popover",
       "type": "registry:ui"
     },
     {

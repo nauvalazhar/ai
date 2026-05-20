@@ -1,0 +1,110 @@
+---
+parts:
+  - name: FeedbackBar
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: open
+        type: boolean
+        description: Controlled open state. Pair with onOpenChange. When false the bar unmounts.
+      - name: defaultOpen
+        type: boolean
+        default: "true"
+        description: Initial open state when uncontrolled.
+      - name: onOpenChange
+        type: "(open: boolean) => void"
+        description: Fires when the bar opens or closes, from the dismiss button or a controlled update.
+      - name: render
+        type: ReactElement
+        description: Render the root as another element.
+  - name: FeedbackBarIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: FeedbackBarContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: FeedbackBarAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: FeedbackBarDismiss
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default unstyled button. Pass the kit's `Button` or any custom button to bring the visual styling.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the dismiss, for flows that want to confirm or persist before the bar closes.
+---
+
+A small bar that asks for a quick reaction to a response.
+
+## Anatomy
+
+A horizontal pill with a leading icon, a short prompt, and an action cluster on the right. The bar owns its open state and unmounts when dismissed, so the call site can drop it next to a message and let it disappear on its own. Only the dismiss is wired. The reaction buttons stay plain so the caller can attach any handler without the component getting in the way.
+
+```tsx
+<FeedbackBar>
+  <FeedbackBarIcon>
+    <Info />
+  </FeedbackBarIcon>
+  <FeedbackBarContent>Was this response helpful?</FeedbackBarContent>
+  <FeedbackBarAction>
+    <Button iconOnly variant="ghost" aria-label="Helpful">
+      <ThumbsUp />
+    </Button>
+    <Button iconOnly variant="ghost" aria-label="Not helpful">
+      <ThumbsDown />
+    </Button>
+    <FeedbackBarDismiss
+      render={
+        <Button iconOnly variant="ghost" aria-label="Dismiss">
+          <X />
+        </Button>
+      }
+    />
+  </FeedbackBarAction>
+</FeedbackBar>
+```
+
+For flows that want to keep the bar in the tree after a reaction, wire `open` and `onOpenChange` from the outside. The dismiss still fires `onOpenChange(false)`, the caller decides what to do.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### FeedbackBar
+
+Root. Owns the open state. Accepts `open` for the controlled flow, `defaultOpen` for the uncontrolled flow, and `onOpenChange` to mirror the value. Renders nothing when closed.
+
+<Props name="FeedbackBar" />
+
+### FeedbackBarIcon
+
+The leading mark. Sized to match the prompt text and tinted muted by default. Pass any icon as children.
+
+<Props name="FeedbackBarIcon" />
+
+### FeedbackBarContent
+
+The prompt slot. A single line of text in the foreground color, set to take the leading space so the action cluster can sit at the trailing end.
+
+<Props name="FeedbackBarContent" />
+
+### FeedbackBarAction
+
+The trailing cluster. A flex row with a tight gap, sized to fit icon-only buttons. Drop in any combination of reaction buttons followed by `FeedbackBarDismiss`.
+
+<Props name="FeedbackBarAction" />
+
+### FeedbackBarDismiss
+
+Headless trigger that closes the bar. Pass the visual button via `render`. The trigger calls the caller's `onClick` first, then sets open to false. Call `event.preventDefault()` inside the handler to block the auto-close, for flows that need to persist a reaction first and then close from outside.
+
+<Props name="FeedbackBarDismiss" />
