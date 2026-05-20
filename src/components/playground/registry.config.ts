@@ -565,6 +565,27 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Model Selector",
+        slug: "model-selector",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/model-selector/basic")),
+          },
+          {
+            name: "Popover",
+            slug: "popover",
+            Component: lazy(() => import("#/demos/model-selector/popover")),
+          },
+          {
+            name: "Dialog",
+            slug: "dialog",
+            Component: lazy(() => import("#/demos/model-selector/dialog")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [
@@ -718,6 +739,17 @@ export const registry: Group[] = [
             name: "Disabled",
             slug: "disabled",
             Component: lazy(() => import("#/demos/select/disabled")),
+          },
+        ],
+      },
+      {
+        name: "Popover",
+        slug: "popover",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/popover/basic")),
           },
         ],
       },

@@ -320,6 +320,20 @@
       ]
     },
     {
+      "name": "model-selector",
+      "type": "component",
+      "files": [
+        { "name": "model-selector.tsx", "path": "src/components/ai/model-selector.tsx", "target": "components" }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "component",
+      "files": [
+        { "name": "popover.tsx", "path": "src/components/ai/popover.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "prompt",
       "type": "component",
       "files": [

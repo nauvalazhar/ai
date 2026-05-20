@@ -1,0 +1,109 @@
+---
+parts:
+  - name: Popover
+    passThrough:
+      type: Popover.Root.Props
+      docsUrl:
+        label: Base UI Popover.Root
+        href: https://base-ui.com/react/components/popover#root
+  - name: PopoverTrigger
+    passThrough:
+      type: Popover.Trigger.Props
+      docsUrl:
+        label: Base UI Popover.Trigger
+        href: https://base-ui.com/react/components/popover#trigger
+  - name: PopoverPopup
+    passThrough:
+      type: Popover.Popup.Props
+      docsUrl:
+        label: Base UI Popover.Popup
+        href: https://base-ui.com/react/components/popover#popup
+    props:
+      - name: align
+        type: '"start" | "center" | "end"'
+        description: Forwarded to the positioner. Anchors the popup to the start, center, or end of the trigger along the chosen side.
+      - name: alignOffset
+        type: number
+        description: Forwarded to the positioner. Shifts the popup along the alignment axis.
+      - name: side
+        type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"'
+        description: Forwarded to the positioner. Picks the side of the trigger the popup attaches to.
+      - name: sideOffset
+        type: number
+        description: Forwarded to the positioner. Distance from the trigger along the chosen side. Defaults to a value that leaves room for the arrow.
+      - name: anchor
+        type: Element | Ref | VirtualElement
+        description: Forwarded to the positioner. Overrides the trigger as the element the popup is anchored to.
+      - name: sticky
+        type: boolean
+        description: Forwarded to the positioner. Keeps the popup attached to the trigger as it scrolls.
+      - name: positionMethod
+        type: '"absolute" | "fixed"'
+        description: Forwarded to the positioner. Picks the CSS positioning strategy.
+  - name: PopoverTitle
+    passThrough:
+      type: Popover.Title.Props
+      docsUrl:
+        label: Base UI Popover.Title
+        href: https://base-ui.com/react/components/popover#title
+  - name: PopoverDescription
+    passThrough:
+      type: Popover.Description.Props
+      docsUrl:
+        label: Base UI Popover.Description
+        href: https://base-ui.com/react/components/popover#description
+---
+
+A floating panel anchored to a trigger. Use it for short, contextual content that does not block the rest of the page.
+
+## Anatomy
+
+The trigger opens the popup. The popup carries the floating surface, the arrow that points back to the trigger, and the optional title and description for accessible naming.
+
+```tsx
+<Popover>
+  <PopoverTrigger render={<Button>Upgrade</Button>} />
+  <PopoverPopup>
+    <PopoverTitle>Upgrade to Pro</PopoverTitle>
+    <PopoverDescription>
+      More features and access to exclusive content.
+    </PopoverDescription>
+  </PopoverPopup>
+</Popover>
+```
+
+The popup also accepts richer content. Drop in actions, lists, or any custom child to build settings menus, source previews, or compact forms.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Popover
+
+Root of the popover. Tracks the open state and provides context to the trigger and popup. Forwards every prop to the underlying root, so the same controlled or uncontrolled patterns from Base UI apply here.
+
+<Props name="Popover" />
+
+### PopoverTrigger
+
+The element that opens the popup. Pass a button, link, or any focusable element through `render` to bring custom visuals while keeping the open and accessibility wiring.
+
+<Props name="PopoverTrigger" />
+
+### PopoverPopup
+
+The floating panel. Wraps the portal, positioner, and popup so the author drops it in without wiring the three together. Carries the surface, ring, shadow, and arrow, and lays its children out in a column. Positioning props are forwarded to the positioner.
+
+<Props name="PopoverPopup" />
+
+### PopoverTitle
+
+Accessible title for the popup. Pairs with the description to give screen reader users a clear summary of what the popup is about.
+
+<Props name="PopoverTitle" />
+
+### PopoverDescription
+
+Supporting copy beneath the title. Use it for a one-line summary or a short explanation of the choice the user is about to make.
+
+<Props name="PopoverDescription" />

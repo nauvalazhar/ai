@@ -1,0 +1,227 @@
+---
+parts:
+  - name: ModelSelector
+    passThrough:
+      type: Autocomplete.Root.Props
+      docsUrl:
+        label: Base UI Autocomplete.Root
+        href: https://base-ui.com/react/components/autocomplete#root
+    props:
+      - name: variant
+        type: '"default" | "plain"'
+        default: '"default"'
+        description: "`default` frames the input and list with a surface, ring, and rounded outer for inline use. `plain` drops the frame so the selector sits cleanly inside a popover, dialog, or any container that owns its own surface."
+      - name: autoHighlight
+        type: 'boolean | "always"'
+        default: '"always"'
+        description: Forwarded to the autocomplete. Defaults to `"always"` so the first matching item is highlighted from the moment the list renders. Without a highlighted item, pressing Enter is a no-op.
+      - name: items
+        type: "ItemValue[] | { items: ItemValue[] }[]"
+        description: The items the list filters against. Accepts a flat array, or an array of groups where each group has its own `items` array.
+      - name: value
+        type: string
+        description: Controlled input value. Pair with `onValueChange` to keep the search query in your own state.
+      - name: onValueChange
+        type: "(value, eventDetails) => void"
+        description: Fires whenever the input value changes. Use it to track the search query. Use the per-item `onClick` to handle selection.
+  - name: ModelSelectorInput
+    passThrough:
+      type: Autocomplete.Input.Props
+      docsUrl:
+        label: Base UI Autocomplete.Input
+        href: https://base-ui.com/react/components/autocomplete#input
+  - name: ModelSelectorList
+    passThrough:
+      type: Autocomplete.List.Props
+      docsUrl:
+        label: Base UI Autocomplete.List
+        href: https://base-ui.com/react/components/autocomplete#list
+  - name: ModelSelectorEmpty
+    passThrough:
+      type: Autocomplete.Empty.Props
+      docsUrl:
+        label: Base UI Autocomplete.Empty
+        href: https://base-ui.com/react/components/autocomplete#empty
+  - name: ModelSelectorGroup
+    passThrough:
+      type: Autocomplete.Group.Props
+      docsUrl:
+        label: Base UI Autocomplete.Group
+        href: https://base-ui.com/react/components/autocomplete#group
+  - name: ModelSelectorGroupLabel
+    passThrough:
+      type: Autocomplete.GroupLabel.Props
+      docsUrl:
+        label: Base UI Autocomplete.GroupLabel
+        href: https://base-ui.com/react/components/autocomplete#group-label
+  - name: ModelSelectorCollection
+    passThrough:
+      type: Autocomplete.Collection.Props
+      docsUrl:
+        label: Base UI Autocomplete.Collection
+        href: https://base-ui.com/react/components/autocomplete#collection
+  - name: ModelSelectorSeparator
+    passThrough:
+      type: Autocomplete.Separator.Props
+      docsUrl:
+        label: Base UI Autocomplete.Separator
+        href: https://base-ui.com/react/components/autocomplete#separator
+  - name: ModelSelectorItem
+    passThrough:
+      type: Autocomplete.Item.Props
+      docsUrl:
+        label: Base UI Autocomplete.Item
+        href: https://base-ui.com/react/components/autocomplete#item
+    props:
+      - name: value
+        type: ItemValue
+        description: The data the item represents. Pass the full item object so the per-item `onClick` can read everything about the picked model.
+      - name: onClick
+        type: "(event) => void"
+        description: Fires on pointer click and on Enter when the item is highlighted and the input or list has focus. This is the selection hook. Update parent state here and close the surrounding popover or dialog.
+  - name: ModelSelectorItemIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ModelSelectorItemText
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ModelSelectorItemMeta
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+---
+
+A searchable list of models grouped by provider.
+
+## Anatomy
+
+A search input sits above a filtered list. Each item carries an icon, a name, and a small bit of meta text on the right. Groups carry a label and the items underneath. The list always shows. Filtering reacts to the input as the user types.
+
+```tsx
+<ModelSelector items={groups}>
+  <ModelSelectorInput placeholder="Search models" />
+  <ModelSelectorEmpty>No models match your search.</ModelSelectorEmpty>
+  <ModelSelectorList>
+    {(group) => (
+      <ModelSelectorGroup items={group.items}>
+        <ModelSelectorGroupLabel>{group.value}</ModelSelectorGroupLabel>
+        <ModelSelectorCollection>
+          {(item) => (
+            <ModelSelectorItem value={item} onClick={() => setSelected(item)}>
+              <ModelSelectorItemIcon>{group.icon}</ModelSelectorItemIcon>
+              <ModelSelectorItemText>{item.label}</ModelSelectorItemText>
+              <ModelSelectorItemMeta>{item.meta}</ModelSelectorItemMeta>
+            </ModelSelectorItem>
+          )}
+        </ModelSelectorCollection>
+      </ModelSelectorGroup>
+    )}
+  </ModelSelectorList>
+</ModelSelector>
+```
+
+## Variants
+
+`default` is the framed look for inline use. The panel carries its own surface, ring, and rounding, ready to drop next to a label or into a settings card.
+
+`plain` strips the frame so the selector sits cleanly inside a container that already owns the surface. Reach for it inside a popover, a dialog, or a document body where a double frame would feel boxy.
+
+## Selection
+
+The autocomplete tracks the input string, not the picked item. Use the per-item `onClick` to know which model the user chose. It fires on pointer click and on Enter when the item is highlighted, which is what the keyboard user expects.
+
+```tsx
+<ModelSelectorItem
+  value={item}
+  onClick={() => {
+    setSelected(item);
+    setOpen(false);
+  }}
+>
+  ...
+</ModelSelectorItem>
+```
+
+`onValueChange` on the root reports the input string. Use it to keep the search query in your own state, never as a selection signal.
+
+## Inside a popover or dialog
+
+Render the selector with the `plain` variant inside the parent surface. Reset the search query in the open-change-complete callback so the input clears after the close animation finishes, not during it. Resetting on the moment of close causes the list to refilter mid-fade, which reads as lag.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### ModelSelector
+
+Root of the picker. Wraps the autocomplete with inline mode forced on so the list is always rendered, never as a floating popup. The wrapping div carries the variant frame and forwards every remaining prop to the autocomplete root, so the same patterns from Base UI apply.
+
+<Props name="ModelSelector" />
+
+### ModelSelectorInput
+
+The search field. As the user types, the autocomplete filters the items against the input string. Focus stays here while the user navigates the list with arrow keys.
+
+<Props name="ModelSelectorInput" />
+
+### ModelSelectorList
+
+The scrollable region that holds the items. Pass a function as children to iterate the filtered groups. Filtering, ordering, and grouping all come from the autocomplete store, so the children function only renders what is actually visible.
+
+<Props name="ModelSelectorList" />
+
+### ModelSelectorEmpty
+
+Shown when no items match the current query. Renders only after the store has confirmed an empty result, which keeps screen readers from being told the list is empty on every keystroke.
+
+<Props name="ModelSelectorEmpty" />
+
+### ModelSelectorGroup
+
+A wrapper for one provider. Pass the group's items so the inner `ModelSelectorCollection` can iterate over the filtered subset.
+
+<Props name="ModelSelectorGroup" />
+
+### ModelSelectorGroupLabel
+
+The header above a group. Carries the provider name and styles it as a muted small label.
+
+<Props name="ModelSelectorGroupLabel" />
+
+### ModelSelectorCollection
+
+The render-prop iterator inside a group. Receives each filtered item and returns the JSX for one row. The collection reads from the autocomplete store, so any item that does not match the query is skipped.
+
+<Props name="ModelSelectorCollection" />
+
+### ModelSelectorSeparator
+
+A thin divider between sections. Use it to break up a flat list or to set off a special section like recents.
+
+<Props name="ModelSelectorSeparator" />
+
+### ModelSelectorItem
+
+A single row. Carries the icon, text, and meta slots, plus the highlight state. The `value` prop identifies the item, and the `onClick` prop is where you commit the selection.
+
+<Props name="ModelSelectorItem" />
+
+### ModelSelectorItemIcon
+
+Left slot for the provider logo or a generic icon. The slot sets a fixed size and a muted tone, so any SVG or image drops in without extra styling.
+
+<Props name="ModelSelectorItemIcon" />
+
+### ModelSelectorItemText
+
+Middle slot for the model name. Takes the available width and truncates when the row is too narrow.
+
+<Props name="ModelSelectorItemText" />
+
+### ModelSelectorItemMeta
+
+Right slot for a short bit of meta text. Pushes itself to the end of the row and renders in a smaller muted tone, ready for context windows, tier badges, or pricing.
+
+<Props name="ModelSelectorItemMeta" />
