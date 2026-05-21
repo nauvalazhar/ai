@@ -443,6 +443,16 @@
       ]
     },
     {
+      "name": "transcript",
+      "type": "component",
+      "dependencies": {
+        "items": ["player"]
+      },
+      "files": [
+        { "name": "transcript.tsx", "path": "src/components/ai/transcript.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "tooltip",
       "type": "component",
       "files": [

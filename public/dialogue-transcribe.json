@@ -1,0 +1,1752 @@
+{
+  "language_code": "eng",
+  "segments": [
+    {
+      "text": "So the galaxy is 13 billion years old, hundreds of billions of stars. The math says we should be tripping over civilizations. Where is everyone? ",
+      "start_time": 0.0,
+      "end_time": 11.599,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "So",
+          "start_time": 0.199,
+          "end_time": 0.319
+        },
+        {
+          "text": " ",
+          "start_time": 0.319,
+          "end_time": 0.359
+        },
+        {
+          "text": "the",
+          "start_time": 0.359,
+          "end_time": 0.419
+        },
+        {
+          "text": " ",
+          "start_time": 0.419,
+          "end_time": 0.479
+        },
+        {
+          "text": "galaxy",
+          "start_time": 0.479,
+          "end_time": 1.0
+        },
+        {
+          "text": " ",
+          "start_time": 1.0,
+          "end_time": 1.159
+        },
+        {
+          "text": "is",
+          "start_time": 1.159,
+          "end_time": 1.259
+        },
+        {
+          "text": " ",
+          "start_time": 1.259,
+          "end_time": 1.399
+        },
+        {
+          "text": "13",
+          "start_time": 1.399,
+          "end_time": 1.939
+        },
+        {
+          "text": " ",
+          "start_time": 1.939,
+          "end_time": 2.139
+        },
+        {
+          "text": "billion",
+          "start_time": 2.139,
+          "end_time": 2.599
+        },
+        {
+          "text": " ",
+          "start_time": 2.599,
+          "end_time": 2.659
+        },
+        {
+          "text": "years",
+          "start_time": 2.659,
+          "end_time": 2.899
+        },
+        {
+          "text": " ",
+          "start_time": 2.899,
+          "end_time": 2.959
+        },
+        {
+          "text": "old,",
+          "start_time": 2.96,
+          "end_time": 3.259
+        },
+        {
+          "text": " ",
+          "start_time": 3.259,
+          "end_time": 3.799
+        },
+        {
+          "text": "hundreds",
+          "start_time": 3.799,
+          "end_time": 4.299
+        },
+        {
+          "text": " ",
+          "start_time": 4.299,
+          "end_time": 4.339
+        },
+        {
+          "text": "of",
+          "start_time": 4.339,
+          "end_time": 4.44
+        },
+        {
+          "text": " ",
+          "start_time": 4.44,
+          "end_time": 4.579
+        },
+        {
+          "text": "billions",
+          "start_time": 4.579,
+          "end_time": 5.079
+        },
+        {
+          "text": " ",
+          "start_time": 5.079,
+          "end_time": 5.119
+        },
+        {
+          "text": "of",
+          "start_time": 5.119,
+          "end_time": 5.199
+        },
+        {
+          "text": " ",
+          "start_time": 5.199,
+          "end_time": 5.339
+        },
+        {
+          "text": "stars.",
+          "start_time": 5.339,
+          "end_time": 5.839
+        },
+        {
+          "text": " ",
+          "start_time": 5.839,
+          "end_time": 6.599
+        },
+        {
+          "text": "The",
+          "start_time": 6.599,
+          "end_time": 6.699
+        },
+        {
+          "text": " ",
+          "start_time": 6.699,
+          "end_time": 6.759
+        },
+        {
+          "text": "math",
+          "start_time": 6.759,
+          "end_time": 7.039
+        },
+        {
+          "text": " ",
+          "start_time": 7.039,
+          "end_time": 7.139
+        },
+        {
+          "text": "says",
+          "start_time": 7.139,
+          "end_time": 7.379
+        },
+        {
+          "text": " ",
+          "start_time": 7.379,
+          "end_time": 7.499
+        },
+        {
+          "text": "we",
+          "start_time": 7.5,
+          "end_time": 7.579
+        },
+        {
+          "text": " ",
+          "start_time": 7.579,
+          "end_time": 7.599
+        },
+        {
+          "text": "should",
+          "start_time": 7.599,
+          "end_time": 7.719
+        },
+        {
+          "text": " ",
+          "start_time": 7.719,
+          "end_time": 7.759
+        },
+        {
+          "text": "be",
+          "start_time": 7.759,
+          "end_time": 7.899
+        },
+        {
+          "text": " ",
+          "start_time": 7.899,
+          "end_time": 7.979
+        },
+        {
+          "text": "tripping",
+          "start_time": 7.98,
+          "end_time": 8.319
+        },
+        {
+          "text": " ",
+          "start_time": 8.319,
+          "end_time": 8.38
+        },
+        {
+          "text": "over",
+          "start_time": 8.38,
+          "end_time": 8.539
+        },
+        {
+          "text": " ",
+          "start_time": 8.539,
+          "end_time": 8.659
+        },
+        {
+          "text": "civilizations.",
+          "start_time": 8.659,
+          "end_time": 9.559
+        },
+        {
+          "text": " ",
+          "start_time": 9.559,
+          "end_time": 10.46
+        },
+        {
+          "text": "Where",
+          "start_time": 10.46,
+          "end_time": 10.619
+        },
+        {
+          "text": " ",
+          "start_time": 10.619,
+          "end_time": 10.779
+        },
+        {
+          "text": "is",
+          "start_time": 10.779,
+          "end_time": 10.92
+        },
+        {
+          "text": " ",
+          "start_time": 10.92,
+          "end_time": 11.059
+        },
+        {
+          "text": "everyone?",
+          "start_time": 11.059,
+          "end_time": 11.599
+        },
+        {
+          "text": " ",
+          "start_time": 11.599,
+          "end_time": 11.599
+        }
+      ]
+    },
+    {
+      "text": "Yeah, that's Fermi's question. And there are the polite answers. Life is rare. Intelligence is rarer. Maybe the radio window closes fast. ",
+      "start_time": 12.739,
+      "end_time": 23.599,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "Yeah,",
+          "start_time": 12.739,
+          "end_time": 12.899
+        },
+        {
+          "text": " ",
+          "start_time": 12.899,
+          "end_time": 13.139
+        },
+        {
+          "text": "that's",
+          "start_time": 13.139,
+          "end_time": 13.319
+        },
+        {
+          "text": " ",
+          "start_time": 13.319,
+          "end_time": 13.379
+        },
+        {
+          "text": "Fermi's",
+          "start_time": 13.38,
+          "end_time": 13.759
+        },
+        {
+          "text": " ",
+          "start_time": 13.759,
+          "end_time": 13.839
+        },
+        {
+          "text": "question.",
+          "start_time": 13.84,
+          "end_time": 14.279
+        },
+        {
+          "text": " ",
+          "start_time": 14.279,
+          "end_time": 14.959
+        },
+        {
+          "text": "And",
+          "start_time": 14.96,
+          "end_time": 15.059
+        },
+        {
+          "text": " ",
+          "start_time": 15.059,
+          "end_time": 15.099
+        },
+        {
+          "text": "there",
+          "start_time": 15.099,
+          "end_time": 15.239
+        },
+        {
+          "text": " ",
+          "start_time": 15.239,
+          "end_time": 15.299
+        },
+        {
+          "text": "are",
+          "start_time": 15.299,
+          "end_time": 15.399
+        },
+        {
+          "text": " ",
+          "start_time": 15.399,
+          "end_time": 15.439
+        },
+        {
+          "text": "the",
+          "start_time": 15.439,
+          "end_time": 15.559
+        },
+        {
+          "text": " ",
+          "start_time": 15.559,
+          "end_time": 15.639
+        },
+        {
+          "text": "polite",
+          "start_time": 15.639,
+          "end_time": 15.92
+        },
+        {
+          "text": " ",
+          "start_time": 15.92,
+          "end_time": 16.02
+        },
+        {
+          "text": "answers.",
+          "start_time": 16.02,
+          "end_time": 16.459
+        },
+        {
+          "text": " ",
+          "start_time": 16.459,
+          "end_time": 17.139
+        },
+        {
+          "text": "Life",
+          "start_time": 17.139,
+          "end_time": 17.319
+        },
+        {
+          "text": " ",
+          "start_time": 17.319,
+          "end_time": 17.359
+        },
+        {
+          "text": "is",
+          "start_time": 17.359,
+          "end_time": 17.479
+        },
+        {
+          "text": " ",
+          "start_time": 17.479,
+          "end_time": 17.559
+        },
+        {
+          "text": "rare.",
+          "start_time": 17.559,
+          "end_time": 17.859
+        },
+        {
+          "text": " ",
+          "start_time": 17.859,
+          "end_time": 18.519
+        },
+        {
+          "text": "Intelligence",
+          "start_time": 18.52,
+          "end_time": 19.219
+        },
+        {
+          "text": " ",
+          "start_time": 19.219,
+          "end_time": 19.34
+        },
+        {
+          "text": "is",
+          "start_time": 19.34,
+          "end_time": 19.439
+        },
+        {
+          "text": " ",
+          "start_time": 19.439,
+          "end_time": 19.559
+        },
+        {
+          "text": "rarer.",
+          "start_time": 19.559,
+          "end_time": 19.92
+        },
+        {
+          "text": " ",
+          "start_time": 19.92,
+          "end_time": 20.679
+        },
+        {
+          "text": "Maybe",
+          "start_time": 20.68,
+          "end_time": 20.92
+        },
+        {
+          "text": " ",
+          "start_time": 20.92,
+          "end_time": 20.979
+        },
+        {
+          "text": "the",
+          "start_time": 20.979,
+          "end_time": 21.02
+        },
+        {
+          "text": " ",
+          "start_time": 21.02,
+          "end_time": 21.119
+        },
+        {
+          "text": "radio",
+          "start_time": 21.119,
+          "end_time": 21.399
+        },
+        {
+          "text": " ",
+          "start_time": 21.399,
+          "end_time": 21.479
+        },
+        {
+          "text": "window",
+          "start_time": 21.479,
+          "end_time": 21.799
+        },
+        {
+          "text": " ",
+          "start_time": 21.799,
+          "end_time": 21.879
+        },
+        {
+          "text": "closes",
+          "start_time": 21.879,
+          "end_time": 22.239
+        },
+        {
+          "text": " ",
+          "start_time": 22.239,
+          "end_time": 22.359
+        },
+        {
+          "text": "fast.",
+          "start_time": 22.359,
+          "end_time": 22.76
+        },
+        {
+          "text": " ",
+          "start_time": 22.76,
+          "end_time": 23.599
+        }
+      ]
+    },
+    {
+      "text": "Polite. You don't believe any of them. ",
+      "start_time": 23.6,
+      "end_time": 26.939,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Polite.",
+          "start_time": 23.6,
+          "end_time": 24.319
+        },
+        {
+          "text": " ",
+          "start_time": 24.319,
+          "end_time": 24.939
+        },
+        {
+          "text": "You",
+          "start_time": 24.939,
+          "end_time": 25.019
+        },
+        {
+          "text": " ",
+          "start_time": 25.019,
+          "end_time": 25.079
+        },
+        {
+          "text": "don't",
+          "start_time": 25.079,
+          "end_time": 25.199
+        },
+        {
+          "text": " ",
+          "start_time": 25.199,
+          "end_time": 25.239
+        },
+        {
+          "text": "believe",
+          "start_time": 25.239,
+          "end_time": 25.479
+        },
+        {
+          "text": " ",
+          "start_time": 25.479,
+          "end_time": 25.559
+        },
+        {
+          "text": "any",
+          "start_time": 25.559,
+          "end_time": 25.68
+        },
+        {
+          "text": " ",
+          "start_time": 25.68,
+          "end_time": 25.719
+        },
+        {
+          "text": "of",
+          "start_time": 25.719,
+          "end_time": 25.799
+        },
+        {
+          "text": " ",
+          "start_time": 25.799,
+          "end_time": 25.84
+        },
+        {
+          "text": "them.",
+          "start_time": 25.84,
+          "end_time": 25.999
+        },
+        {
+          "text": " ",
+          "start_time": 25.999,
+          "end_time": 26.939
+        }
+      ]
+    },
+    {
+      "text": "I believe one of them, just not the polite version. ",
+      "start_time": 26.939,
+      "end_time": 29.719,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "I",
+          "start_time": 26.939,
+          "end_time": 26.979
+        },
+        {
+          "text": " ",
+          "start_time": 26.979,
+          "end_time": 27.079
+        },
+        {
+          "text": "believe",
+          "start_time": 27.079,
+          "end_time": 27.379
+        },
+        {
+          "text": " ",
+          "start_time": 27.379,
+          "end_time": 27.459
+        },
+        {
+          "text": "one",
+          "start_time": 27.459,
+          "end_time": 27.539
+        },
+        {
+          "text": " ",
+          "start_time": 27.539,
+          "end_time": 27.579
+        },
+        {
+          "text": "of",
+          "start_time": 27.579,
+          "end_time": 27.659
+        },
+        {
+          "text": " ",
+          "start_time": 27.659,
+          "end_time": 27.699
+        },
+        {
+          "text": "them,",
+          "start_time": 27.699,
+          "end_time": 27.859
+        },
+        {
+          "text": " ",
+          "start_time": 27.859,
+          "end_time": 28.42
+        },
+        {
+          "text": "just",
+          "start_time": 28.42,
+          "end_time": 28.599
+        },
+        {
+          "text": " ",
+          "start_time": 28.599,
+          "end_time": 28.639
+        },
+        {
+          "text": "not",
+          "start_time": 28.639,
+          "end_time": 28.779
+        },
+        {
+          "text": " ",
+          "start_time": 28.779,
+          "end_time": 28.819
+        },
+        {
+          "text": "the",
+          "start_time": 28.819,
+          "end_time": 28.879
+        },
+        {
+          "text": " ",
+          "start_time": 28.879,
+          "end_time": 28.979
+        },
+        {
+          "text": "polite",
+          "start_time": 28.979,
+          "end_time": 29.279
+        },
+        {
+          "text": " ",
+          "start_time": 29.279,
+          "end_time": 29.339
+        },
+        {
+          "text": "version.",
+          "start_time": 29.34,
+          "end_time": 29.719
+        },
+        {
+          "text": " ",
+          "start_time": 29.719,
+          "end_time": 29.719
+        }
+      ]
+    },
+    {
+      "text": "Imagine the galaxy as a forest at night. Every civilization is a hunter walking through it. ",
+      "start_time": 31.619,
+      "end_time": 38.379,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "Imagine",
+          "start_time": 31.619,
+          "end_time": 32.0
+        },
+        {
+          "text": " ",
+          "start_time": 32.0,
+          "end_time": 32.04
+        },
+        {
+          "text": "the",
+          "start_time": 32.04,
+          "end_time": 32.119
+        },
+        {
+          "text": " ",
+          "start_time": 32.119,
+          "end_time": 32.239
+        },
+        {
+          "text": "galaxy",
+          "start_time": 32.239,
+          "end_time": 32.719
+        },
+        {
+          "text": " ",
+          "start_time": 32.719,
+          "end_time": 32.759
+        },
+        {
+          "text": "as",
+          "start_time": 32.759,
+          "end_time": 32.84
+        },
+        {
+          "text": " ",
+          "start_time": 32.84,
+          "end_time": 32.899
+        },
+        {
+          "text": "a",
+          "start_time": 32.899,
+          "end_time": 32.979
+        },
+        {
+          "text": " ",
+          "start_time": 32.979,
+          "end_time": 33.059
+        },
+        {
+          "text": "forest",
+          "start_time": 33.059,
+          "end_time": 33.38
+        },
+        {
+          "text": " ",
+          "start_time": 33.38,
+          "end_time": 33.439
+        },
+        {
+          "text": "at",
+          "start_time": 33.439,
+          "end_time": 33.52
+        },
+        {
+          "text": " ",
+          "start_time": 33.52,
+          "end_time": 33.619
+        },
+        {
+          "text": "night.",
+          "start_time": 33.619,
+          "end_time": 33.899
+        },
+        {
+          "text": " ",
+          "start_time": 33.899,
+          "end_time": 34.52
+        },
+        {
+          "text": "Every",
+          "start_time": 34.52,
+          "end_time": 34.819
+        },
+        {
+          "text": " ",
+          "start_time": 34.819,
+          "end_time": 34.899
+        },
+        {
+          "text": "civilization",
+          "start_time": 34.899,
+          "end_time": 35.7
+        },
+        {
+          "text": " ",
+          "start_time": 35.7,
+          "end_time": 35.819
+        },
+        {
+          "text": "is",
+          "start_time": 35.819,
+          "end_time": 35.919
+        },
+        {
+          "text": " ",
+          "start_time": 35.919,
+          "end_time": 35.979
+        },
+        {
+          "text": "a",
+          "start_time": 35.979,
+          "end_time": 36.059
+        },
+        {
+          "text": " ",
+          "start_time": 36.059,
+          "end_time": 36.139
+        },
+        {
+          "text": "hunter",
+          "start_time": 36.139,
+          "end_time": 36.659
+        },
+        {
+          "text": " ",
+          "start_time": 36.659,
+          "end_time": 36.739
+        },
+        {
+          "text": "walking",
+          "start_time": 36.739,
+          "end_time": 37.079
+        },
+        {
+          "text": " ",
+          "start_time": 37.079,
+          "end_time": 37.119
+        },
+        {
+          "text": "through",
+          "start_time": 37.119,
+          "end_time": 37.299
+        },
+        {
+          "text": " ",
+          "start_time": 37.299,
+          "end_time": 37.36
+        },
+        {
+          "text": "it.",
+          "start_time": 37.36,
+          "end_time": 37.459
+        },
+        {
+          "text": " ",
+          "start_time": 37.459,
+          "end_time": 38.379
+        }
+      ]
+    },
+    {
+      "text": "Okay. ",
+      "start_time": 38.379,
+      "end_time": 38.699,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Okay.",
+          "start_time": 38.379,
+          "end_time": 38.699
+        },
+        {
+          "text": " ",
+          "start_time": 38.699,
+          "end_time": 38.699
+        }
+      ]
+    },
+    {
+      "text": "You can't tell who's friendly. You can't tell who's stronger. You can't even tell who's listening. So what do you do? ",
+      "start_time": 40.34,
+      "end_time": 46.919,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "You",
+          "start_time": 40.34,
+          "end_time": 40.439
+        },
+        {
+          "text": " ",
+          "start_time": 40.439,
+          "end_time": 40.5
+        },
+        {
+          "text": "can't",
+          "start_time": 40.5,
+          "end_time": 40.719
+        },
+        {
+          "text": " ",
+          "start_time": 40.719,
+          "end_time": 40.779
+        },
+        {
+          "text": "tell",
+          "start_time": 40.779,
+          "end_time": 40.939
+        },
+        {
+          "text": " ",
+          "start_time": 40.939,
+          "end_time": 40.979
+        },
+        {
+          "text": "who's",
+          "start_time": 40.979,
+          "end_time": 41.159
+        },
+        {
+          "text": " ",
+          "start_time": 41.159,
+          "end_time": 41.239
+        },
+        {
+          "text": "friendly.",
+          "start_time": 41.239,
+          "end_time": 41.619
+        },
+        {
+          "text": " ",
+          "start_time": 41.619,
+          "end_time": 42.18
+        },
+        {
+          "text": "You",
+          "start_time": 42.18,
+          "end_time": 42.279
+        },
+        {
+          "text": " ",
+          "start_time": 42.279,
+          "end_time": 42.34
+        },
+        {
+          "text": "can't",
+          "start_time": 42.34,
+          "end_time": 42.579
+        },
+        {
+          "text": " ",
+          "start_time": 42.579,
+          "end_time": 42.639
+        },
+        {
+          "text": "tell",
+          "start_time": 42.639,
+          "end_time": 42.779
+        },
+        {
+          "text": " ",
+          "start_time": 42.779,
+          "end_time": 42.84
+        },
+        {
+          "text": "who's",
+          "start_time": 42.84,
+          "end_time": 43.02
+        },
+        {
+          "text": " ",
+          "start_time": 43.02,
+          "end_time": 43.099
+        },
+        {
+          "text": "stronger.",
+          "start_time": 43.099,
+          "end_time": 43.579
+        },
+        {
+          "text": " ",
+          "start_time": 43.579,
+          "end_time": 44.099
+        },
+        {
+          "text": "You",
+          "start_time": 44.099,
+          "end_time": 44.2
+        },
+        {
+          "text": " ",
+          "start_time": 44.2,
+          "end_time": 44.279
+        },
+        {
+          "text": "can't",
+          "start_time": 44.279,
+          "end_time": 44.419
+        },
+        {
+          "text": " ",
+          "start_time": 44.419,
+          "end_time": 44.479
+        },
+        {
+          "text": "even",
+          "start_time": 44.479,
+          "end_time": 44.68
+        },
+        {
+          "text": " ",
+          "start_time": 44.68,
+          "end_time": 44.739
+        },
+        {
+          "text": "tell",
+          "start_time": 44.739,
+          "end_time": 44.879
+        },
+        {
+          "text": " ",
+          "start_time": 44.879,
+          "end_time": 44.919
+        },
+        {
+          "text": "who's",
+          "start_time": 44.919,
+          "end_time": 45.099
+        },
+        {
+          "text": " ",
+          "start_time": 45.099,
+          "end_time": 45.18
+        },
+        {
+          "text": "listening.",
+          "start_time": 45.18,
+          "end_time": 45.579
+        },
+        {
+          "text": " ",
+          "start_time": 45.579,
+          "end_time": 46.219
+        },
+        {
+          "text": "So",
+          "start_time": 46.219,
+          "end_time": 46.319
+        },
+        {
+          "text": " ",
+          "start_time": 46.319,
+          "end_time": 46.379
+        },
+        {
+          "text": "what",
+          "start_time": 46.379,
+          "end_time": 46.459
+        },
+        {
+          "text": " ",
+          "start_time": 46.459,
+          "end_time": 46.479
+        },
+        {
+          "text": "do",
+          "start_time": 46.479,
+          "end_time": 46.539
+        },
+        {
+          "text": " ",
+          "start_time": 46.539,
+          "end_time": 46.579
+        },
+        {
+          "text": "you",
+          "start_time": 46.579,
+          "end_time": 46.68
+        },
+        {
+          "text": " ",
+          "start_time": 46.68,
+          "end_time": 46.739
+        },
+        {
+          "text": "do?",
+          "start_time": 46.739,
+          "end_time": 46.919
+        },
+        {
+          "text": " ",
+          "start_time": 46.919,
+          "end_time": 46.919
+        }
+      ]
+    },
+    {
+      "text": "You don't make a sound. ",
+      "start_time": 48.0,
+      "end_time": 51.219,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "You",
+          "start_time": 48.0,
+          "end_time": 48.359
+        },
+        {
+          "text": " ",
+          "start_time": 48.359,
+          "end_time": 48.439
+        },
+        {
+          "text": "don't",
+          "start_time": 48.439,
+          "end_time": 48.979
+        },
+        {
+          "text": " ",
+          "start_time": 48.979,
+          "end_time": 49.099
+        },
+        {
+          "text": "make",
+          "start_time": 49.099,
+          "end_time": 49.579
+        },
+        {
+          "text": " ",
+          "start_time": 49.579,
+          "end_time": 49.679
+        },
+        {
+          "text": "a",
+          "start_time": 49.68,
+          "end_time": 49.799
+        },
+        {
+          "text": " ",
+          "start_time": 49.799,
+          "end_time": 49.899
+        },
+        {
+          "text": "sound.",
+          "start_time": 49.899,
+          "end_time": 50.459
+        },
+        {
+          "text": " ",
+          "start_time": 50.459,
+          "end_time": 51.219
+        }
+      ]
+    },
+    {
+      "text": "You don't make a sound. And if you hear something move, you shoot first, because by the time you finish saying hello, the arrow's already on its way. ",
+      "start_time": 51.219,
+      "end_time": 60.379,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "You",
+          "start_time": 51.219,
+          "end_time": 51.259
+        },
+        {
+          "text": " ",
+          "start_time": 51.259,
+          "end_time": 51.299
+        },
+        {
+          "text": "don't",
+          "start_time": 51.299,
+          "end_time": 51.439
+        },
+        {
+          "text": " ",
+          "start_time": 51.439,
+          "end_time": 51.479
+        },
+        {
+          "text": "make",
+          "start_time": 51.479,
+          "end_time": 51.599
+        },
+        {
+          "text": " ",
+          "start_time": 51.599,
+          "end_time": 51.659
+        },
+        {
+          "text": "a",
+          "start_time": 51.659,
+          "end_time": 51.719
+        },
+        {
+          "text": " ",
+          "start_time": 51.719,
+          "end_time": 51.799
+        },
+        {
+          "text": "sound.",
+          "start_time": 51.799,
+          "end_time": 52.139
+        },
+        {
+          "text": " ",
+          "start_time": 52.139,
+          "end_time": 52.599
+        },
+        {
+          "text": "And",
+          "start_time": 52.599,
+          "end_time": 52.68
+        },
+        {
+          "text": " ",
+          "start_time": 52.68,
+          "end_time": 52.719
+        },
+        {
+          "text": "if",
+          "start_time": 52.719,
+          "end_time": 52.84
+        },
+        {
+          "text": " ",
+          "start_time": 52.84,
+          "end_time": 52.86
+        },
+        {
+          "text": "you",
+          "start_time": 52.86,
+          "end_time": 53.0
+        },
+        {
+          "text": " ",
+          "start_time": 53.0,
+          "end_time": 53.039
+        },
+        {
+          "text": "hear",
+          "start_time": 53.039,
+          "end_time": 53.239
+        },
+        {
+          "text": " ",
+          "start_time": 53.239,
+          "end_time": 53.299
+        },
+        {
+          "text": "something",
+          "start_time": 53.299,
+          "end_time": 53.639
+        },
+        {
+          "text": " ",
+          "start_time": 53.639,
+          "end_time": 53.719
+        },
+        {
+          "text": "move,",
+          "start_time": 53.719,
+          "end_time": 54.059
+        },
+        {
+          "text": " ",
+          "start_time": 54.059,
+          "end_time": 54.599
+        },
+        {
+          "text": "you",
+          "start_time": 54.599,
+          "end_time": 54.719
+        },
+        {
+          "text": " ",
+          "start_time": 54.719,
+          "end_time": 54.779
+        },
+        {
+          "text": "shoot",
+          "start_time": 54.779,
+          "end_time": 55.059
+        },
+        {
+          "text": " ",
+          "start_time": 55.059,
+          "end_time": 55.139
+        },
+        {
+          "text": "first,",
+          "start_time": 55.139,
+          "end_time": 55.52
+        },
+        {
+          "text": " ",
+          "start_time": 55.52,
+          "end_time": 56.02
+        },
+        {
+          "text": "because",
+          "start_time": 56.02,
+          "end_time": 56.279
+        },
+        {
+          "text": " ",
+          "start_time": 56.279,
+          "end_time": 56.36
+        },
+        {
+          "text": "by",
+          "start_time": 56.36,
+          "end_time": 56.439
+        },
+        {
+          "text": " ",
+          "start_time": 56.439,
+          "end_time": 56.5
+        },
+        {
+          "text": "the",
+          "start_time": 56.5,
+          "end_time": 56.619
+        },
+        {
+          "text": " ",
+          "start_time": 56.619,
+          "end_time": 56.659
+        },
+        {
+          "text": "time",
+          "start_time": 56.659,
+          "end_time": 56.88
+        },
+        {
+          "text": " ",
+          "start_time": 56.88,
+          "end_time": 56.919
+        },
+        {
+          "text": "you",
+          "start_time": 56.919,
+          "end_time": 57.039
+        },
+        {
+          "text": " ",
+          "start_time": 57.039,
+          "end_time": 57.099
+        },
+        {
+          "text": "finish",
+          "start_time": 57.099,
+          "end_time": 57.34
+        },
+        {
+          "text": " ",
+          "start_time": 57.34,
+          "end_time": 57.399
+        },
+        {
+          "text": "saying",
+          "start_time": 57.399,
+          "end_time": 57.579
+        },
+        {
+          "text": " ",
+          "start_time": 57.579,
+          "end_time": 57.659
+        },
+        {
+          "text": "hello,",
+          "start_time": 57.659,
+          "end_time": 58.5
+        },
+        {
+          "text": " ",
+          "start_time": 58.5,
+          "end_time": 58.579
+        },
+        {
+          "text": "the",
+          "start_time": 58.579,
+          "end_time": 58.699
+        },
+        {
+          "text": " ",
+          "start_time": 58.699,
+          "end_time": 58.799
+        },
+        {
+          "text": "arrow's",
+          "start_time": 58.799,
+          "end_time": 59.239
+        },
+        {
+          "text": " ",
+          "start_time": 59.239,
+          "end_time": 59.339
+        },
+        {
+          "text": "already",
+          "start_time": 59.34,
+          "end_time": 59.759
+        },
+        {
+          "text": " ",
+          "start_time": 59.759,
+          "end_time": 59.799
+        },
+        {
+          "text": "on",
+          "start_time": 59.799,
+          "end_time": 59.879
+        },
+        {
+          "text": " ",
+          "start_time": 59.879,
+          "end_time": 59.919
+        },
+        {
+          "text": "its",
+          "start_time": 59.919,
+          "end_time": 60.099
+        },
+        {
+          "text": " ",
+          "start_time": 60.099,
+          "end_time": 60.139
+        },
+        {
+          "text": "way.",
+          "start_time": 60.139,
+          "end_time": 60.379
+        },
+        {
+          "text": " ",
+          "start_time": 60.379,
+          "end_time": 60.379
+        }
+      ]
+    },
+    {
+      "text": "So the silence isn't an absence. ",
+      "start_time": 61.419,
+      "end_time": 64.479,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "So",
+          "start_time": 61.419,
+          "end_time": 61.5
+        },
+        {
+          "text": " ",
+          "start_time": 61.5,
+          "end_time": 61.539
+        },
+        {
+          "text": "the",
+          "start_time": 61.539,
+          "end_time": 61.619
+        },
+        {
+          "text": " ",
+          "start_time": 61.619,
+          "end_time": 61.699
+        },
+        {
+          "text": "silence",
+          "start_time": 61.699,
+          "end_time": 62.239
+        },
+        {
+          "text": " ",
+          "start_time": 62.239,
+          "end_time": 62.299
+        },
+        {
+          "text": "isn't",
+          "start_time": 62.299,
+          "end_time": 62.639
+        },
+        {
+          "text": " ",
+          "start_time": 62.639,
+          "end_time": 62.68
+        },
+        {
+          "text": "an",
+          "start_time": 62.68,
+          "end_time": 62.799
+        },
+        {
+          "text": " ",
+          "start_time": 62.799,
+          "end_time": 62.899
+        },
+        {
+          "text": "absence.",
+          "start_time": 62.899,
+          "end_time": 63.52
+        },
+        {
+          "text": " ",
+          "start_time": 63.52,
+          "end_time": 64.479
+        }
+      ]
+    },
+    {
+      "text": "The silence is the strategy. Everyone who didn't figure that out is already gone. ",
+      "start_time": 64.479,
+      "end_time": 69.699,
+      "speaker": {
+        "id": "speaker_1",
+        "name": "Speaker 1"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 64.479,
+          "end_time": 64.519
+        },
+        {
+          "text": " ",
+          "start_time": 64.519,
+          "end_time": 64.699
+        },
+        {
+          "text": "silence",
+          "start_time": 64.699,
+          "end_time": 65.339
+        },
+        {
+          "text": " ",
+          "start_time": 65.339,
+          "end_time": 65.399
+        },
+        {
+          "text": "is",
+          "start_time": 65.4,
+          "end_time": 65.539
+        },
+        {
+          "text": " ",
+          "start_time": 65.539,
+          "end_time": 65.579
+        },
+        {
+          "text": "the",
+          "start_time": 65.58,
+          "end_time": 65.619
+        },
+        {
+          "text": " ",
+          "start_time": 65.619,
+          "end_time": 65.739
+        },
+        {
+          "text": "strategy.",
+          "start_time": 65.739,
+          "end_time": 66.299
+        },
+        {
+          "text": " ",
+          "start_time": 66.299,
+          "end_time": 67.059
+        },
+        {
+          "text": "Everyone",
+          "start_time": 67.059,
+          "end_time": 67.459
+        },
+        {
+          "text": " ",
+          "start_time": 67.459,
+          "end_time": 67.5
+        },
+        {
+          "text": "who",
+          "start_time": 67.5,
+          "end_time": 67.619
+        },
+        {
+          "text": " ",
+          "start_time": 67.619,
+          "end_time": 67.639
+        },
+        {
+          "text": "didn't",
+          "start_time": 67.639,
+          "end_time": 67.899
+        },
+        {
+          "text": " ",
+          "start_time": 67.899,
+          "end_time": 67.919
+        },
+        {
+          "text": "figure",
+          "start_time": 67.919,
+          "end_time": 68.159
+        },
+        {
+          "text": " ",
+          "start_time": 68.159,
+          "end_time": 68.199
+        },
+        {
+          "text": "that",
+          "start_time": 68.199,
+          "end_time": 68.339
+        },
+        {
+          "text": " ",
+          "start_time": 68.339,
+          "end_time": 68.419
+        },
+        {
+          "text": "out",
+          "start_time": 68.419,
+          "end_time": 68.699
+        },
+        {
+          "text": " ",
+          "start_time": 68.699,
+          "end_time": 68.759
+        },
+        {
+          "text": "is",
+          "start_time": 68.76,
+          "end_time": 68.879
+        },
+        {
+          "text": " ",
+          "start_time": 68.879,
+          "end_time": 68.939
+        },
+        {
+          "text": "already",
+          "start_time": 68.939,
+          "end_time": 69.179
+        },
+        {
+          "text": " ",
+          "start_time": 69.179,
+          "end_time": 69.259
+        },
+        {
+          "text": "gone.",
+          "start_time": 69.26,
+          "end_time": 69.699
+        },
+        {
+          "text": " ",
+          "start_time": 69.699,
+          "end_time": 69.699
+        }
+      ]
+    },
+    {
+      "text": "[sighs] And we've been broadcasting since 1936.",
+      "start_time": 70.759,
+      "end_time": 74.519,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "[sighs]",
+          "start_time": 70.759,
+          "end_time": 71.279
+        },
+        {
+          "text": " ",
+          "start_time": 71.279,
+          "end_time": 71.399
+        },
+        {
+          "text": "And",
+          "start_time": 71.4,
+          "end_time": 71.639
+        },
+        {
+          "text": " ",
+          "start_time": 71.639,
+          "end_time": 71.699
+        },
+        {
+          "text": "we've",
+          "start_time": 71.699,
+          "end_time": 71.879
+        },
+        {
+          "text": " ",
+          "start_time": 71.879,
+          "end_time": 71.919
+        },
+        {
+          "text": "been",
+          "start_time": 71.919,
+          "end_time": 72.079
+        },
+        {
+          "text": " ",
+          "start_time": 72.079,
+          "end_time": 72.099
+        },
+        {
+          "text": "broadcasting",
+          "start_time": 72.099,
+          "end_time": 72.859
+        },
+        {
+          "text": " ",
+          "start_time": 72.859,
+          "end_time": 72.979
+        },
+        {
+          "text": "since",
+          "start_time": 72.979,
+          "end_time": 73.259
+        },
+        {
+          "text": " ",
+          "start_time": 73.259,
+          "end_time": 73.299
+        },
+        {
+          "text": "1936.",
+          "start_time": 73.299,
+          "end_time": 74.519
+        }
+      ]
+    }
+  ]
+}

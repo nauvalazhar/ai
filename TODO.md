@@ -6,7 +6,7 @@
 - [ ] branch picker
 - [x] feedback bar
 - [x] selection toolbar
-- [ ] transcript
+- [x] transcript
 
 ### Code
 

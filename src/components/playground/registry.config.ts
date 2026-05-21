@@ -620,6 +620,37 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Transcript",
+        slug: "transcript",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/transcript/basic")),
+          },
+          {
+            name: "Video",
+            slug: "video",
+            Component: lazy(() => import("#/demos/transcript/video")),
+          },
+          {
+            name: "Custom Scroll",
+            slug: "custom-scroll",
+            Component: lazy(() => import("#/demos/transcript/custom-scroll")),
+          },
+          {
+            name: "Word Highlight",
+            slug: "word-highlight",
+            Component: lazy(() => import("#/demos/transcript/word-highlight")),
+          },
+          {
+            name: "Waveform",
+            slug: "waveform",
+            Component: lazy(() => import("#/demos/transcript/waveform")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [

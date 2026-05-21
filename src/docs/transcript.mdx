@@ -1,0 +1,183 @@
+---
+parts:
+  - name: Transcript
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: defaultAutoScroll
+        type: boolean
+        default: "true"
+        description: Initial value for auto-scroll. When true, the active item scrolls into view as playback advances. Toggle at runtime through `useTranscript().setAutoScroll`.
+      - name: render
+        type: ReactElement
+        description: Render the root as another element.
+  - name: TranscriptContent
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: render
+        type: ReactElement
+        description: Render the scroll viewport as another element. Pass a custom `ScrollArea` or any element that wraps children with its own overflow rules. When provided, the default `overflow-y-auto` is dropped so the swapped element owns scrolling.
+  - name: TranscriptList
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TranscriptItem
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: start
+        type: number
+        description: Start time of the line, in seconds. Drives the active calculation and is the target of `TranscriptTime` clicks.
+      - name: end
+        type: number
+        description: Optional end time of the line, in seconds. When omitted the item stays active until the next item's start. Set it for the last line, or for sparse transcripts with gaps between lines.
+      - name: render
+        type: ReactElement
+        description: Render the item as another element.
+  - name: TranscriptSpeaker
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TranscriptText
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: TranscriptWord
+    passThrough:
+      type: useRender.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: start
+        type: number
+        description: Start time of the word, in seconds.
+      - name: end
+        type: number
+        description: Optional end time of the word, in seconds. When omitted, the word stays highlighted until the next word's start or the end of the segment.
+      - name: render
+        type: ReactElement
+        description: Render the word as another element.
+  - name: TranscriptTime
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: format
+        type: "(seconds: number, duration: number) => string"
+        description: Custom formatter for the timestamp label. Receives the item's start and the total media duration so it can switch between `m:ss` and `h:mm:ss` on its own. Defaults to `formatTimestamp`.
+      - name: render
+        type: ReactElement
+        description: Render the time control as another element.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the seek.
+---
+
+A scrollable list of transcript lines bound to a `Player`. The active line tracks playback and clicking a time stamp seeks to it.
+
+## Anatomy
+
+`Transcript` consumes the playback context from `Player`. A source part (`PlayerAudio` or `PlayerVideo`) feeds the media, and the transcript registers its items so the current time can be matched against each line's range.
+
+```tsx
+<Player>
+  <PlayerAudio src="/podcast.mp3" />
+  <Transcript>
+    <TranscriptContent>
+      <TranscriptList>
+        <TranscriptItem start={0}>
+          <TranscriptTime />
+          <div>
+            <TranscriptSpeaker>Host</TranscriptSpeaker>
+            <TranscriptText>Welcome back to the show.</TranscriptText>
+          </div>
+        </TranscriptItem>
+      </TranscriptList>
+    </TranscriptContent>
+  </Transcript>
+</Player>
+```
+
+The `Player` parts (PlayPause, Progress, Volume, Waveform) and the transcript live in the same root, so a custom control bar slots in next to the list without any extra wiring.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Transcript
+
+The list root. Consumes `usePlayer` to derive the active item from the current playback time, registers items so order doesn't have to match the JSX order, and exposes `autoScroll` so the list can follow the playhead.
+
+<Props name="Transcript" />
+
+### TranscriptContent
+
+The scroll viewport. Sized to fill the remaining space and scrolls vertically. Use the `render` prop to swap in a custom scroll area without changing the rest of the tree.
+
+```tsx
+<TranscriptContent render={<ScrollArea />}>
+  <TranscriptList>{/* items */}</TranscriptList>
+</TranscriptContent>
+```
+
+Auto-scroll uses `scrollIntoView` with `block: "nearest"`, so it walks up to the nearest scrollable ancestor on its own. The swapped element keeps owning overflow and the active line still glides into view.
+
+<Props name="TranscriptContent" />
+
+### TranscriptList
+
+Container for the items. A simple flex column with a small gap and a touch of padding. Trade it for any layout when needed.
+
+<Props name="TranscriptList" />
+
+### TranscriptItem
+
+A single line. Takes the line's `start` time, and optionally an `end`. Sets `data-active` when the current playback position falls inside the line. Items register themselves on mount, so the order in the JSX does not need to match the order in time.
+
+<Props name="TranscriptItem" />
+
+### TranscriptSpeaker
+
+Label for who is speaking. A small text block above or beside the line. Omit it for single-voice transcripts.
+
+<Props name="TranscriptSpeaker" />
+
+### TranscriptText
+
+The line itself. Muted by default, switches to the foreground color when the parent item is active so the eye can scan the current line at a glance.
+
+<Props name="TranscriptText" />
+
+### TranscriptWord
+
+Per-word progress for transcripts with word-level timing. Each word reads `currentTime` from the player and exposes two attributes: `data-played` when the playhead has reached or passed the word, and `data-active` while the playhead sits inside its range. The default styling tracks progress: words start muted and brighten to the foreground color as they're spoken. Drop it inside `TranscriptText` whenever the transcript source carries per-word timestamps (ElevenLabs Scribe, Whisper word-level, AssemblyAI, and so on).
+
+Override the className to switch to a karaoke-style background highlight if that fits the design better, for example `data-active:bg-primary data-active:text-primary-foreground`.
+
+```tsx
+<TranscriptText>
+  {words.map((w, i) => (
+    <Fragment key={i}>
+      <TranscriptWord start={w.start} end={w.end}>{w.text}</TranscriptWord>
+      {i < words.length - 1 && " "}
+    </Fragment>
+  ))}
+</TranscriptText>
+```
+
+A long transcript becomes a lot of subscribing components. For multi-minute audio with hundreds of words, consider splitting by segment so only the visible words re-render on each tick.
+
+<Props name="TranscriptWord" />
+
+### TranscriptTime
+
+The clickable timestamp. Reads the start time from the parent item and the duration from the player. Click calls `jumpTo(start)`. Pass `format` to render a custom label and `render` to swap the underlying element.
+
+<Props name="TranscriptTime" />
+
+### useTranscript
+
+Hook for reading transcript state from a child of `Transcript`. Returns `activeId`, `autoScroll`, and `setAutoScroll`. For playback state and controls, use `usePlayer` instead, since the two concerns are intentionally split.
