@@ -431,6 +431,18 @@
       ]
     },
     {
+      "name": "player",
+      "type": "component",
+      "dependencies": {
+        "npm": {
+          "react-player": "^3.4.0"
+        }
+      },
+      "files": [
+        { "name": "player.tsx", "path": "src/components/ai/player.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "tooltip",
       "type": "component",
       "files": [

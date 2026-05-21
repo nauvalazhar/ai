@@ -111,6 +111,18 @@
   }
 }
 
+@keyframes player-waveform-loading {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
 @keyframes generated-image-pulse {
   0%,
   100% {

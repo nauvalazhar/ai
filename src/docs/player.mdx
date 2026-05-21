@@ -1,0 +1,316 @@
+---
+parts:
+  - name: Player
+    props:
+      - name: children
+        type: ReactNode
+        description: Anything that needs access to player state. The root renders nothing of its own, it only provides the context.
+  - name: PlayerAudio
+    passThrough:
+      type: React.ComponentProps<"audio">
+      to: <audio>
+    props:
+      - name: src
+        type: string
+        description: The audio URL. Forwarded straight to the native `<audio>` element.
+  - name: PlayerVideo
+    passThrough:
+      type: ComponentProps<typeof ReactPlayer>
+      to: <ReactPlayer>
+    props:
+      - name: src
+        type: string
+        description: The media source. Accepts a direct audio or video URL, or a URL recognized by react-player (YouTube, Vimeo, SoundCloud).
+      - name: controls
+        type: boolean
+        default: "true"
+        description: Show the native controls. Set to false for a chromeless player driven by the parts below.
+  - name: PlayerPlayPause
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: playIcon
+        type: ReactNode
+        description: Icon shown when playback is paused. Used only when no `children` are passed.
+      - name: pauseIcon
+        type: ReactNode
+        description: Icon shown when playback is running. Used only when no `children` are passed.
+      - name: render
+        type: ReactElement
+        description: Render as another element, for example the kit's `Button`.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the toggle.
+  - name: PlayerSeekButton
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: seek
+        type: number
+        description: Seconds to skip on click. Negative values seek backward.
+      - name: render
+        type: ReactElement
+        description: Render as another element, for example the kit's `Button`.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the seek.
+  - name: PlayerCurrentTime
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: format
+        type: "(seconds: number, duration: number) => string"
+        description: Custom formatter. Defaults to `formatTimestamp`.
+  - name: PlayerDuration
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: format
+        type: "(seconds: number, duration: number) => string"
+        description: Custom formatter. Defaults to `formatTimestamp`.
+  - name: PlayerProgress
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PlayerTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PlayerMeta
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PlayerMute
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: muteIcon
+        type: ReactNode
+        description: Icon shown when the player is muted or volume is zero. Used only when no `children` are passed.
+      - name: unmuteIcon
+        type: ReactNode
+        description: Icon shown when audio is audible. Used only when no `children` are passed.
+      - name: render
+        type: ReactElement
+        description: Render as another element, for example the kit's `Button`.
+      - name: onClick
+        type: "(event) => void"
+        description: Called first. Call `event.preventDefault()` to block the toggle.
+  - name: PlayerVolume
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: PlayerWaveform
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: src
+        type: string
+        description: Audio URL to decode for peak data. Omit if you pass `peaks` directly.
+      - name: peaks
+        type: number[]
+        description: Pre-computed normalized peaks (0 to 1). When provided, the decode is skipped entirely and the waveform renders instantly. Generate them with a one-off Node script using `audio-decode`, or compute at runtime with any library.
+      - name: samples
+        type: number
+        default: "96"
+        description: Number of bars to draw when decoding from `src`. Ignored when `peaks` is passed.
+      - name: barWidth
+        type: number
+        default: "2"
+        description: Width of each bar in pixels.
+      - name: barGap
+        type: number
+        default: "2"
+        description: Gap between bars in pixels.
+      - name: minHeight
+        type: number
+        default: "2"
+        description: Minimum bar height in pixels so silent regions still render.
+---
+
+A media playback primitive split into composable parts.
+
+## Anatomy
+
+`Player` is a headless context provider. It renders no DOM of its own. A source part (`PlayerAudio` or `PlayerVideo`) registers the media element, and control parts drive it.
+
+```tsx
+<Player>
+  <PlayerAudio src="/voice-message.mp3" />
+  <div className="flex items-center gap-3">
+    <PlayerPlayPause playIcon={<Play />} pauseIcon={<Pause />} />
+    <PlayerProgress />
+    <PlayerCurrentTime />
+  </div>
+</Player>
+```
+
+Every part throws if rendered outside `Player`, so composition mistakes surface immediately.
+
+For embedded sources like YouTube, Vimeo, SoundCloud, Twitch, HLS, and DASH, swap `PlayerAudio` for `PlayerVideo` and pass the URL. `react-player` v3 wraps each provider in a custom element that implements the `HTMLMediaElement` interface, so the same control parts (`PlayerPlayPause`, `PlayerSeekButton`, `PlayerProgress`, `PlayerVolume`, `PlayerCurrentTime`, `PlayerDuration`) drive them transparently — no special path. `PlayerWaveform` is the one exception, since it needs to fetch and decode the raw audio bytes; see its section below.
+
+## API
+
+### Player
+
+The context provider. Owns the media element reference, subscribes to native media events (`timeupdate`, `play`, `pause`, `durationchange`, `volumechange`), and exposes everything through `usePlayer`. Polls `currentTime` with `requestAnimationFrame` while playing so word-level highlights stay smooth.
+
+<Props name="Player" />
+
+### PlayerAudio
+
+Headless native `<audio>`. No chrome, no controls. Drop it in once per `Player` to register the source.
+
+<Props name="PlayerAudio" />
+
+### PlayerVideo
+
+A `react-player` wrapper for the cases where you do want a visible player surface. Handles video files, YouTube, Vimeo, and the rest of react-player's matrix. Pass `controls={false}` to render a chromeless surface and drive playback through the control parts.
+
+<Props name="PlayerVideo" />
+
+### PlayerPlayPause
+
+A button that toggles playback. Swaps `playIcon` and `pauseIcon` based on the state. Sets `data-playing` on the element when running, so a single `render` element can style both states.
+
+<Props name="PlayerPlayPause" />
+
+### PlayerSeekButton
+
+A button that skips by a fixed number of seconds. Negative values seek backward. Sets `data-direction` to `forward` or `back`.
+
+<Props name="PlayerSeekButton" />
+
+### PlayerCurrentTime
+
+A live text label for the current playback position. Uses `formatTimestamp` by default, switching between `m:ss` and `h:mm:ss` based on the duration. Pass a `format` callback to swap in your own formatter.
+
+<Props name="PlayerCurrentTime" />
+
+### PlayerDuration
+
+A text label for the total length of the media. Reads `0:00` until metadata loads, then updates once the duration is known. Accepts the same `format` callback as `PlayerCurrentTime`.
+
+<Props name="PlayerDuration" />
+
+### PlayerProgress
+
+A thin draggable seek bar with a hover thumb. Fills the available width.
+
+<Props name="PlayerProgress" />
+
+### PlayerTitle
+
+A text slot for the media's name. An unopinionated `<div>` styled as small foreground text. Override the className to change the size, weight, or color.
+
+<Props name="PlayerTitle" />
+
+### PlayerMeta
+
+A secondary text slot for things like the source, host, or recording length. Styled as muted, smaller text so it reads as a subtitle to `PlayerTitle`. Same `<div>` escape hatch through className.
+
+<Props name="PlayerMeta" />
+
+### PlayerMute
+
+A button that toggles `muted` on the media element. Swaps `muteIcon` and `unmuteIcon` based on state and treats `volume: 0` as muted too, so a slider pulled to zero shows the muted icon. Sets `data-muted` for one-render styling. When the slider is at zero, clicking the button restores the last non-zero volume (or 1 if it was always silent) instead of just flipping `muted`, so the user always gets audible feedback from a single click.
+
+<Props name="PlayerMute" />
+
+### PlayerVolume
+
+A small horizontal slider bound to the media element's `volume`. Reflects external volume changes (e.g. someone hitting the system volume keys with the audio focused) through the `volumechange` event.
+
+<Props name="PlayerVolume" />
+
+### PlayerWaveform
+
+A clickable waveform. By default it decodes the audio file once via the Web Audio API, samples it into peaks, and draws bars with the played portion in the primary color. Peaks are cached by `src` so multiple waveforms or remounts don't re-decode.
+
+**Direct audio sources only.** The decode runs `fetch(src) + decodeAudioData`, which only works for URLs that return raw audio bytes with permissive CORS. YouTube, Vimeo, Twitch, and similar embeds don't expose their media files at the URL, so the fetch returns HTML and the decode silently fails. For external embeds, use `PlayerProgress` instead. If you have the original audio stored separately, pre-compute peaks server-side and pass them via `peaks` — the waveform skips the decode entirely.
+
+The decode is async, so bars render at `minHeight` while the file loads and snap into shape once peaks arrive. For instant render, pre-compute peaks and pass them via `peaks`. A one-off Node script using `audio-decode` writes the JSON next to the audio file:
+
+<CodeTabs>
+```tsx title="Usage"
+import peaks from "./voice-message-peaks.json";
+
+<PlayerWaveform src="/voice-message.mp3" peaks={peaks} />
+```
+```ts title="generate-peaks.ts"
+// scripts/generate-peaks.ts
+import decode from "audio-decode";
+import { readFile, writeFile } from "node:fs/promises";
+
+const SAMPLES = 96;
+const audio = await decode(await readFile("public/voice-message.mp3"));
+const channel = audio.getChannelData(0);
+const samplesPerBar = Math.floor(channel.length / SAMPLES);
+const peaks: number[] = [];
+let absMax = 0;
+for (let i = 0; i < SAMPLES; i++) {
+let max = 0;
+for (let j = i _ samplesPerBar; j < (i + 1) _ samplesPerBar; j++) {
+const v = Math.abs(channel[j] ?? 0);
+if (v > max) max = v;
+}
+peaks.push(max);
+if (max > absMax) absMax = max;
+}
+await writeFile(
+"public/voice-message-peaks.json",
+JSON.stringify(peaks.map((p) => p / absMax)),
+);
+
+````
+</CodeTabs>
+
+<Props name="PlayerWaveform" />
+
+### usePlayer
+
+Hook for reading playback state and driving the player from any child. Must be called inside `<Player>`.
+
+State:
+
+- `currentTime` is the current playback position in seconds. Updated at animation-frame rate while playing.
+- `duration` is the total length of the media in seconds. Stays at `0` until metadata loads.
+- `isPlaying` is `true` while the media is playing, `false` when paused or ended.
+- `volume` is the current volume from `0` to `1`.
+- `muted` is `true` when audio is silenced, either explicitly muted or with volume at `0`.
+
+Actions:
+
+- `play()` starts playback.
+- `pause()` pauses playback.
+- `toggle()` flips between play and pause.
+- `jumpTo(seconds)` seeks to an absolute time in seconds.
+- `seekBy(delta)` seeks relative to the current position. Negative values rewind.
+- `setVolume(next)` sets volume to a value between `0` and `1`. Unmutes automatically when raised above zero.
+- `toggleMute()` flips the muted state. When called while volume is `0`, it restores the last audible level so a single click always produces sound.
+
+```tsx
+function MiniControls() {
+  const { isPlaying, currentTime, duration, play, pause, seekBy } =
+    usePlayer();
+  return (
+    <div>
+      <button onClick={() => seekBy(-10)}>Rewind 10s</button>
+      <button onClick={() => (isPlaying ? pause() : play())}>
+        {isPlaying ? "Pause" : "Play"}
+      </button>
+      <span>{formatTimestamp(currentTime, duration)}</span>
+    </div>
+  );
+}
+````
+
+### formatTimestamp
+
+Helper that formats a seconds value as `m:ss` or `h:mm:ss` depending on a duration hint. Exposed so custom formatters can mirror the default before adding their own tweaks.

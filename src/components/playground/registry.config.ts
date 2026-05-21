@@ -777,6 +777,32 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Player",
+        slug: "player",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/player/basic")),
+          },
+          {
+            name: "Waveform",
+            slug: "waveform",
+            Component: lazy(() => import("#/demos/player/waveform")),
+          },
+          {
+            name: "Video",
+            slug: "video",
+            Component: lazy(() => import("#/demos/player/video")),
+          },
+          {
+            name: "YouTube",
+            slug: "youtube",
+            Component: lazy(() => import("#/demos/player/youtube")),
+          },
+        ],
+      },
+      {
         name: "Popover",
         slug: "popover",
         demos: [
