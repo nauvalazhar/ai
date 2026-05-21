@@ -86,7 +86,8 @@ export function Transcript({
   }, []);
 
   const sortedItems = useMemo(
-    () => Array.from(itemsRef.current.values()).sort((a, b) => a.start - b.start),
+    () =>
+      Array.from(itemsRef.current.values()).sort((a, b) => a.start - b.start),
     [itemsVersion],
   );
 
@@ -149,7 +150,7 @@ export function TranscriptList({
   return (
     <div
       data-slot="transcript-list"
-      className={cn("flex flex-col gap-1 p-2", className)}
+      className={cn("flex flex-col gap-1 p-1", className)}
       {...props}
     />
   );
@@ -195,7 +196,7 @@ export function TranscriptItem({
       "data-slot": "transcript-item",
       "data-active": active ? "" : undefined,
       className: cn(
-        "flex gap-3 rounded p-2 transition-colors",
+        "flex gap-3 rounded px-3.5 py-2 transition-colors",
         "data-active:bg-surface-elevated",
         className,
       ),
@@ -212,10 +213,7 @@ export function TranscriptSpeaker({
   return (
     <div
       data-slot="transcript-speaker"
-      className={cn(
-        "shrink-0 text-xs font-medium text-foreground",
-        className,
-      )}
+      className={cn("shrink-0 text-xs font-medium text-foreground", className)}
       {...props}
     />
   );
