@@ -1,11 +1,6 @@
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
 import { Check, ChevronDownIcon, Copy } from "lucide-react";
-import {
-  useMemo,
-  useState,
-  type ComponentType,
-  type SVGProps,
-} from "react";
+import { useMemo, useState, type ComponentType, type SVGProps } from "react";
 import { SiBun, SiNpm, SiPnpm, SiYarn } from "react-icons/si";
 import { cn } from "#/lib/utils";
 import { Button } from "../ai/button";
@@ -127,10 +122,7 @@ export function InstallBlock({ slug }: { slug: string }) {
 
         {!isManual && (
           <>
-            <span
-              aria-hidden
-              className="h-4 w-px bg-border"
-            />
+            <span aria-hidden className="h-4 w-px bg-border" />
             <Select
               items={pmItems}
               value={pmValue}
@@ -138,7 +130,7 @@ export function InstallBlock({ slug }: { slug: string }) {
             >
               <SelectTrigger
                 variant="plain"
-                className="h-7 px-2 w-auto text-xs text-muted-foreground hover:text-foreground"
+                className="h-7 px-2 w-auto text-xs text-muted-foreground hover:text-foreground -ml-1.5"
               >
                 <SelectValue />
               </SelectTrigger>
