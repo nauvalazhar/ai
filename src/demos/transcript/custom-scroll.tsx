@@ -87,7 +87,7 @@ const lines = [
 
 function MiniControls() {
   return (
-    <div className="flex items-center gap-2 border-t border-border bg-surface-elevated px-3 py-2">
+    <div className="flex items-center gap-1 border-t border-border bg-surface-elevated px-4 py-3">
       <PlayerSeekButton
         seek={-10}
         render={

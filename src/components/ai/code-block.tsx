@@ -94,7 +94,7 @@ export function CodeBlockHeader({
   return (
     <header
       data-slot="code-block-header"
-      className={cn("px-3.5 h-8 flex items-center", className)}
+      className={cn("px-3 h-8 flex items-center", className)}
       {...props}
     >
       {children}
@@ -199,7 +199,7 @@ export function CodeBlockContent({
       style={{ height: height !== undefined ? `${height}px` : undefined }}
       {...props}
     >
-      <div ref={innerRef} className="px-3.5 py-2.5">
+      <div ref={innerRef} className="px-3 py-2">
         {children}
       </div>
       {clip && (

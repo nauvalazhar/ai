@@ -27,7 +27,7 @@ export default function Basic() {
     <div className="mx-auto w-full max-w-md">
       <Player>
         <PlayerAudio src="/dialogue.mp3" />
-        <div className="flex flex-col gap-2.5 rounded-outer bg-surface p-3.5 ring ring-border">
+        <div className="flex flex-col gap-2.5 rounded-outer bg-surface p-4 ring ring-border">
           <div className="flex items-center">
             <div className="flex flex-col gap-1">
               <PlayerTitle>Dialogue.mp3</PlayerTitle>

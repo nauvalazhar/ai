@@ -4,7 +4,7 @@ import { cn } from "#/lib/utils";
 
 export const sourceVariants = cva(
   cn(
-    "flex flex-col gap-1.5 p-3.5 rounded-outer",
+    "flex flex-col gap-1.5 p-3 rounded-outer",
     "no-underline text-foreground",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
     "transition-colors hover:bg-accent",

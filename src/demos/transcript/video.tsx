@@ -20,12 +20,24 @@ import {
 
 const lines = [
   { start: 0, text: "Opening shot: waves rolling in from the horizon." },
-  { start: 4, text: "Cut underwater. Sunlight cuts through the surface in slow shafts." },
+  {
+    start: 4,
+    text: "Cut underwater. Sunlight cuts through the surface in slow shafts.",
+  },
   { start: 9, text: "A school of small silver fish drifts across the frame." },
-  { start: 14, text: "Push toward a coral wall textured with anemones and sponges." },
-  { start: 19, text: "Wide angle on the reef. Color saturates as the camera settles." },
+  {
+    start: 14,
+    text: "Push toward a coral wall textured with anemones and sponges.",
+  },
+  {
+    start: 19,
+    text: "Wide angle on the reef. Color saturates as the camera settles.",
+  },
   { start: 24, text: "A larger fish glides past, almost brushing the lens." },
-  { start: 30, text: "Cut to a slow ascent toward the surface, bubbles rising." },
+  {
+    start: 30,
+    text: "Cut to a slow ascent toward the surface, bubbles rising.",
+  },
   { start: 35, text: "Surface again. Setting sun gilds the swell." },
 ];
 
@@ -33,13 +45,13 @@ export default function Video() {
   return (
     <div className="mx-auto w-full max-w-3xl">
       <Player>
-        <Transcript className="h-[720px]">
+        <Transcript className="h-180">
           <PlayerVideo
             src="https://vjs.zencdn.net/v/oceans.mp4"
             controls={false}
             className="bg-black"
           />
-          <div className="flex items-center gap-2 border-y border-border bg-surface-elevated px-3 py-2">
+          <div className="flex items-center gap-1 border-y border-border bg-surface-elevated px-4 py-3">
             <PlayerSeekButton
               seek={-10}
               render={

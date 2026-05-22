@@ -117,7 +117,7 @@ export function Composer({
           data-disabled={disabled ? "true" : undefined}
           aria-disabled={disabled || undefined}
           className={cn(
-            "relative flex flex-col gap-1 rounded-outer border border-border bg-surface p-2",
+            "relative flex flex-col gap-1 rounded-outer border border-border bg-surface",
             "focus-within:ring-2 focus-within:ring-primary/40 focus-within:border-primary/60",
             "transition-[box-shadow,border-color] shadow-xs",
             "data-[disabled=true]:opacity-60 data-[disabled=true]:cursor-not-allowed",
@@ -241,7 +241,7 @@ export function ComposerInput({
       }}
       className={cn(
         "w-full resize-none outline-none bg-transparent",
-        "min-h-9 px-2 py-1.5 text-sm leading-relaxed text-foreground",
+        "min-h-9 px-3 py-2 text-sm leading-relaxed text-foreground",
         "placeholder:text-muted-foreground",
         "disabled:cursor-not-allowed",
         className,
@@ -259,7 +259,7 @@ export function ComposerQuote({
     <div
       data-slot="composer-quote"
       className={cn(
-        "mx-1 mt-1 flex items-start gap-2 rounded bg-surface-elevated px-3 py-2 text-xs text-muted-foreground",
+        "mx-1 mt-1 flex items-start gap-2 rounded bg-surface-elevated px-2.5 py-1.5 text-xs text-muted-foreground",
         className,
       )}
       {...props}
@@ -345,7 +345,7 @@ export function ComposerToolbar({
   return (
     <div
       data-slot="composer-toolbar"
-      className={cn("flex items-center gap-1.5 px-1 pt-1", className)}
+      className={cn("flex items-center gap-1.5 px-3 py-2", className)}
       {...props}
     />
   );

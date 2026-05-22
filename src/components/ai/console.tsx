@@ -206,7 +206,7 @@ export function ConsoleEntry({
     <li
       data-slot="console-entry"
       data-level={level}
-      className={cn("flex items-start gap-2.5 px-3.5 py-1.5", className)}
+      className={cn("flex items-start gap-2.5 px-3 py-1.5", className)}
       {...props}
     >
       <svg
@@ -253,19 +253,13 @@ export function ConsoleSource({
   return (
     <span
       data-slot="console-source"
-      className={cn(
-        "ml-auto shrink-0 text-muted-foreground/70",
-        className,
-      )}
+      className={cn("ml-auto shrink-0 text-muted-foreground/70", className)}
       {...props}
     />
   );
 }
 
-export function ConsoleStack({
-  className,
-  ...props
-}: Collapsible.Root.Props) {
+export function ConsoleStack({ className, ...props }: Collapsible.Root.Props) {
   return (
     <Collapsible.Root
       data-slot="console-stack"

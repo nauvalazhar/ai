@@ -48,7 +48,7 @@ export function FeedbackBar({
       "data-slot": "feedback-bar",
       className: cn(
         "inline-flex items-center gap-3 rounded-outer bg-surface ring ring-border",
-        "py-1.5 pl-3.5 pr-1.5 text-sm text-foreground",
+        "py-1.5 pl-3 pr-1.5 text-sm text-foreground",
         className,
       ),
     },

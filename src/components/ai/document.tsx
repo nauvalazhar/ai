@@ -59,7 +59,7 @@ export function Document({
         data-slot="document"
         data-open={open || undefined}
         className={cn(
-          "group/document flex flex-col rounded-outer bg-surface ring ring-border p-1",
+          "group/document flex flex-col rounded-outer bg-surface ring ring-border",
           className,
         )}
         {...props}
@@ -75,7 +75,7 @@ export function DocumentHeader({
   return (
     <div
       data-slot="document-header"
-      className={cn("flex items-center gap-2 px-3.5 py-2.5", className)}
+      className={cn("flex items-center gap-2 px-4 py-3", className)}
       {...props}
     />
   );
@@ -173,7 +173,7 @@ export function DocumentContent({
       style={{ height: height !== undefined ? `${height}px` : undefined }}
       {...props}
     >
-      <div ref={innerRef} className="px-3.5 pb-2.5">
+      <div ref={innerRef} className="px-4 pb-3">
         {children}
       </div>
       <div

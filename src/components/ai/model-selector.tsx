@@ -50,7 +50,7 @@ export function ModelSelectorInput({
     <BaseAutocomplete.Input
       data-slot="model-selector-input"
       className={cn(
-        "w-full bg-transparent px-2.5 py-1.5 text-sm outline-none h-9.5",
+        "w-full bg-transparent px-3 py-2 text-sm outline-none h-9.5",
         "text-foreground placeholder:text-muted-foreground",
         className,
       )}
@@ -83,7 +83,7 @@ export function ModelSelectorEmpty({
     <BaseAutocomplete.Empty
       data-slot="model-selector-empty"
       className={cn(
-        "px-2.5 py-2 text-sm text-muted-foreground empty:p-0",
+        "px-3 py-2 text-sm text-muted-foreground empty:p-0",
         className,
       )}
       {...props}
@@ -104,10 +104,7 @@ export function ModelSelectorGroupLabel({
   return (
     <BaseAutocomplete.GroupLabel
       data-slot="model-selector-group-label"
-      className={cn(
-        "px-2.5 pt-2 pb-1 text-xs text-muted-foreground",
-        className,
-      )}
+      className={cn("px-3 pt-2 pb-1 text-xs text-muted-foreground", className)}
       {...props}
     />
   );
@@ -136,7 +133,7 @@ export function ModelSelectorItem({
     <BaseAutocomplete.Item
       data-slot="model-selector-item"
       className={cn(
-        "flex cursor-pointer items-center gap-2.5 rounded px-2.5 py-1.5 text-sm text-foreground select-none",
+        "flex cursor-pointer items-center gap-2.5 rounded px-3 py-2 text-sm text-foreground select-none",
         "transition-colors duration-150",
         "data-highlighted:bg-accent",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",

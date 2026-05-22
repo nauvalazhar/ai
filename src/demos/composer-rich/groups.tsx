@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   ArrowUpIcon,
-  ClockIcon,
   CodeIcon,
   CompassIcon,
   FileTextIcon,
@@ -107,18 +106,15 @@ export default function Groups() {
         <ComposerSuggestions
           renderGroup={(label) => (
             <div className="flex items-center gap-1.5 px-2.5 pt-2 pb-1 text-xs text-muted-foreground/80">
-              {label === "Recent" ? (
-                <ClockIcon className="size-3" />
-              ) : label === "Pinned" ? (
-                <StarIcon className="size-3" />
-              ) : null}
-              <span>{label}</span>
+              {label}
             </div>
           )}
         />
         <ComposerToolbar>
           <ComposerToolbarSpacer>
-            <ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+            <ComposerSubmit
+              render={<Button iconOnly className="rounded-full" />}
+            >
               <ArrowUpIcon />
             </ComposerSubmit>
           </ComposerToolbarSpacer>

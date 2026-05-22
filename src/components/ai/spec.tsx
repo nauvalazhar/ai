@@ -44,7 +44,7 @@ export function SpecHeader({
     <div
       data-slot="spec-header"
       className={cn(
-        "px-3.5 py-2.5 flex items-center gap-3",
+        "px-3 py-2 flex items-center gap-3",
         "text-xs font-medium text-muted-foreground",
         className,
       )}
@@ -84,7 +84,7 @@ export function SpecTrigger({
       data-slot="spec-trigger"
       className={cn(
         "cursor-pointer select-none w-full text-left bg-transparent",
-        "px-3.5 py-2.5 flex items-center gap-3 text-sm",
+        "px-3 py-2 flex items-center gap-3 text-sm",
         "rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "not-data-panel-open:hover:bg-accent",
         "transition-all duration-150",
@@ -135,7 +135,7 @@ export function SpecContent({
       )}
       {...props}
     >
-      <div className="px-3.5 py-2.5 flex flex-col gap-4">{children}</div>
+      <div className="px-3 py-2 flex flex-col gap-4">{children}</div>
     </Collapsible.Panel>
   );
 }

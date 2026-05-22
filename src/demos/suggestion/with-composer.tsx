@@ -14,7 +14,6 @@ const prompts = [
   "Write a poem about the ocean",
   "Summarize this article",
   "Plan a weekend trip to Kyoto",
-  "Draft a follow-up email",
 ];
 
 export default function WithComposer() {
@@ -39,7 +38,9 @@ export default function WithComposer() {
         />
         <ComposerToolbar>
           <ComposerToolbarSpacer>
-            <ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+            <ComposerSubmit
+              render={<Button iconOnly className="rounded-full" />}
+            >
               <ArrowUpIcon />
             </ComposerSubmit>
           </ComposerToolbarSpacer>

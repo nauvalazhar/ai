@@ -196,7 +196,7 @@ export function TranscriptItem({
       "data-slot": "transcript-item",
       "data-active": active ? "" : undefined,
       className: cn(
-        "flex gap-3 rounded px-3.5 py-2 transition-colors",
+        "flex gap-3 rounded px-4 py-2 transition-colors",
         "data-active:bg-surface-elevated",
         className,
       ),

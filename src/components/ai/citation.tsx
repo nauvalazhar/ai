@@ -151,7 +151,7 @@ export function CitationHeader({
   return (
     <div
       data-slot="citation-header"
-      className={cn("flex items-center gap-2 px-3.5 h-8", className)}
+      className={cn("flex items-center gap-2 px-3 h-8", className)}
       {...props}
     />
   );
@@ -258,7 +258,7 @@ export function CitationList({
     <div
       data-slot="citation-list"
       className={cn(
-        "relative bg-surface-elevated ring ring-border rounded p-3.5",
+        "relative bg-surface-elevated ring ring-border rounded p-3",
         className,
       )}
       {...props}

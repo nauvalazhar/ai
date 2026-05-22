@@ -30,7 +30,7 @@ export default function Video() {
       <Player>
         <div className="overflow-hidden rounded-outer bg-surface ring ring-border">
           <PlayerVideo src={VIDEO_SRC} controls={false} />
-          <div className="flex flex-col gap-2.5 p-3.5">
+          <div className="flex flex-col gap-2.5 p-4">
             <div className="flex items-center">
               <div className="flex flex-col gap-1">
                 <PlayerTitle>Oceans</PlayerTitle>

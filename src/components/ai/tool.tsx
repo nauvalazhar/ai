@@ -13,7 +13,7 @@ export function Tool({ state, className, ...props }: ToolProps) {
       data-slot="tool"
       data-state={state}
       className={cn(
-        "group/tool flex flex-col rounded-outer bg-surface ring ring-border p-1",
+        "group/tool flex flex-col rounded-outer bg-surface ring ring-border",
         "data-[state=error]:ring-destructive/30",
         className,
       )}
@@ -32,7 +32,7 @@ export function ToolTrigger({
       data-slot="tool-trigger"
       className={cn(
         "flex w-full items-center gap-2 cursor-pointer select-none text-left bg-transparent",
-        "rounded px-3.5 py-2.5 text-muted-foreground",
+        "rounded-outer px-3 py-2 text-muted-foreground",
         "hover:bg-accent hover:text-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "transition-colors",
@@ -73,8 +73,8 @@ export function ToolIcon({
       data-slot="tool-icon"
       aria-hidden
       className={cn(
-        "size-4.5 inline-flex items-center justify-center shrink-0",
-        "[&_svg]:size-4.5",
+        "size-4 inline-flex items-center justify-center shrink-0",
+        "[&_svg]:size-4",
         className,
       )}
       {...props}
@@ -150,7 +150,7 @@ export function ToolContent({
       )}
       {...props}
     >
-      <div className="flex flex-col gap-2 px-3.5 pt-1.5 pb-2.5">{children}</div>
+      <div className="flex flex-col gap-2 px-3 pt-1.5 pb-2.5">{children}</div>
     </Collapsible.Panel>
   );
 }
@@ -162,7 +162,7 @@ export function ToolSubtitle({
   return (
     <div
       data-slot="tool-subtitle"
-      className={cn("text-sm font-medium text-muted-foreground", className)}
+      className={cn("text-xs font-medium text-muted-foreground", className)}
       {...props}
     />
   );
@@ -196,7 +196,7 @@ export function ToolError({
       data-slot="tool-error"
       className={cn(
         "hidden group-data-[state=error]/tool:block",
-        "rounded bg-destructive/10 ring ring-destructive/30 p-2.5",
+        "rounded bg-destructive/10 ring ring-destructive/30 p-3",
         "text-sm text-destructive",
         className,
       )}

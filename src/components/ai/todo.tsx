@@ -8,7 +8,7 @@ export function Todo({ className, ...props }: Collapsible.Root.Props) {
     <Collapsible.Root
       data-slot="todo"
       className={cn(
-        "group/todo flex flex-col rounded-outer bg-surface ring ring-border p-1",
+        "group/todo flex flex-col rounded-outer bg-surface ring ring-border",
         className,
       )}
       {...props}
@@ -23,7 +23,7 @@ export function TodoHeader({
   return (
     <div
       data-slot="todo-header"
-      className={cn("flex items-center gap-2 px-3.5 py-2.5", className)}
+      className={cn("flex items-center gap-2 px-4 py-3", className)}
       {...props}
     />
   );
@@ -91,7 +91,7 @@ export function TodoItem({ status, className, ...props }: TodoItemProps) {
       data-slot="todo-item"
       data-status={status}
       className={cn(
-        "flex items-start gap-2.5 rounded px-3.5 py-1.5 text-sm",
+        "flex items-start gap-2.5 rounded px-4 py-1.5 text-sm",
         className,
       )}
       {...props}

@@ -49,16 +49,12 @@ export default function Controlled() {
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-12">
       <p className="text-sm text-muted-foreground">
         The parent owns the editor content as a `ComposerValue`. Prefill a draft
-        with a chip already embedded, or clear it externally. The editor stays in
-        sync with the prop on every render.
+        with a chip already embedded, or clear it externally. The editor stays
+        in sync with the prop on every render.
       </p>
 
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          onClick={() => setValue(TEMPLATE)}
-        >
-          <SparklesIcon />
+        <Button variant="secondary" onClick={() => setValue(TEMPLATE)}>
           Load draft with mention
         </Button>
         <Button
@@ -88,7 +84,9 @@ export default function Controlled() {
         <ComposerSuggestions />
         <ComposerToolbar>
           <ComposerToolbarSpacer>
-            <ComposerSubmit render={<Button iconOnly className="rounded-full" />}>
+            <ComposerSubmit
+              render={<Button iconOnly className="rounded-full" />}
+            >
               <ArrowUpIcon />
             </ComposerSubmit>
           </ComposerToolbarSpacer>

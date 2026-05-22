@@ -4,7 +4,7 @@ import { cn } from "#/lib/utils";
 
 export const calloutVariants = cva(
   cn(
-    "group/callout flex gap-3 rounded-outer p-3.5 ring",
+    "group/callout flex gap-3 rounded-outer p-3 ring",
     "[&_p]:m-0 [&_p]:text-sm [&_p]:text-muted-foreground",
     "[&_p+p]:mt-2",
     "[&_code]:font-mono [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs",

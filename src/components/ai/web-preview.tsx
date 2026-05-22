@@ -130,10 +130,7 @@ export function WebPreviewHeader({
   return (
     <div
       data-slot="web-preview-header"
-      className={cn(
-        "flex items-center gap-1.5 px-3.5 py-1.5 mb-1.5",
-        className,
-      )}
+      className={cn("flex items-center gap-1.5 px-3 py-1.5 mb-1.5", className)}
       {...props}
     />
   );

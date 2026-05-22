@@ -10,10 +10,8 @@ import {
 export default function Basic() {
   return (
     <div className="mx-auto max-w-2xl p-6">
-      <Selection
-        onSelect={(text) => console.log("selected:", text)}
-      >
-        <SelectionContent className="prose-like flex flex-col gap-4 text-sm leading-7 text-foreground">
+      <Selection onSelect={(text) => console.log("selected:", text)}>
+        <SelectionContent className="prose-like flex flex-col gap-4 text-sm leading-relaxed text-foreground [&_p]:text-muted-foreground">
           <h2 className="text-lg font-semibold">
             On selecting text in conversations
           </h2>
@@ -24,15 +22,15 @@ export default function Basic() {
             selection, so it keeps every native affordance you already know.
           </p>
           <p>
-            Drag across multiple paragraphs, reverse direction, or use a keyboard
-            shift-select. The toolbar tracks the start of the selection and
-            repositions when the page scrolls. On touch devices it appears after
-            you finish dragging the selection handles.
+            Drag across multiple paragraphs, reverse direction, or use a
+            keyboard shift-select. The toolbar tracks the start of the selection
+            and repositions when the page scrolls. On touch devices it appears
+            after you finish dragging the selection handles.
           </p>
           <p>
-            Tapping a toolbar action receives the selected text and dismisses the
-            toolbar by default. The actions themselves are unopinionated, so the
-            component can host quote and share, code highlights, citation
+            Tapping a toolbar action receives the selected text and dismisses
+            the toolbar by default. The actions themselves are unopinionated, so
+            the component can host quote and share, code highlights, citation
             footnotes, or anything else worth doing with a slice of prose.
           </p>
         </SelectionContent>

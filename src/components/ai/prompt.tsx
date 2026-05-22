@@ -520,7 +520,7 @@ export function PromptQuestion({
   return (
     <div
       data-slot="prompt-question"
-      className={cn("px-3.5 py-2.5 text-foreground text-sm", className)}
+      className={cn("px-3 py-2 text-foreground text-sm", className)}
       {...props}
     />
   );
@@ -550,7 +550,7 @@ export function PromptOption({
         if (ctx.submitOnClick) ctx.submit();
       }}
       className={cn(
-        "flex items-center gap-3 px-3.5 py-2 text-left cursor-pointer select-none",
+        "flex items-center gap-3 px-3 py-2 text-left cursor-pointer select-none",
         "rounded text-sm focus:outline-none",
         isHighlighted ? "bg-accent text-foreground" : "bg-transparent",
         className,
@@ -587,7 +587,7 @@ export function PromptOptionOther({
         ctx.otherInputRef.current?.focus();
       }}
       className={cn(
-        "flex items-center gap-3 px-3.5 py-2 cursor-text select-none",
+        "flex items-center gap-3 px-3 py-2 cursor-text select-none",
         "rounded text-sm focus:outline-none",
         isHighlighted ? "bg-accent text-foreground" : "bg-transparent",
         className,
@@ -628,10 +628,7 @@ export function PromptFooter({
   return (
     <div
       data-slot="prompt-footer"
-      className={cn(
-        "flex items-center justify-end gap-3 px-3.5 py-2.5",
-        className,
-      )}
+      className={cn("flex items-center justify-end gap-3 px-3 py-2", className)}
       {...props}
     />
   );

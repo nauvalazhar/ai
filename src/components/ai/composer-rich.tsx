@@ -730,7 +730,7 @@ export function ComposerRichInput({
         "aria-multiline": "true",
         class: cn(
           "outline-none min-h-9 max-h-60 overflow-y-auto",
-          "px-2 py-1.5 text-sm leading-relaxed text-foreground",
+          "px-3 py-2 text-sm leading-relaxed text-foreground",
           "[&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)]",
           "[&_p.is-editor-empty:first-child]:before:text-muted-foreground",
           "[&_p.is-editor-empty:first-child]:before:pointer-events-none",
@@ -869,7 +869,7 @@ export function ComposerRichInput({
           aria-hidden
           data-slot="composer-rich-input-skeleton"
           className={cn(
-            "min-h-9 max-h-60 px-2 py-1.5 text-sm leading-relaxed",
+            "min-h-9 max-h-60 px-3 py-2 text-sm leading-relaxed",
             "text-muted-foreground select-none pointer-events-none",
           )}
         >
@@ -1129,9 +1129,7 @@ function renderGroupedItems(args: {
 
 function DefaultGroupHeader({ label }: { label: string }) {
   return (
-    <div className="px-2.5 pt-2 pb-1 text-xs text-muted-foreground">
-      {label}
-    </div>
+    <div className="px-3 pt-2 pb-1 text-xs text-muted-foreground">{label}</div>
   );
 }
 
@@ -1201,7 +1199,7 @@ function DefaultRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 px-2.5 py-1.5 rounded text-sm",
+        "flex items-center gap-2.5 px-3 py-1.5 rounded text-sm",
         highlighted ? "bg-accent text-foreground" : "text-foreground",
         item.disabled && "opacity-50",
       )}

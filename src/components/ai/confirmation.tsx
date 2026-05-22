@@ -24,7 +24,7 @@ function useConfirmationContext() {
 }
 
 export const confirmationVariants = cva(
-  "group/confirmation flex flex-col rounded-outer bg-surface p-1 ring",
+  "group/confirmation flex flex-col rounded-outer bg-surface ring",
   {
     variants: {
       tone: {
@@ -87,7 +87,7 @@ export function ConfirmationHeader({
   return (
     <div
       data-slot="confirmation-header"
-      className={cn("flex items-center gap-2 px-3.5 pt-2.5 pb-2.5", className)}
+      className={cn("flex items-center gap-2 px-4 py-3", className)}
       {...props}
     />
   );
@@ -136,7 +136,7 @@ export function ConfirmationDescription({
   return (
     <div
       data-slot="confirmation-description"
-      className={cn("px-3.5 pb-2.5 text-sm text-muted-foreground", className)}
+      className={cn("px-4 pb-3 text-sm text-muted-foreground", className)}
       {...props}
     />
   );
@@ -149,7 +149,7 @@ export function ConfirmationContent({
   return (
     <div
       data-slot="confirmation-content"
-      className={cn("px-3.5 pb-2.5", className)}
+      className={cn("px-4 pb-3", className)}
       {...props}
     />
   );
@@ -210,10 +210,7 @@ export function ConfirmationAction({
   return (
     <div
       data-slot="confirmation-action"
-      className={cn(
-        "flex items-center justify-end gap-2 px-3.5 pt-1 pb-2.5",
-        className,
-      )}
+      className={cn("flex items-center justify-end gap-2 px-4 py-3", className)}
       {...props}
     />
   );
@@ -269,7 +266,7 @@ export function ConfirmationStatus({
     <div
       data-slot="confirmation-status"
       className={cn(
-        "flex items-center gap-2 px-3.5 pt-1 pb-2.5 text-sm text-muted-foreground",
+        "flex items-center gap-2 px-4 pt-1 pb-3 text-sm text-muted-foreground",
         "[&>svg]:size-4 [&>svg]:shrink-0",
         className,
       )}

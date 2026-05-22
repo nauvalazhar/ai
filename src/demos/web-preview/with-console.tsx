@@ -161,7 +161,7 @@ export default function WithConsole() {
           </div>
         </WebPreviewHeader>
         <WebPreviewContent className="h-96" />
-        <div className="flex items-center gap-1 px-3.5 py-1.5 mt-1.5">
+        <div className="flex items-center gap-1 px-3 py-1.5 mt-1.5">
           <WebPreviewPanelTrigger
             panelId="console"
             render={

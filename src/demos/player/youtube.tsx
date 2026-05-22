@@ -31,7 +31,7 @@ export default function YouTube() {
             src="https://www.youtube.com/watch?v=aqz-KE-bpKQ"
             controls={false}
           />
-          <div className="flex flex-col gap-2.5 p-3.5">
+          <div className="flex flex-col gap-2.5 p-4">
             <div className="flex items-center">
               <div className="flex flex-col gap-1">
                 <PlayerTitle>Big Buck Bunny</PlayerTitle>

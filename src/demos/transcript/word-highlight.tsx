@@ -57,9 +57,7 @@ export default function WordHighlight() {
           <TranscriptContent>
             <TranscriptList>
               {data?.segments.map((seg) => {
-                const words = seg.words.filter(
-                  (w) => w.text.trim().length > 0,
-                );
+                const words = seg.words.filter((w) => w.text.trim().length > 0);
                 return (
                   <TranscriptItem
                     key={seg.start_time}
@@ -90,7 +88,7 @@ export default function WordHighlight() {
               })}
             </TranscriptList>
           </TranscriptContent>
-          <div className="flex items-center gap-2 border-t border-border bg-surface-elevated px-3 py-2">
+          <div className="flex items-center gap-1 border-t border-border bg-surface-elevated px-4 py-3">
             <PlayerSeekButton
               seek={-10}
               render={
