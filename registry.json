@@ -299,6 +299,13 @@
       ]
     },
     {
+      "name": "exception",
+      "type": "component",
+      "files": [
+        { "name": "exception.tsx", "path": "src/components/ai/exception.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "feedback-bar",
       "type": "component",
       "files": [

@@ -10,12 +10,12 @@
 ### Code
 
 - [x] web preview (iframe, adress bar, refresh, navigation, element selector)
-- artifact (code + toolbar)
-- file tree (using trees)
-- monaco editor
+- [x] console log
+- [x] exception
 - environtment variables
 - dependency (package json info)
+- artifact (code + toolbar)
 - sandbox (code + output result)
-- exception
-- [x] console log
+- file tree (using trees)
+- monaco editor
 - code mode ui (https://tanstack.com/ai/latest/docs/code-mode/client-integration)

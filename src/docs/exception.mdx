@@ -1,0 +1,267 @@
+---
+parts:
+  - name: Exception
+    passThrough:
+      type: Collapsible.Root.Props
+      to: <Collapsible.Root>
+  - name: ExceptionHeader
+    passThrough:
+      type: React.ComponentProps<"header">
+      to: <header>
+  - name: ExceptionType
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ExceptionMessage
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ExceptionAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ExceptionTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      to: <Collapsible.Trigger>
+  - name: ExceptionContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      to: <Collapsible.Panel>
+  - name: ExceptionSource
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ExceptionSourceHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ExceptionSourceContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ExceptionFrames
+    passThrough:
+      type: React.ComponentProps<"ol">
+      to: <ol>
+  - name: ExceptionFrame
+    passThrough:
+      type: React.ComponentProps<"li">
+      to: <li>
+    props:
+      - name: active
+        type: boolean
+        default: "false"
+        description: Marks the offending frame. Paints a red left bar and a tinted row. Mirrors `ExceptionSourceLine`.
+      - name: internal
+        type: boolean
+        default: "false"
+        description: Marks the frame as framework or runtime code so the row dims. Exposed as `data-internal="true"` for custom styling or hiding internal frames via CSS.
+  - name: ExceptionFrameFunction
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ExceptionFrameLocation
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+---
+
+A structured display for a thrown error. Shows the error type, the message, an optional source preview around the offending line, and a list of stack frames in a collapsible panel.
+
+The surface stays neutral. Red is reserved for two micro-accents: the type pill and the active row (a frame or a source line).
+
+## Anatomy
+
+The header is always visible. The source preview is always visible if you render it. The frames list lives inside `ExceptionContent` and animates open and closed.
+
+The component has no data contract. It does not parse a stack string. You hand it the type, the message, the frames, and the source you want to render. That keeps it usable for thrown JavaScript errors, server errors deserialized over the wire, Sentry events, or anything else with a similar shape.
+
+```tsx
+<Exception defaultOpen>
+  <ExceptionHeader>
+    <ExceptionType>TypeError</ExceptionType>
+    <ExceptionMessage>
+      Cannot read properties of undefined (reading 'name')
+    </ExceptionMessage>
+  </ExceptionHeader>
+
+  <ExceptionSource>
+    <ExceptionSourceHeader>
+      <span>src/components/user-card.tsx</span>
+      <span>27:18</span>
+    </ExceptionSourceHeader>
+    <ExceptionSourceContent>
+      {/* Shiki output, a CodeBlock, a plain pre — your call */}
+    </ExceptionSourceContent>
+  </ExceptionSource>
+
+  <ExceptionContent>
+    <ExceptionFrames>
+      <ExceptionFrame active>
+        <ExceptionFrameFunction>UserCard</ExceptionFrameFunction>
+        <ExceptionFrameLocation>
+          src/components/user-card.tsx:27:18
+        </ExceptionFrameLocation>
+      </ExceptionFrame>
+      <ExceptionFrame internal>
+        <ExceptionFrameFunction>renderWithHooks</ExceptionFrameFunction>
+        <ExceptionFrameLocation>
+          node_modules/react-dom/...
+        </ExceptionFrameLocation>
+      </ExceptionFrame>
+    </ExceptionFrames>
+  </ExceptionContent>
+</Exception>
+```
+
+## Parsing a real Error
+
+When you have an actual `Error` object, write a small parser in your app and feed the result in. A minimal V8 parser is around twenty lines:
+
+```tsx
+function parseError(err: Error) {
+  const lines = (err.stack ?? "").split("\n");
+  const frames = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    const withFn = line.match(/^at\s+(.+?)\s+\((.+?)\)$/);
+    if (withFn) {
+      frames.push({ fn: withFn[1], location: withFn[2] });
+      continue;
+    }
+    const noFn = line.match(/^at\s+(.+?)$/);
+    if (noFn) frames.push({ fn: "<anonymous>", location: noFn[1] });
+  }
+  return { type: err.name, message: err.message, frames };
+}
+```
+
+Then render the parsed shape into the parts. Mark `internal` based on whatever rule fits your app (matching `node_modules`, `node:`, your framework's paths). Server-sourced errors arrive deserialized, so the parser there reads from a JSON payload instead.
+
+Source preview is a separate concern. The browser does not give you the file contents from an `Error`, so the lines have to come from somewhere else — a source map, the dev server, or a recorded payload from the backend.
+
+## Collapsing
+
+The root wraps Base UI's `Collapsible.Root` and accepts `open`, `defaultOpen`, and `onOpenChange`. You can keep the header alone and put a trigger inside `ExceptionAction`, or omit the trigger entirely if the panel is always open.
+
+```tsx
+<Exception>
+  <ExceptionHeader>
+    <ExceptionType>ReferenceError</ExceptionType>
+    <ExceptionMessage>fetchUser is not defined</ExceptionMessage>
+    <ExceptionAction>
+      <ExceptionTrigger>Show stack</ExceptionTrigger>
+    </ExceptionAction>
+  </ExceptionHeader>
+  <ExceptionContent>{/* frames */}</ExceptionContent>
+</Exception>
+```
+
+## Chained exceptions
+
+A caused-by chain is two exceptions stacked. The component does not nest, because nesting forces a visual hierarchy that does not always match the cause chain. Render them as siblings with a small label between.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Exception
+
+The root. Wraps `Collapsible.Root` and renders a neutral card. The surface stays the same regardless of state. The open state is exposed to descendants via the `group/exception` class so `ExceptionTrigger` can rotate its chevron.
+
+<Props name="Exception" />
+
+### ExceptionHeader
+
+The top row. A flex container that holds the type, the message, and an optional action slot. Always visible regardless of collapsible state. Items align to the top so a multi-line message wraps under itself instead of under the pill.
+
+<Props name="ExceptionHeader" />
+
+### ExceptionType
+
+A small filled pill for the error type. Uses the destructive token so it reads as the one piece of accent color on the surface. Renders as a `<span>` so it lays out inline next to the message.
+
+<Props name="ExceptionType" />
+
+### ExceptionMessage
+
+The error message text. Renders as a `<div>` so it can wrap freely and host multiple paragraphs if needed.
+
+<Props name="ExceptionMessage" />
+
+### ExceptionAction
+
+A right-aligned slot for buttons. A copy button, a dismiss button, or the trigger live here. No Base UI, just a flex container.
+
+<Props name="ExceptionAction" />
+
+### ExceptionTrigger
+
+Wraps `Collapsible.Trigger`. Renders a chevron that rotates when open. Optional. Place it inside `ExceptionAction` for a header that toggles, or skip it and use `defaultOpen` for a panel that stays open.
+
+<Props name="ExceptionTrigger" />
+
+### ExceptionContent
+
+Wraps `Collapsible.Panel`. Animates height with the same easing the rest of the kit uses for collapsibles.
+
+<Props name="ExceptionContent" />
+
+### ExceptionSource
+
+The source preview card. A framed container with a header strip and a content area below it. The body is intentionally open — drop in a syntax-highlighted blob from Shiki or Prism, a nested `CodeBlock`, or a plain `<pre>`. The kit does not impose a line model because real source comes in too many shapes (Sentry context lines, highlighted HTML, dev-server payloads).
+
+<Props name="ExceptionSource" />
+
+### ExceptionSourceHeader
+
+The strip above the code. A flex row with the file path on the left and the line and column on the right by default. Style as freely as you want.
+
+<Props name="ExceptionSourceHeader" />
+
+### ExceptionSourceContent
+
+The content area inside the source card. Sets padding, neutralizes the highlighter's default background and outline, and wires the active-line accent: any descendant with `data-active="true"` gets the red left bar and tinted row.
+
+That means marking the offending line is one attribute. With Shiki, a one-line transformer:
+
+```tsx
+transformers={[
+  {
+    line(node, lineNumber) {
+      if (startLine + lineNumber - 1 === activeLine) {
+        node.properties["data-active"] = "true";
+      }
+    },
+  },
+]}
+```
+
+With plain markup, add `data-active="true"` to the line element directly. With Prism or another highlighter, use whatever its line-render hook is to set the same attribute.
+
+<Props name="ExceptionSourceContent" />
+
+### ExceptionFrames
+
+A `<ol>` styled as a framed monospace list. Children are `ExceptionFrame` elements.
+
+<Props name="ExceptionFrames" />
+
+### ExceptionFrame
+
+A single row in the list. The `active` prop paints a red left bar and a tinted row to mark the offending frame, mirroring the highlight on `ExceptionSourceLine`. The `internal` prop dims the row and sets `data-internal="true"`, which lets you hide framework frames via CSS or filter them before render.
+
+<Props name="ExceptionFrame" />
+
+### ExceptionFrameFunction
+
+The function name for the frame. Renders on the left.
+
+<Props name="ExceptionFrameFunction" />
+
+### ExceptionFrameLocation
+
+The file path with line and column. Pushes to the right of the row with `margin-left: auto` and truncates on narrow widths. Wrap in your own `<a>` if you want a clickable link to a source-map viewer or editor.
+
+<Props name="ExceptionFrameLocation" />

@@ -678,6 +678,37 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Exception",
+        slug: "exception",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/exception/basic")),
+          },
+          {
+            name: "With Source",
+            slug: "with-source",
+            Component: lazy(() => import("#/demos/exception/with-source")),
+          },
+          {
+            name: "Collapsed",
+            slug: "collapsed",
+            Component: lazy(() => import("#/demos/exception/collapsed")),
+          },
+          {
+            name: "From Error",
+            slug: "from-error",
+            Component: lazy(() => import("#/demos/exception/from-error")),
+          },
+          {
+            name: "Chained",
+            slug: "chained",
+            Component: lazy(() => import("#/demos/exception/chained")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [
