@@ -1,16 +1,23 @@
-import {
-  CircleAlert,
-  Info,
-  Monitor,
-  RotateCw,
-  Smartphone,
-  Tablet,
-  Terminal,
-  TriangleAlert,
-  Wifi,
-} from "lucide-react";
+import AnsiImport from "ansi-to-react";
+
+const Ansi =
+  (AnsiImport as unknown as { default?: typeof AnsiImport }).default ??
+  AnsiImport;
+import { Monitor, RotateCw, Smartphone, Tablet, Terminal } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "#/components/ai/button";
-import { cn } from "#/lib/utils";
+import {
+  Console,
+  ConsoleContent,
+  ConsoleEntry,
+  ConsoleList,
+  ConsoleSource,
+  ConsoleStack,
+  ConsoleStackContent,
+  ConsoleStackTrigger,
+  ConsoleTimestamp,
+  type ConsoleLevel,
+} from "#/components/ai/console";
 import {
   type Viewport,
   WebPreview,
@@ -48,36 +55,91 @@ function ViewportCycle() {
   );
 }
 
-const logs = [
-  { level: "info", message: "GET / 200 OK" },
-  { level: "info", message: "Hydration complete" },
-  { level: "warn", message: "Deprecated API: legacy-router" },
-  { level: "info", message: "Mounted <App /> in 124ms" },
-  { level: "error", message: "TypeError: cannot read property 'id' of null" },
-  { level: "info", message: "Render committed" },
+type LogEntry = {
+  id: number;
+  level: ConsoleLevel;
+  time: string;
+  message: string;
+  source?: string;
+  stack?: string;
+};
+
+const seedLogs: LogEntry[] = [
+  {
+    id: 0,
+    level: "info",
+    time: "12:04:31",
+    message: "GET / 200 OK",
+    source: "server.ts:42",
+  },
+  {
+    id: 1,
+    level: "log",
+    time: "12:04:31",
+    message: "Hydration complete",
+  },
+  {
+    id: 2,
+    level: "warn",
+    time: "12:04:32",
+    message: "Deprecated API: legacy-router",
+    source: "router.ts:104",
+  },
+  {
+    id: 3,
+    level: "log",
+    time: "12:04:32",
+    message: "Mounted <App /> in 124ms",
+  },
+  {
+    id: 4,
+    level: "error",
+    time: "12:04:33",
+    message: "TypeError: cannot read property 'id' of null",
+    source: "user-card.tsx:27",
+    stack: `at UserCard (user-card.tsx:27:18)
+at Profile (profile.tsx:12:5)
+at App (app.tsx:18:3)`,
+  },
+  {
+    id: 5,
+    level: "info",
+    time: "12:04:34",
+    message: "Render committed",
+  },
 ];
 
-const levelStyles = {
-  info: "text-muted-foreground",
-  warn: "text-amber-500",
-  error: "text-red-500",
-} as const;
-
-const levelIcons = {
-  info: Info,
-  warn: TriangleAlert,
-  error: CircleAlert,
-} as const;
-
-const requests = [
-  { method: "GET", path: "/", status: 200, ms: 86 },
-  { method: "GET", path: "/_app/main.js", status: 200, ms: 142 },
-  { method: "GET", path: "/_app/style.css", status: 200, ms: 58 },
-  { method: "GET", path: "/api/session", status: 401, ms: 41 },
-  { method: "POST", path: "/api/track", status: 204, ms: 27 },
+const streamLogs: Omit<LogEntry, "id" | "time">[] = [
+  { level: "debug", message: "Cache hit: feed:user:42" },
+  { level: "info", message: "POST /api/track 204 No Content" },
+  { level: "log", message: "Render committed (4ms)" },
+  { level: "warn", message: "Slow query: 312ms" },
 ];
+
+function now() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
+}
+
+const terminalOutput = `[32;1m  VITE[22m v8.0.10[39m  [2mready in[22m [1m1299[22m [2mms[22m[39m
+
+  [32m➜[39m  [1mLocal:[22m   [36mhttp://localhost:3300/[39m
+  [32m➜[39m  [1mNetwork:[22m [2muse --host to expose[22m
+  [32m➜[39m  [2mpress[22m [1mh + enter[22m [2mto show help.[22m`;
 
 export default function WithConsole() {
+  const [logs, setLogs] = useState<LogEntry[]>(seedLogs);
+
+  useEffect(() => {
+    let i = 0;
+    const id = setInterval(() => {
+      const next = streamLogs[i % streamLogs.length];
+      setLogs((prev) => [...prev, { id: prev.length, time: now(), ...next }]);
+      i += 1;
+    }, 2200);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <div className="mx-auto max-w-5xl p-6">
       <WebPreview defaultUrl="https://selia.earth">
@@ -113,7 +175,7 @@ export default function WithConsole() {
             Console
           </WebPreviewPanelTrigger>
           <WebPreviewPanelTrigger
-            panelId="network"
+            panelId="terminal"
             render={
               <Button
                 variant="ghost"
@@ -121,58 +183,46 @@ export default function WithConsole() {
               />
             }
           >
-            <Wifi />
-            Network
+            <Terminal />
+            Terminal
           </WebPreviewPanelTrigger>
         </div>
         <WebPreviewPanels>
-          <WebPreviewPanel id="console">
-            <ul className="divide-y divide-border font-mono text-xs">
-              {logs.map((log, i) => {
-                const Icon = levelIcons[log.level as keyof typeof levelIcons];
-                return (
-                  <li
-                    key={i}
-                    className="flex items-center gap-2.5 px-3.5 py-1.5"
-                  >
-                    <Icon
-                      className={cn(
-                        "size-3.5 shrink-0",
-                        levelStyles[log.level as keyof typeof levelStyles],
+          <WebPreviewPanel
+            id="console"
+            className="max-h-72 overflow-hidden p-0"
+          >
+            <Console className="h-72">
+              <ConsoleContent>
+                <ConsoleList>
+                  {logs.map((log) => (
+                    <ConsoleEntry key={log.id} level={log.level}>
+                      <ConsoleTimestamp>{log.time}</ConsoleTimestamp>
+                      {log.stack ? (
+                        <ConsoleStack>
+                          <ConsoleStackTrigger>
+                            {log.message}
+                          </ConsoleStackTrigger>
+                          <ConsoleStackContent>{log.stack}</ConsoleStackContent>
+                        </ConsoleStack>
+                      ) : (
+                        <span className="min-w-0 flex-1 truncate">
+                          {log.message}
+                        </span>
                       )}
-                    />
-                    <span className="text-foreground/80">{log.message}</span>
-                  </li>
-                );
-              })}
-            </ul>
+                      {log.source ? (
+                        <ConsoleSource>{log.source}</ConsoleSource>
+                      ) : null}
+                    </ConsoleEntry>
+                  ))}
+                </ConsoleList>
+              </ConsoleContent>
+            </Console>
           </WebPreviewPanel>
-          <WebPreviewPanel id="network">
-            <ul className="divide-y divide-border font-mono text-xs">
-              {requests.map((req, i) => (
-                <li key={i} className="flex items-center gap-3 px-3.5 py-1.5">
-                  <span className="w-12 text-muted-foreground">
-                    {req.method}
-                  </span>
-                  <span className="flex-1 truncate text-foreground/80">
-                    {req.path}
-                  </span>
-                  <span
-                    className={cn(
-                      "w-10 tabular-nums",
-                      req.status >= 400
-                        ? "text-red-500"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {req.status}
-                  </span>
-                  <span className="w-12 text-right text-muted-foreground tabular-nums">
-                    {req.ms}ms
-                  </span>
-                </li>
-              ))}
-            </ul>
+          <WebPreviewPanel id="terminal">
+            <div className="whitespace-pre font-mono text-xs py-2">
+              <Ansi>{terminalOutput}</Ansi>
+            </div>
           </WebPreviewPanel>
         </WebPreviewPanels>
       </WebPreview>

@@ -5,10 +5,11 @@
 - [x] feedback bar
 - [x] selection toolbar
 - [x] transcript
+- [ ] speak
 
 ### Code
 
-- web preview (iframe, adress bar, refresh, navigation, element selector)
+- [x] web preview (iframe, adress bar, refresh, navigation, element selector)
 - artifact (code + toolbar)
 - file tree (using trees)
 - monaco editor
@@ -16,5 +17,5 @@
 - dependency (package json info)
 - sandbox (code + output result)
 - exception
-- console log
-- code mode ui
+- [x] console log
+- code mode ui (https://tanstack.com/ai/latest/docs/code-mode/client-integration)

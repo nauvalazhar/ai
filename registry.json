@@ -278,6 +278,13 @@
       ]
     },
     {
+      "name": "console",
+      "type": "component",
+      "files": [
+        { "name": "console.tsx", "path": "src/components/ai/console.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "conversation",
       "type": "component",
       "files": [

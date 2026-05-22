@@ -1,0 +1,167 @@
+---
+parts:
+  - name: Console
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: ConsoleContent
+    passThrough:
+      type: useRender.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: render
+        type: ReactElement
+        description: Renders another element in place of the default scrolling `div`. Pass a custom scroll area if you want to replace the native scroll. The substitute must forward `ref` and `onScroll` to the element that actually scrolls so stick-to-bottom keeps working. The packaged `ScrollArea` is set up for this.
+  - name: ConsoleList
+    passThrough:
+      type: React.ComponentProps<"ul">
+      to: <ul>
+  - name: ConsoleEntry
+    passThrough:
+      type: React.ComponentProps<"li">
+      to: <li>
+    props:
+      - name: level
+        type: '"log" | "info" | "warn" | "error" | "debug"'
+        default: '"log"'
+        description: Drives the leading icon and the icon color. Also exposed as `data-level` for custom styling per row.
+  - name: ConsoleTimestamp
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ConsoleSource
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: ConsoleStack
+    passThrough:
+      type: Collapsible.Root.Props
+      to: <Collapsible.Root>
+  - name: ConsoleStackTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      to: <Collapsible.Trigger>
+  - name: ConsoleStackContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      to: <Collapsible.Panel>
+---
+
+A browser-console-style log viewer for streams of leveled messages. Pairs with `WebPreview` for in-app devtools, but works anywhere a feed of logs needs to render.
+
+## Anatomy
+
+```tsx
+<Console className="h-72">
+  <ConsoleContent>
+    <ConsoleList>
+      <ConsoleEntry level="info">
+        <ConsoleTimestamp>12:04:31</ConsoleTimestamp>
+        GET / 200 OK
+        <ConsoleSource>server.ts:42</ConsoleSource>
+      </ConsoleEntry>
+      <ConsoleEntry level="error">
+        <ConsoleTimestamp>12:04:33</ConsoleTimestamp>
+        <ConsoleStack>
+          <ConsoleStackTrigger>
+            TypeError: cannot read property 'id' of null
+          </ConsoleStackTrigger>
+          <ConsoleStackContent>{stackString}</ConsoleStackContent>
+        </ConsoleStack>
+        <ConsoleSource>user-card.tsx:27</ConsoleSource>
+      </ConsoleEntry>
+    </ConsoleList>
+  </ConsoleContent>
+</Console>
+```
+
+The component takes a constrained height from a parent (or sets its own with `className`). `ConsoleContent` is the scrollable region. Auto-scroll keeps the latest entry in view while new logs stream in, and pauses the moment the user scrolls up — exactly how a real devtools console behaves.
+
+Entries are free-form children of `ConsoleList`. The kit ships `ConsoleEntry`, `ConsoleTimestamp`, `ConsoleSource`, and `ConsoleStack`, but plain text or a custom row works too.
+
+## Custom scroll area
+
+`ConsoleContent` accepts a `render` prop so the native scroll can be swapped for any scroll area implementation. The packaged `ScrollArea` is wired up for this.
+
+```tsx
+<Console className="h-72">
+  <ConsoleContent render={<ScrollArea scrollbar="vertical" />}>
+    <ConsoleList>{/* entries */}</ConsoleList>
+  </ConsoleContent>
+</Console>
+```
+
+If you supply your own component, the incoming `ref` and `onScroll` need to land on the inner viewport, not the outer container. The outer element does not scroll, so a ref on it would never see scroll events and `scrollTop` would always read zero, breaking stick-to-bottom.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Console
+
+The root. Holds the stick-to-bottom context (`viewportRef`, `isAtBottom`, `scrollToBottom`) and renders a plain `<div>` with `flex flex-col min-h-0` so a constrained parent height flows down into the scrollable area. Exposes `data-at-bottom` on the root for sibling chrome (a gradient mask, a "live" indicator) that wants to react to scroll state.
+
+<Props name="Console" />
+
+### ConsoleContent
+
+The scrollable viewport. Owns the `ResizeObserver` that keeps the latest entry in view when new ones arrive, and pauses auto-scroll the moment the user scrolls up. Defaults to `overflow-y-auto overscroll-contain` when no `render` is provided. Pass `className` to override paddings or maximum height per instance.
+
+<Props name="ConsoleContent" />
+
+### ConsoleList
+
+A plain `<ul>` with monospaced text and row dividers. Style overrides through `className` per instance.
+
+<Props name="ConsoleList" />
+
+### ConsoleEntry
+
+A single row. The `level` prop drives the leading icon and its color. Children render as a flex row, so a typical entry is `<ConsoleTimestamp>` first, the message in the middle, and `<ConsoleSource>` pushed to the right via `margin-left: auto`.
+
+<Props name="ConsoleEntry" />
+
+### ConsoleTimestamp
+
+Tabular-num text styled as a muted timestamp. The content is verbatim, so format the string however you want — clock time, relative offset, monotonic counter, anything.
+
+<Props name="ConsoleTimestamp" />
+
+### ConsoleSource
+
+Right-aligned indicator for a file path, request URL, or any source identifier. Uses `margin-left: auto` so it pins to the end of the row regardless of message length.
+
+<Props name="ConsoleSource" />
+
+### ConsoleStack
+
+Collapsible wrapper for multiline content — stack traces, JSON payloads, response bodies. Wraps base-ui `Collapsible.Root` and animates height from 0 to the panel's measured height when open.
+
+<Props name="ConsoleStack" />
+
+### ConsoleStackTrigger
+
+The visible message line for an entry with a collapsible body. Renders a chevron that rotates when open. The trigger text is the message itself, so a row with a stack trace stays compact until the user clicks to expand.
+
+<Props name="ConsoleStackTrigger" />
+
+### ConsoleStackContent
+
+The collapsible body. Wraps a `<pre>` with `whitespace-pre-wrap` so a multiline stack trace renders verbatim while still wrapping at narrow widths.
+
+<Props name="ConsoleStackContent" />
+
+### useConsole
+
+Hook for wiring a fully custom jump-to-latest button (or any other reactive surface) to the same scroll state. Returns `{ isAtBottom, scrollToBottom }`. Must be called inside `<Console>`. `scrollToBottom` accepts an optional `ScrollBehavior` (`"smooth"` by default).
+
+```tsx
+function JumpToLatest() {
+  const { isAtBottom, scrollToBottom } = useConsole();
+  return (
+    <Button data-at-bottom={isAtBottom} onClick={() => scrollToBottom()}>
+      Jump to latest
+    </Button>
+  );
+}
+```
