@@ -1,0 +1,219 @@
+---
+parts:
+  - name: WebPreview
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: url
+        type: string
+        description: Controlled URL of the previewed page. Use this when the parent owns the URL (e.g. an agent that streams new previews into the iframe).
+      - name: defaultUrl
+        type: string
+        default: '""'
+        description: Initial URL for the uncontrolled mode. Ignored when `url` is set.
+      - name: onUrlChange
+        type: "(url: string) => void"
+        description: Fires when the address bar commits a new URL. Receives the normalized value (URLs without a scheme get `https://` prepended).
+      - name: viewport
+        type: number | null
+        description: Controlled viewport width in pixels. `null` means the iframe fills the canvas. Drop in alongside `onViewportChange` to drive responsive previews from outside.
+      - name: defaultViewport
+        type: number | null
+        default: "null"
+        description: Initial viewport for the uncontrolled mode.
+      - name: onViewportChange
+        type: "(viewport: number | null) => void"
+        description: Fires when the viewport changes through any built-in trigger (or through `useWebPreview().setViewport`).
+      - name: panel
+        type: string | null
+        description: Controlled id of the open dock panel. `null` closes the dock.
+      - name: defaultPanel
+        type: string | null
+        default: "null"
+        description: Initial open panel for the uncontrolled mode.
+      - name: onPanelChange
+        type: "(panel: string | null) => void"
+        description: Fires when the dock opens, closes, or switches panels.
+  - name: WebPreviewHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: WebPreviewAddress
+    passThrough:
+      type: 'Omit<React.ComponentProps<"input">, "value" | "onChange">'
+      to: <input>
+  - name: WebPreviewReload
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: render
+        type: ReactElement
+        description: Render as another element, for example the kit's `Button`.
+  - name: WebPreviewOpen
+    passThrough:
+      type: useRender.ComponentProps<"a">
+      to: <a>
+    props:
+      - name: render
+        type: ReactElement
+        description: Render as another element. The `href`, `target`, and `rel` are wired automatically from the current URL.
+  - name: WebPreviewContent
+    passThrough:
+      type: React.ComponentProps<"iframe">
+      to: <iframe>
+    props:
+      - name: fallback
+        type: ReactNode
+        description: Shown in place of the iframe when no URL is set yet. Defaults to a muted "Enter a URL to preview" message.
+  - name: WebPreviewPanelTrigger
+    passThrough:
+      type: useRender.ComponentProps<"button">
+      to: <button>
+    props:
+      - name: panelId
+        type: string
+        description: The id of the panel this trigger toggles. Clicking the trigger while it's already active collapses the dock.
+      - name: render
+        type: ReactElement
+        description: Render as another element. `data-active` is set when this panel is the open one, so a single `render` styles both states.
+  - name: WebPreviewPanels
+    passThrough:
+      type: React.ComponentProps<typeof Collapsible.Panel>
+      to: <Collapsible.Panel>
+  - name: WebPreviewPanel
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: id
+        type: string
+        description: Identifier matched against a `WebPreviewPanelTrigger`'s `panelId`. Only the matching panel is rendered inside the dock.
+---
+
+An iframe-based site preview with a chrome header and a dockable panel area for things like console or network views.
+
+## Anatomy
+
+`WebPreview` is a context provider. It owns the URL, the viewport width, the active dock panel, and a reload counter. Every part below reads from that context.
+
+```tsx
+<WebPreview defaultUrl="https://example.com">
+  <WebPreviewHeader>
+    <WebPreviewReload render={<Button iconOnly variant="ghost"><RotateCw /></Button>} />
+    <WebPreviewAddress />
+    <WebPreviewOpen render={<Button iconOnly variant="ghost"><ExternalLink /></Button>} />
+  </WebPreviewHeader>
+  <WebPreviewContent />
+  <div className="flex items-center gap-1 px-2.5 py-2">
+    <WebPreviewPanelTrigger panelId="console" render={<Button variant="ghost"><Terminal />Console</Button>} />
+  </div>
+  <WebPreviewPanels>
+    <WebPreviewPanel id="console">{/* log rows */}</WebPreviewPanel>
+  </WebPreviewPanels>
+</WebPreview>
+```
+
+The chrome layout, the viewport mode, and the panel layout are not baked into a fixed template, so the demo composes them with regular `div`s. The same building blocks cover a one-button cycle (fit → tablet → mobile) and a multi-tab dock.
+
+For agent-driven previews where the parent owns the URL, pass `url` and listen to `onUrlChange`. The component falls back to its address bar when uncontrolled.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### WebPreview
+
+The root and the context provider. Owns the URL, viewport width, active panel, and reload counter, and exposes them through `useWebPreview`. Renders a plain `<div>` with the kit's surface treatment (`bg-surface`, ring, rounded outer) and `flex flex-col` so the header, canvas, and dock stack naturally.
+
+URL submissions from the address bar are normalized — strings without a scheme get `https://` prepended — before `onUrlChange` fires.
+
+<Props name="WebPreview" />
+
+### WebPreviewHeader
+
+The top row. A flex container styled for the kit's chrome look. Drop in any combination of `WebPreviewReload`, `WebPreviewAddress`, `WebPreviewOpen`, viewport controls, or your own buttons.
+
+<Props name="WebPreviewHeader" />
+
+### WebPreviewAddress
+
+The URL input. Shows the live URL when blurred, switches to an editable draft on focus, and commits on Enter. Escape cancels the edit and restores the previous value. Submitting blurs the input so focus returns to the page.
+
+The address bar is optional — for agent-driven previews where navigation happens from outside the component, leave it out and drive the URL through the `url` prop.
+
+<Props name="WebPreviewAddress" />
+
+### WebPreviewReload
+
+A headless trigger that bumps an internal reload counter. The counter is keyed into the iframe so the same URL forces a fresh load. Disabled while no URL is set.
+
+<Props name="WebPreviewReload" />
+
+### WebPreviewOpen
+
+A headless anchor that opens the current URL in a new tab. Renders as `<a>` by default with `target="_blank"` and `rel="noreferrer noopener"` wired up.
+
+<Props name="WebPreviewOpen" />
+
+### WebPreviewContent
+
+The canvas. Renders a sandboxed `<iframe>` (`allow-scripts allow-same-origin allow-forms allow-popups`) inside a fixed-height wrapper (`h-96` by default). Pass `className` to override the wrapper's height — for example `h-[600px]` or `h-full` when the parent provides its own height. The iframe always fills the wrapper.
+
+When a `viewport` is set, the iframe is constrained to that width and centered inside the canvas. The width animates between values so toggling tablet → mobile feels smooth.
+
+For cross-origin previews the iframe can't be inspected from JavaScript, so in-iframe navigation isn't tracked back into the address bar. Drive navigation through the `url` prop when the previewed page is cooperative.
+
+<Props name="WebPreviewContent" />
+
+### WebPreviewPanelTrigger
+
+A headless toggle for a dock panel. Clicking it sets `activePanel` to its `panelId`. Clicking the active trigger collapses the dock. `data-active` is set when this panel is open, so styling both states from one `render` element is straightforward.
+
+Triggers can live anywhere in the tree — header, a bottom bar, or somewhere outside `WebPreview` entirely (anywhere `useWebPreview` works).
+
+<Props name="WebPreviewPanelTrigger" />
+
+### WebPreviewPanels
+
+The dock container. Wraps a base-ui `Collapsible` and animates height from 0 to the panel's measured height when open. The root uses `display: contents` so a closed dock doesn't sit as a flex slot in the parent and steal a `gap-*` from it.
+
+A separate `displayedPanel` state lags `activePanel` by one transition: when the dock closes, `displayedPanel` keeps the last id so the inner content stays mounted until the height animation finishes. Without it the inner panel would unmount on click and the close animation would have nothing to transition from.
+
+<Props name="WebPreviewPanels" />
+
+### WebPreviewPanel
+
+A single panel slot. Renders only when `displayedPanel` matches its `id`, so switching panels is a content swap inside the same open dock — no double animation. Content is your call: a styled list, a virtualized log view, a chart, whatever the panel represents.
+
+<Props name="WebPreviewPanel" />
+
+### useWebPreview
+
+Hook for reading and mutating the preview state from any child. Must be called inside `<WebPreview>`.
+
+State:
+
+- `url` is the current URL displayed in the iframe.
+- `viewport` is the active viewport width in pixels, or `null` for fit.
+- `activePanel` is the currently open panel id, or `null` when the dock is closed. Use this for trigger state and to drive `setActivePanel` from outside the built-in triggers.
+- `displayedPanel` is the id of the panel currently mounted in the dock. Lags `activePanel` during the close transition so panel content stays available while the height animation runs.
+- `reloadKey` increments each time `reload()` is called. Keyed into the iframe to force a refresh.
+
+Actions:
+
+- `setUrl(next)` navigates the iframe to a new URL. Skips normalization, so pass a fully-qualified URL.
+- `setViewport(next)` sets the iframe width or clears it with `null`.
+- `setActivePanel(next)` opens a panel by id, or closes the dock with `null`.
+- `reload()` bumps the reload counter.
+
+```tsx
+function ViewportCycle() {
+  const { viewport, setViewport } = useWebPreview();
+  const presets = [null, 768, 375];
+  const index = presets.findIndex((p) => p === viewport);
+  const next = () => setViewport(presets[((index < 0 ? 0 : index) + 1) % presets.length]);
+  return <Button onClick={next}>Switch viewport</Button>;
+}
+```

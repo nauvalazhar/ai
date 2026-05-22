@@ -453,6 +453,13 @@
       ]
     },
     {
+      "name": "web-preview",
+      "type": "component",
+      "files": [
+        { "name": "web-preview.tsx", "path": "src/components/ai/web-preview.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "tooltip",
       "type": "component",
       "files": [

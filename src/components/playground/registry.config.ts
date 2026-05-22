@@ -651,6 +651,22 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Web Preview",
+        slug: "web-preview",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/web-preview/basic")),
+          },
+          {
+            name: "With Console",
+            slug: "with-console",
+            Component: lazy(() => import("#/demos/web-preview/with-console")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [
