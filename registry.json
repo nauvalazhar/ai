@@ -299,6 +299,13 @@
       ]
     },
     {
+      "name": "env",
+      "type": "component",
+      "files": [
+        { "name": "env.tsx", "path": "src/components/ai/env.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "exception",
       "type": "component",
       "files": [

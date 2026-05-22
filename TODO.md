@@ -12,7 +12,7 @@
 - [x] web preview (iframe, adress bar, refresh, navigation, element selector)
 - [x] console log
 - [x] exception
-- environtment variables
+- [x] environtment variables
 - dependency (package json info)
 - artifact (code + toolbar)
 - sandbox (code + output result)

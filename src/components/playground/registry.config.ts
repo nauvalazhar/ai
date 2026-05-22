@@ -709,6 +709,27 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Env",
+        slug: "env",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/env/basic")),
+          },
+          {
+            name: "Toggle",
+            slug: "toggle",
+            Component: lazy(() => import("#/demos/env/toggle")),
+          },
+          {
+            name: "Controlled",
+            slug: "controlled",
+            Component: lazy(() => import("#/demos/env/controlled")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [
