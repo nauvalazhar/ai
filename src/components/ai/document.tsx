@@ -71,11 +71,11 @@ export function Document({
 export function DocumentHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   return (
-    <div
+    <header
       data-slot="document-header"
-      className={cn("flex items-center gap-2 px-4 py-3", className)}
+      className={cn("flex items-center gap-2 px-4 h-11", className)}
       {...props}
     />
   );

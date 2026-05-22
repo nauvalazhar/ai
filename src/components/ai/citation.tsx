@@ -147,9 +147,9 @@ export function CitationPopup({
 export function CitationHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   return (
-    <div
+    <header
       data-slot="citation-header"
       className={cn("flex items-center gap-2 px-3 h-8", className)}
       {...props}

@@ -624,9 +624,9 @@ export function PromptOptionOther({
 export function PromptFooter({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"footer">) {
   return (
-    <div
+    <footer
       data-slot="prompt-footer"
       className={cn("flex items-center justify-end gap-3 px-3 py-2", className)}
       {...props}

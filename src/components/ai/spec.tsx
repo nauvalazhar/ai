@@ -38,13 +38,13 @@ export function SpecHeader({
   className,
   children,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   const { cols } = useContext(SpecContext);
   return (
-    <div
+    <header
       data-slot="spec-header"
       className={cn(
-        "px-3 py-2 flex items-center gap-3",
+        "px-3 h-8 flex items-center gap-3",
         "text-xs font-medium text-muted-foreground",
         className,
       )}
@@ -54,7 +54,7 @@ export function SpecHeader({
         {children}
       </div>
       <div aria-hidden className="size-4 shrink-0" />
-    </div>
+    </header>
   );
 }
 

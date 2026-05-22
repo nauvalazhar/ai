@@ -83,9 +83,9 @@ export function Confirmation({
 export function ConfirmationHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   return (
-    <div
+    <header
       data-slot="confirmation-header"
       className={cn("flex items-center gap-2 px-4 py-3", className)}
       {...props}

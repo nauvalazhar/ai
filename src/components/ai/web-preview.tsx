@@ -126,11 +126,11 @@ export function WebPreview({
 export function WebPreviewHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   return (
-    <div
+    <header
       data-slot="web-preview-header"
-      className={cn("flex items-center gap-1.5 px-3 py-1.5 mb-1.5", className)}
+      className={cn("flex items-center gap-1.5 px-3 h-11 mb-1.5", className)}
       {...props}
     />
   );

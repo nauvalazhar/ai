@@ -23,7 +23,7 @@ export function ExceptionHeader({
   return (
     <header
       data-slot="exception-header"
-      className={cn("flex items-center gap-2.5 px-3 py-2", className)}
+      className={cn("flex items-center gap-2.5 px-4 h-11", className)}
       {...props}
     />
   );
@@ -37,7 +37,7 @@ export function ExceptionType({
     <span
       data-slot="exception-type"
       className={cn(
-        "shrink-0 self-start mt-0.5",
+        "shrink-0 mt-0.5",
         "font-mono text-xs font-medium",
         "rounded bg-destructive/10 text-destructive",
         "px-1.5 py-0.5",
@@ -96,6 +96,7 @@ export function ExceptionTrigger({
       )}
       {...props}
     >
+      {children}
       <svg
         width="24"
         height="24"
@@ -110,7 +111,6 @@ export function ExceptionTrigger({
       >
         <path d="m9 18 6-6-6-6" />
       </svg>
-      {children}
     </Collapsible.Trigger>
   );
 }
@@ -132,7 +132,7 @@ export function ExceptionContent({
       )}
       {...props}
     >
-      <div className="px-3 pb-3 pt-0.5">{children}</div>
+      <div className="px-4 pb-3 pt-0.5">{children}</div>
     </Collapsible.Panel>
   );
 }
@@ -172,7 +172,7 @@ export function ExceptionFrame({
       data-active={active ? "true" : undefined}
       data-internal={internal ? "true" : undefined}
       className={cn(
-        "flex items-baseline gap-2 px-3 py-1.5",
+        "flex items-baseline gap-2 px-4 py-1.5",
         "border-l-2 border-transparent",
         "data-[active=true]:border-destructive data-[active=true]:bg-destructive/5",
         "data-[internal=true]:opacity-50",
@@ -231,12 +231,12 @@ export function ExceptionSource({
 export function ExceptionSourceHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"header">) {
   return (
-    <div
+    <header
       data-slot="exception-source-header"
       className={cn(
-        "flex items-center justify-between gap-2.5 px-3 py-2",
+        "flex items-center justify-between gap-2.5 px-4 py-3",
         "border-b border-border",
         "font-mono text-xs text-muted-foreground",
         className,
@@ -254,7 +254,7 @@ export function ExceptionSourceContent({
     <div
       data-slot="exception-source-content"
       className={cn(
-        "text-xs leading-relaxed px-3 py-2",
+        "text-xs leading-relaxed px-4 py-3",
         "[&_pre]:bg-transparent! [&_pre]:outline-none!",
         "[&_code]:flex [&_code]:flex-col",
         "**:data-[active=true]:bg-destructive/5",
