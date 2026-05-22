@@ -1,6 +1,5 @@
 import {
   CircleAlert,
-  ExternalLink,
   Info,
   Monitor,
   RotateCw,
@@ -18,7 +17,6 @@ import {
   WebPreviewAddress,
   WebPreviewContent,
   WebPreviewHeader,
-  WebPreviewOpen,
   WebPreviewPanel,
   WebPreviewPanels,
   WebPreviewPanelTrigger,
