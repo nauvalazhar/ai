@@ -20,7 +20,7 @@ export function CodeView({
   }
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full px-4">
       <Button
         type="button"
         onClick={handleCopy}

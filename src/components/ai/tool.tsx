@@ -32,7 +32,7 @@ export function ToolTrigger({
       data-slot="tool-trigger"
       className={cn(
         "flex w-full items-center gap-2 cursor-pointer select-none text-left bg-transparent",
-        "rounded-outer px-3 py-2 text-muted-foreground",
+        "rounded-outer px-4 py-3 text-muted-foreground",
         "hover:bg-accent hover:text-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "transition-colors",
@@ -150,7 +150,7 @@ export function ToolContent({
       )}
       {...props}
     >
-      <div className="flex flex-col gap-2 px-3 pt-1.5 pb-2.5">{children}</div>
+      <div className="flex flex-col gap-2 px-4 pt-1.5 pb-2.5">{children}</div>
     </Collapsible.Panel>
   );
 }

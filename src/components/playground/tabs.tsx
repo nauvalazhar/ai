@@ -23,8 +23,8 @@ export function TabsList({
     <BaseTabs.List
       data-slot="tabs-list"
       className={cn(
-        "relative z-0 inline-flex items-center gap-1.5 shrink-0",
-        "bg-background/60 backdrop-blur-xs w-auto self-start rounded-outer p-1",
+        "relative z-0 inline-flex items-center shrink-0",
+        "bg-background/60 backdrop-blur-xs w-auto self-start rounded-outer",
         "ring ring-site-border",
         className,
       )}
@@ -33,7 +33,7 @@ export function TabsList({
       {children}
       <BaseTabs.Indicator
         className={cn(
-          "absolute top-1/2 left-0 z-[-1] h-7.5 w-(--active-tab-width) translate-x-(--active-tab-left) -translate-y-1/2 rounded-xl bg-accent transition-all duration-200 ease-in-out",
+          "absolute top-1/2 left-0 z-[-1] h-9.5 w-(--active-tab-width) translate-x-(--active-tab-left) -translate-y-1/2 rounded bg-accent transition-all duration-200 ease-in-out",
         )}
       />
     </BaseTabs.List>
@@ -48,7 +48,7 @@ export function TabsTab({
     <BaseTabs.Tab
       data-slot="tabs-tab"
       className={cn(
-        "inline-flex items-center px-2.5 h-7.5 font-medium text-sm text-site-muted hover:text-foreground",
+        "inline-flex items-center px-4 h-9.5 font-medium text-sm text-site-muted hover:text-foreground",
         "data-active:text-site-foreground",
         "outline-none focus-visible:text-foreground",
         "transition-all cursor-pointer",

@@ -38,7 +38,7 @@ export default function Chained() {
         </ExceptionContent>
       </Exception>
 
-      <div className="px-3.5 text-xs text-muted-foreground">Caused by</div>
+      <div className="px-4 text-xs text-muted-foreground">Caused by</div>
 
       <Exception defaultOpen>
         <ExceptionHeader>
@@ -51,14 +51,20 @@ export default function Chained() {
           <ExceptionFrames>
             <ExceptionFrame active>
               <ExceptionFrameFunction>connect</ExceptionFrameFunction>
-              <ExceptionFrameLocation>src/db/pool.ts:104:7</ExceptionFrameLocation>
+              <ExceptionFrameLocation>
+                src/db/pool.ts:104:7
+              </ExceptionFrameLocation>
             </ExceptionFrame>
             <ExceptionFrame>
               <ExceptionFrameFunction>query</ExceptionFrameFunction>
-              <ExceptionFrameLocation>src/db/pool.ts:62:14</ExceptionFrameLocation>
+              <ExceptionFrameLocation>
+                src/db/pool.ts:62:14
+              </ExceptionFrameLocation>
             </ExceptionFrame>
             <ExceptionFrame internal>
-              <ExceptionFrameFunction>processTicksAndRejections</ExceptionFrameFunction>
+              <ExceptionFrameFunction>
+                processTicksAndRejections
+              </ExceptionFrameFunction>
               <ExceptionFrameLocation>
                 node:internal/process/task_queues:96:5
               </ExceptionFrameLocation>
