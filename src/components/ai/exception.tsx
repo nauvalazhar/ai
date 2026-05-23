@@ -172,7 +172,7 @@ export function ExceptionFrame({
       data-active={active ? "true" : undefined}
       data-internal={internal ? "true" : undefined}
       className={cn(
-        "flex items-baseline gap-2 px-4 py-1.5",
+        "flex items-baseline gap-2 px-3 py-1.5",
         "border-l-2 border-transparent",
         "data-[active=true]:border-destructive data-[active=true]:bg-destructive/5",
         "data-[internal=true]:opacity-50",
@@ -220,7 +220,7 @@ export function ExceptionSource({
     <div
       data-slot="exception-source"
       className={cn(
-        "mx-3.5 mb-3 rounded ring ring-border bg-surface-elevated overflow-hidden",
+        "mx-4 mb-3 rounded ring ring-border bg-surface-elevated overflow-hidden",
         className,
       )}
       {...props}
@@ -236,9 +236,9 @@ export function ExceptionSourceHeader({
     <header
       data-slot="exception-source-header"
       className={cn(
-        "flex items-center justify-between gap-2.5 px-4 py-3",
-        "border-b border-border",
-        "font-mono text-xs text-muted-foreground",
+        "flex items-center justify-between gap-2.5 px-4 h-9",
+        "border-b border-border text-xs",
+        "font-mono text-muted-foreground",
         className,
       )}
       {...props}
@@ -254,7 +254,7 @@ export function ExceptionSourceContent({
     <div
       data-slot="exception-source-content"
       className={cn(
-        "text-xs leading-relaxed px-4 py-3",
+        "text-sm leading-relaxed px-3 py-3",
         "[&_pre]:bg-transparent! [&_pre]:outline-none!",
         "[&_code]:flex [&_code]:flex-col",
         "**:data-[active=true]:bg-destructive/5",
