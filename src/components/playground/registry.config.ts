@@ -848,6 +848,37 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Diff Rich",
+        slug: "diff-rich",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/diff-rich/basic")),
+          },
+          {
+            name: "From To",
+            slug: "from-to",
+            Component: lazy(() => import("#/demos/diff-rich/from-to")),
+          },
+          {
+            name: "Patch",
+            slug: "patch",
+            Component: lazy(() => import("#/demos/diff-rich/patch")),
+          },
+          {
+            name: "Multi File",
+            slug: "multi-file",
+            Component: lazy(() => import("#/demos/diff-rich/multi-file")),
+          },
+          {
+            name: "Long File",
+            slug: "long-file",
+            Component: lazy(() => import("#/demos/diff-rich/long-file")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [

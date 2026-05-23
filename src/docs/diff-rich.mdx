@@ -1,0 +1,128 @@
+---
+parts:
+  - name: DiffRichFile
+    passThrough:
+      type: Collapsible.Root.Props
+      to: <DiffFile>
+    props:
+      - name: from
+        type: string
+        description: Full text of the file before the change. Required when `patch` is not provided. Used as one half of the syntax pass.
+      - name: to
+        type: string
+        description: Full text of the file after the change. Required when `patch` is not provided. Used as the other half of the syntax pass.
+      - name: patch
+        type: string
+        description: Unified diff string. Mutually exclusive with `from` and `to`. When provided, rows render unhighlighted because the patch does not carry the full file context the highlighter needs.
+      - name: filename
+        type: string
+        description: Filename used for the header label and for language detection. Falls back to the name parsed from a patch header when `patch` is provided.
+      - name: defaultOpen
+        type: boolean
+        default: "true"
+        description: Whether the file starts expanded. Forwarded to the underlying collapsible.
+      - name: theme
+        type: '{ light: string; dark: string }'
+        default: '{ light: "github-light", dark: "github-dark" }'
+        description: Pair of themes the highlighter binds to the `--shiki-light` and `--shiki-dark` CSS variables. The kit's light and dark modes pick the matching one.
+      - name: maxLines
+        type: number
+        default: "2000"
+        description: Highlighting skips when either side of the file or the rendered diff exceeds this. Lock files and minified bundles fall through to plain text so the page stays responsive.
+      - name: ignoreFilenames
+        type: "RegExp[]"
+        default: 'lock files, *.min.*, package-lock.json, bun.lock, yarn.lock, pnpm-lock.yaml'
+        description: Patterns that opt a file out of highlighting by filename. Matches are checked before any tokenization. Pass an empty array to disable the default blocklist.
+      - name: contextLines
+        type: number
+        default: "3"
+        description: How many unchanged lines to keep around each change. Long unchanged runs collapse to a single skip row. Pass `0` to hide all unchanged regions and show only the colored hunks. Set undefined to render every line.
+---
+
+A pre-wired version of `<Diff>` with syntax highlighting baked in. One component, `DiffRichFile`, slots into the existing chrome.
+
+## When to use this
+
+Reach for `DiffRichFile` when you want the GitHub-style look without writing the highlighter yourself. Reach for the chrome in [Diff](/components/diff) when you want full control over how rows render, you already have your own highlighter wired up, or your row content is not just code (inline editing, anchor links, decorations).
+
+## Anatomy
+
+The chrome stays user-owned. `DiffRichFile` replaces the per-file block.
+
+```tsx
+<Diff>
+  <DiffHeader>
+    <DiffTitle>1 file changed</DiffTitle>
+  </DiffHeader>
+  <DiffContent>
+    <DiffRichFile from={before} to={after} filename="counter.tsx" />
+  </DiffContent>
+</Diff>
+```
+
+Multi-file is one `DiffRichFile` per file. Header, title, and action buttons stay where they are because that is where Undo and Review belong.
+
+```tsx
+<Diff>
+  <DiffHeader>
+    <DiffTitle>{files.length} files changed</DiffTitle>
+  </DiffHeader>
+  <DiffContent>
+    {files.map((f) => (
+      <DiffRichFile key={f.name} filename={f.name} from={f.from} to={f.to} />
+    ))}
+  </DiffContent>
+</Diff>
+```
+
+## Language detection
+
+The language is picked from the filename's extension. The table covers the common web stack and a handful of system languages. Files with no extension match by filename only (Dockerfile). Files with an unrecognized extension fall through to plain text instead of guessing.
+
+Patches without filenames borrow the name from the patch header (`--- a/foo.ts`). If neither the prop nor the header carries a name, the file renders as untitled and unhighlighted.
+
+## The patch case
+
+`{ patch }` renders unhighlighted on purpose. A patch carries hunks with a few lines of context, not the full file, and tokenizing partial code produces wrong results for anything with multi-line state like template literals, block comments, or JSX. The component still parses the patch, derives stats and the filename, and renders rows through the chrome's default renderer. To get highlighted patches, reconstruct the full before and after strings yourself and pass them as `from` and `to`.
+
+## Compact view
+
+`contextLines` decides how much unchanged code surrounds each change. The default is `3`, matching what most code hosts ship. Long unchanged runs collapse to a single skip row that shows how many lines were folded.
+
+Wire it to a parent state to get a compact toggle.
+
+```tsx
+const [compact, setCompact] = useState(false);
+
+<DiffRichFile
+  contextLines={compact ? 0 : 3}
+  from={before}
+  to={after}
+  filename="server.ts"
+/>
+```
+
+At `0`, the file shows only the colored hunks with skip rows between them. At `undefined`, every line renders.
+
+## Perf
+
+Two knobs to keep large diffs cheap.
+
+- `maxLines` caps the size of either side and the rendered diff. Over the cap, rows render as plain text so the page stays responsive. Default 2000.
+- `ignoreFilenames` is a list of patterns that opt a file out of highlighting by name. The default skips lock files and `*.min.*` because they tokenize slowly and add no value.
+
+Tokenization is async. The first paint shows plain text, then swaps to highlighted spans once the highlighter resolves. Subsequent renders of the same code stay highlighted because the underlying highlighter caches per language.
+
+## Streaming
+
+The component re-tokenizes both sides on every change to `from` or `to`. For streamed output this is good enough at typical file sizes. For very large or rapidly streamed files, compose with the chrome directly so you can debounce tokenization or only tokenize the changed hunks.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### DiffRichFile
+
+A single file block with syntax highlighting wired in. Renders the file header, the stats, and one row per diff entry. Uses the chrome's `DiffFile`, `DiffFileHeader`, `DiffFileName`, `DiffStat`, `DiffFilePanel`, and `DiffLine` underneath. Pair with `Diff`, `DiffHeader`, `DiffTitle`, `DiffContent` from the chrome to build the full card.
+
+<Props name="DiffRichFile" />
