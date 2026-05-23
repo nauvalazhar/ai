@@ -1,0 +1,182 @@
+---
+parts:
+  - name: Sandbox
+    passThrough:
+      type: Collapsible.Root.Props
+      to: <Collapsible.Root>
+    props:
+      - name: state
+        type: '"running" | "success" | "error"'
+        description: Execution state. Exposes `data-state` on the root. The error value tints the ring with the destructive token. Other values are styling hooks for descendants.
+  - name: SandboxHeader
+    passThrough:
+      type: React.ComponentProps<"header">
+      to: <header>
+  - name: SandboxTrigger
+    passThrough:
+      type: Collapsible.Trigger.Props
+      to: <Collapsible.Trigger>
+  - name: SandboxTitle
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: SandboxAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: SandboxContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      to: <Collapsible.Panel>
+  - name: SandboxTabs
+    passThrough:
+      type: Tabs.Root.Props
+      to: <Tabs.Root>
+  - name: SandboxTabsList
+    passThrough:
+      type: Tabs.List.Props
+      to: <Tabs.List>
+  - name: SandboxTab
+    passThrough:
+      type: Tabs.Tab.Props
+      to: <Tabs.Tab>
+  - name: SandboxPanel
+    passThrough:
+      type: Tabs.Panel.Props
+      to: <Tabs.Panel>
+---
+
+A two-pane container for code and its execution result.
+
+## Anatomy
+
+The component has no data contract. You bring the highlighter for the input and whatever surface fits the output (text, an `Exception`, a streaming `Console`, an image). Sandbox only owns the framing.
+
+The header is the click target for the whole card. Title and any status badge sit on the left. Action buttons sit on the right and do not toggle the collapse.
+
+```tsx
+<Sandbox state="success" defaultOpen>
+  <SandboxHeader>
+    <SandboxTrigger>
+      <SandboxTitle>average.py</SandboxTitle>
+      <Chip>success</Chip>
+    </SandboxTrigger>
+    <SandboxAction>
+      <Button iconOnly>
+        <PlayIcon />
+      </Button>
+    </SandboxAction>
+  </SandboxHeader>
+
+  <SandboxContent>
+    <SandboxTabs defaultValue="input">
+      <SandboxTabsList>
+        <SandboxTab value="input">Input</SandboxTab>
+        <SandboxTab value="output">Output</SandboxTab>
+      </SandboxTabsList>
+
+      <SandboxPanel value="input">
+        {/* Shiki, a plain pre, or a nested CodeBlock */}
+      </SandboxPanel>
+      <SandboxPanel value="output">{/* free form */}</SandboxPanel>
+    </SandboxTabs>
+  </SandboxContent>
+</Sandbox>
+```
+
+## State
+
+`state` is the execution status. Three values, exposed as `data-state` on the root:
+
+- `running` while the code is executing
+- `success` after a clean run
+- `error` for a failed run, which tints the ring with the destructive token
+
+Status text in the header is a separate concern. Render a `Chip` inside the trigger and color it however the design calls for. The kit does not ship a status pill so the visual stays a per-app decision.
+
+## Collapsing
+
+The root wraps Base UI's `Collapsible.Root` and accepts `open`, `defaultOpen`, and `onOpenChange`. The trigger spans the title area so clicking anywhere on the left of the header toggles the panel. The action slot sits outside the trigger so its buttons stay independent.
+
+Default is closed. Pass `defaultOpen` when the result matters more than the chrome.
+
+## Tabs
+
+`SandboxTabs` wraps Base UI's `Tabs.Root`. Two tabs is the typical shape (Input / Output), but the primitive is open ended. Add a third tab for live logs, a fourth for a diff. The tab order in the markup is the visual order.
+
+Pass `defaultValue` to pick which panel opens first, or `value` plus `onValueChange` for controlled selection.
+
+When a panel's content is a separate framed surface like `Console` or `Exception`, set `className="p-0"` on the panel so the inner card sits flush.
+
+## Composing
+
+Sandbox is layout only. Common compositions:
+
+- **Code in the input panel.** Drop a Shiki block, a plain `<pre>`, or anything else with a font-mono pre child. The kit will not highlight for you.
+- **Error in the output panel.** Render `<Exception>` directly. The destructive ring on `state="error"` matches the type pill inside Exception.
+- **Live logs in the output panel.** Render `<Console>` with a fixed height. Set `state="running"` while events stream in and `state="success"` once the run finishes.
+- **TanStack AI code mode.** Three tabs: Code, Logs, Result. Bind `state` to the tool call status, render the generated TypeScript in the code tab, the stream of `code_mode:*` events in the logs tab, and the return value or an `<Exception>` in the result tab.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Sandbox
+
+The root. Wraps `Collapsible.Root` and renders a neutral card. Exposes the open state to descendants via the `group/sandbox` class so the trigger can rotate its chevron and other parts can react. Accepts a `state` prop that lands as `data-state` on the root and tints the ring on `error`.
+
+<Props name="Sandbox" />
+
+### SandboxHeader
+
+The top row. A flex container with no padding of its own. Holds a `SandboxTrigger` on the left and an optional `SandboxAction` on the right.
+
+<Props name="SandboxHeader" />
+
+### SandboxTrigger
+
+Wraps `Collapsible.Trigger`. Takes the remaining width of the header so clicking the title region toggles the panel. Renders a leading chevron that rotates open. Children compose freely. Pair a `SandboxTitle` with a `Chip` for a status badge inside the trigger.
+
+<Props name="SandboxTrigger" />
+
+### SandboxTitle
+
+Filename or label for the run. Monospaced and truncates on narrow widths.
+
+<Props name="SandboxTitle" />
+
+### SandboxAction
+
+Right-aligned slot for buttons. A run button, a copy button, a rerun button. Lives outside the trigger so clicks here do not toggle the panel.
+
+<Props name="SandboxAction" />
+
+### SandboxContent
+
+Wraps `Collapsible.Panel`. Animates height with the same easing the rest of the kit uses for collapsibles. Renders a thin top border between the header and the tab strip when open.
+
+<Props name="SandboxContent" />
+
+### SandboxTabs
+
+Wraps `Tabs.Root`. Owns the active tab. Pass `defaultValue` for the uncontrolled flow or `value` plus `onValueChange` for controlled selection. Required when you render `SandboxTab` parts. Omit it and write a single panel directly inside `SandboxContent` for a one-pane variant.
+
+<Props name="SandboxTabs" />
+
+### SandboxTabsList
+
+Wraps `Tabs.List`. Lays out tabs in a row with a thin underline indicator that slides between the active tab.
+
+<Props name="SandboxTabsList" />
+
+### SandboxTab
+
+A single tab trigger. The `value` prop ties it to its panel. Active tabs receive `data-active` for custom styling.
+
+<Props name="SandboxTab" />
+
+### SandboxPanel
+
+Wraps `Tabs.Panel`. Padded by default. Set `className="p-0"` when the panel content is a self-framed surface like `Console`.
+
+<Props name="SandboxPanel" />

@@ -730,6 +730,42 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Sandbox",
+        slug: "sandbox",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/sandbox/basic")),
+          },
+          {
+            name: "Collapsed",
+            slug: "collapsed",
+            Component: lazy(() => import("#/demos/sandbox/collapsed")),
+          },
+          {
+            name: "Run",
+            slug: "run",
+            Component: lazy(() => import("#/demos/sandbox/run")),
+          },
+          {
+            name: "Error",
+            slug: "error",
+            Component: lazy(() => import("#/demos/sandbox/error")),
+          },
+          {
+            name: "Streaming",
+            slug: "streaming",
+            Component: lazy(() => import("#/demos/sandbox/streaming")),
+          },
+          {
+            name: "Code Mode",
+            slug: "code-mode",
+            Component: lazy(() => import("#/demos/sandbox/code-mode")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [

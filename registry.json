@@ -376,6 +376,13 @@
       ]
     },
     {
+      "name": "sandbox",
+      "type": "component",
+      "files": [
+        { "name": "sandbox.tsx", "path": "src/components/ai/sandbox.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "scroll-area",
       "type": "component",
       "files": [
