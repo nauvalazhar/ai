@@ -192,7 +192,7 @@ export default function WithConsole() {
             id="console"
             className="max-h-72 overflow-hidden p-0"
           >
-            <Console className="h-72">
+            <Console className="h-72 **:data-[slot=console-entry]:px-3">
               <ConsoleContent>
                 <ConsoleList>
                   {logs.map((log) => (

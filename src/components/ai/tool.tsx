@@ -33,7 +33,6 @@ export function ToolTrigger({
       className={cn(
         "flex w-full items-center gap-2 cursor-pointer select-none text-left bg-transparent",
         "rounded-outer px-4 py-3 text-muted-foreground",
-        "hover:bg-accent hover:text-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "transition-colors",
         "group-data-[state=error]/tool:text-destructive group-data-[state=error]/tool:hover:text-destructive",
