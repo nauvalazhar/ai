@@ -277,7 +277,7 @@ export function PlayerVideo({
   );
 }
 
-type PlayerPlayPauseProps = useRender.ComponentProps<"button"> & {
+type PlayerPlayPauseProps = Omit<useRender.ComponentProps<"button">, "children"> & {
   playIcon?: React.ReactNode;
   pauseIcon?: React.ReactNode;
 };
@@ -288,11 +288,9 @@ export function PlayerPlayPause({
   onClick,
   render,
   className,
-  children,
   ...props
 }: PlayerPlayPauseProps) {
   const { isPlaying, toggle } = usePlayerContext();
-  const icon = isPlaying ? pauseIcon : playIcon;
 
   return useRender({
     render,
@@ -314,7 +312,7 @@ export function PlayerPlayPause({
         "[&_svg]:size-4",
         className,
       ),
-      children: children ?? icon,
+      children: isPlaying ? pauseIcon : playIcon,
     },
   });
 }
@@ -522,7 +520,7 @@ export function PlayerMeta({
   );
 }
 
-type PlayerMuteProps = useRender.ComponentProps<"button"> & {
+type PlayerMuteProps = Omit<useRender.ComponentProps<"button">, "children"> & {
   muteIcon?: React.ReactNode;
   unmuteIcon?: React.ReactNode;
 };
@@ -533,12 +531,10 @@ export function PlayerMute({
   onClick,
   render,
   className,
-  children,
   ...props
 }: PlayerMuteProps) {
   const { muted, volume, toggleMute } = usePlayerContext();
   const isSilent = muted || volume === 0;
-  const icon = isSilent ? muteIcon : unmuteIcon;
 
   return useRender({
     render,
@@ -560,7 +556,7 @@ export function PlayerMute({
         "[&_svg]:size-4",
         className,
       ),
-      children: children ?? icon,
+      children: isSilent ? muteIcon : unmuteIcon,
     },
   });
 }
