@@ -1,0 +1,279 @@
+---
+parts:
+  - name: Diff
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffHeader
+    passThrough:
+      type: React.ComponentProps<"header">
+      to: <header>
+  - name: DiffTitle
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffAction
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffFile
+    passThrough:
+      type: Collapsible.Root.Props
+      to: <Collapsible.Root>
+  - name: DiffFileHeader
+    passThrough:
+      type: Collapsible.Trigger.Props
+      to: <Collapsible.Trigger>
+  - name: DiffFileName
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: DiffStat
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: kind
+        type: '"added" | "removed"'
+        description: Picks the green or red tint. Exposed as data-kind on the element so descendants can style off it.
+  - name: DiffFilePanel
+    passThrough:
+      type: Collapsible.Panel.Props
+      to: <Collapsible.Panel>
+  - name: DiffLine
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: state
+        type: '"added" | "removed" | "unchanged"'
+        description: The kind of line. Drives the colored strip on the left, the row tint, and the tint of any DiffWord inside.
+      - name: number
+        type: number
+        description: Line number shown in the gutter. Omit on a continuation row when no number applies.
+  - name: DiffLineNumber
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffLineContent
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffWord
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: DiffSkip
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: DiffRow
+    props:
+      - name: entry
+        type: DiffEntry
+        description: One entry from useDiff's lines array. The component dispatches to DiffSkip for skip entries and to DiffLine with text or segments for content entries.
+---
+
+A unified diff view for code changes. Pure layout primitives. To turn a pair of strings or a patch into rendered lines, pair the primitives with the `useDiff` hook.
+
+## Scope
+
+Designed for the diffs an agent emits in chat. Single column unified layout, line and word level highlights, per file collapse, and a header slot for actions like Undo and Review. Side by side is not in scope. For large diffs measured in thousands of lines, render in a virtualized list yourself.
+
+## Anatomy
+
+Hand authored. Every primitive is a styled element. You provide the lines.
+
+```tsx
+<Diff>
+  <DiffHeader>
+    <DiffTitle>1 file changed</DiffTitle>
+    <DiffAction>{/* Undo, Review, etc */}</DiffAction>
+  </DiffHeader>
+
+  <DiffContent>
+    <DiffFile>
+      <DiffFileHeader>
+        <DiffFileName>style.css</DiffFileName>
+        <DiffStat kind="added">+2</DiffStat>
+        <DiffStat kind="removed">-2</DiffStat>
+      </DiffFileHeader>
+      <DiffFilePanel>
+        <DiffLine state="unchanged" number={1}>{`:root {`}</DiffLine>
+        <DiffLine state="removed" number={2}>
+          --bg: <DiffWord>#111827</DiffWord>;
+        </DiffLine>
+        <DiffLine state="added" number={2}>
+          --bg: <DiffWord>#020617</DiffWord>;
+        </DiffLine>
+        <DiffSkip />
+        <DiffLine state="unchanged" number={19}>...</DiffLine>
+      </DiffFilePanel>
+    </DiffFile>
+  </DiffContent>
+</Diff>
+```
+
+`DiffContent` wraps the file cards and gives them their padding and gap. The root is chrome only.
+
+## Lines
+
+The chrome does not parse diffs. Pair it with the `useDiff` hook to turn a before and after string or a unified patch into structured lines.
+
+```tsx
+const { lines, additions, removals } = useDiff({ from: before, to: after });
+
+<DiffFilePanel>
+  {lines.map((entry) => <DiffRow key={entry.key} entry={entry} />)}
+</DiffFilePanel>
+```
+
+`DiffRow` is the default renderer. It dispatches to `DiffSkip` for skip entries and to `DiffLine` with text or word level segments for content entries. Drop it in for the common case, write your own map with `DiffLine` directly when you need custom row content (syntax highlighting, inline editing, anchor links). See [useDiff](#usediff) in the API for the full input and return reference.
+
+## Word level
+
+Each `segment` is `{ value: string, mark?: boolean }`. Marked segments are the parts that changed within the line. Wrap them in `DiffWord` and the tint flows from the parent `DiffLine`'s `data-state`.
+
+To turn word level off for a single call, pass `wordLevel: false` to `useDiff` and the lines come back without `segments`. Useful when you replace line content with syntax highlighted tokens, since the tokens already span across the changed region.
+
+## Syntax highlighting
+
+For the common case, reach for [Diff Rich](/diff-rich/basic). It ships a `DiffRichFile` that slots into this chrome and pre-wires the highlighter, language detection, and the perf knobs.
+
+The chrome itself does not highlight. To wire your own highlighter (a different engine, theme, or token shape), map `useDiff` lines to `DiffLine` directly instead of using `DiffRow`, and render whatever children you want inside. The `DiffRichFile` source is a working reference for the shiki version.
+
+## Streaming
+
+Push more entries into the `lines` array as they arrive and re render. `DiffFile` defaults to open so streamed rows are visible as they come in. No streaming API on the chrome.
+
+## Tokens
+
+The kit ships two diff specific tokens, both defined in `:root` and `.dark`.
+
+- `--color-diff-added` for the green strip, the +N stat, and the tint of added rows and words
+- `--color-diff-removed` for the red strip, the -N stat, and the tint of removed rows and words
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### Diff
+
+The root card. Holds the header and the content. No state of its own.
+
+<Props name="Diff" />
+
+### DiffHeader
+
+The top row of the diff card. A flex container for the title and an action slot.
+
+<Props name="DiffHeader" />
+
+### DiffTitle
+
+The label on the left of the header. Plain text like "1 file changed."
+
+<Props name="DiffTitle" />
+
+### DiffAction
+
+Right aligned slot for action buttons. Undo, Review, minimize. Lives outside the file row so its clicks do not toggle anything.
+
+<Props name="DiffAction" />
+
+### DiffContent
+
+Wraps the file cards inside the root and provides their padding and the gap between them.
+
+<Props name="DiffContent" />
+
+### DiffFile
+
+One file in the diff. Wraps a collapsible and owns the open state. Pure chrome, no data shaping. Pair with `useDiff` to feed it lines.
+
+<Props name="DiffFile" />
+
+### DiffFileHeader
+
+The file row. Wraps the collapsible trigger so clicking the row toggles the panel. Renders a trailing chevron that rotates open.
+
+<Props name="DiffFileHeader" />
+
+### DiffFileName
+
+Filename inside the header. Monospaced and truncates on narrow widths.
+
+<Props name="DiffFileName" />
+
+### DiffStat
+
+A small +N or -N badge for additions or removals. Picks its tint from `kind`.
+
+<Props name="DiffStat" />
+
+### DiffFilePanel
+
+Wraps the collapsible panel. Animates height with the same easing the rest of the kit uses. Children are the lines.
+
+<Props name="DiffFilePanel" />
+
+### DiffLine
+
+One row in the diff. The `state` drives the row tint, the colored strip on the left, and the tint of any `DiffWord` inside.
+
+<Props name="DiffLine" />
+
+### DiffLineNumber
+
+The gutter cell. `DiffLine` renders it for you from the `number` prop. Render it directly when you want to customize the gutter.
+
+<Props name="DiffLineNumber" />
+
+### DiffLineContent
+
+The code cell. Holds the text and any `DiffWord` parts. Pre formatted whitespace so indents render exactly as written.
+
+<Props name="DiffLineContent" />
+
+### DiffWord
+
+Inline highlight for a changed segment of a line. Picks its tint from the parent line's `data-state`.
+
+<Props name="DiffWord" />
+
+### DiffSkip
+
+A thin gap row between hunks. Renders a centered dot leader. Use this between two `DiffLine` blocks where you want to mark a skipped region.
+
+<Props name="DiffSkip" />
+
+### DiffRow
+
+The default renderer for a `useDiff` entry. Dispatches to `DiffSkip` for skip entries and to `DiffLine` for content entries, deriving state, line number, and word level segments from the entry. Skip it and map to `DiffLine` directly when you want to swap content per row.
+
+<Props name="DiffRow" />
+
+### useDiff
+
+Hook that turns strings or a patch into the entries the chrome renders. Memoized on its inputs, so it is cheap to call on every render.
+
+```tsx
+const { lines, additions, removals, name } = useDiff({ from, to });
+```
+
+Inputs:
+
+- `{ from, to }` for full file before and after strings.
+- `{ patch }` for a unified diff string. Filename, stats, and skip rows are parsed from the patch headers.
+- `wordLevel` defaults to true. When a removed line is immediately followed by an added line, both get a `segments` array describing which parts changed. Pass false to get plain text only.
+- `contextLines` collapses long runs of unchanged lines into a single `skip` entry. Keep `N` lines visible on each side of every change, fold the rest. Pass `0` to hide all unchanged regions. Leave undefined (default) to render every line. Only applies to `{ from, to }`; patches keep the skips that came from their own hunk headers.
+
+Returns:
+
+- `name` for `patch` input, parsed from the headers. Undefined for `from` and `to`.
+- `additions`, `removals` for the stat badges.
+- `lines` is a flat array of entries. Each entry has a `state` and a `key`. Content entries have `text`, `oldNumber` and `newNumber` (one or both depending on state), and an optional `segments` array of `{ value, mark? }` for word level pairs. Skip entries only have `state: "skip"` and a `count`.

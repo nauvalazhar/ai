@@ -15,7 +15,7 @@
 - [x] environtment variables
 - [x] sandbox (code + output result, also covers https://tanstack.com/ai/latest/docs/code-mode/client-integration)
 - [x] file tree
-- monaco editor
-- diff
-- dependency (package json info)
-- artifact (code + toolbar)
+- [x] diff
+- monaco editor [could be just an example]
+- dependency (package json info) [not sure for what]
+- artifact (code + toolbar) [could be just a new demo on code block]

@@ -812,6 +812,42 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Diff",
+        slug: "diff",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/diff/basic")),
+          },
+          {
+            name: "From To",
+            slug: "from-to",
+            Component: lazy(() => import("#/demos/diff/from-to")),
+          },
+          {
+            name: "Patch",
+            slug: "patch",
+            Component: lazy(() => import("#/demos/diff/patch")),
+          },
+          {
+            name: "Multi File",
+            slug: "multi-file",
+            Component: lazy(() => import("#/demos/diff/multi-file")),
+          },
+          {
+            name: "Word Level",
+            slug: "word-level",
+            Component: lazy(() => import("#/demos/diff/word-level")),
+          },
+          {
+            name: "Streaming",
+            slug: "streaming",
+            Component: lazy(() => import("#/demos/diff/streaming")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [
