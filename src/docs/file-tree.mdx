@@ -1,0 +1,351 @@
+---
+parts:
+  - name: FileTree
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: expanded
+        type: string[]
+        description: Controlled list of folder values that are open. Pair with onExpandedChange.
+      - name: defaultExpanded
+        type: string[]
+        description: Initial open folders when uncontrolled.
+      - name: onExpandedChange
+        type: "(next: string[]) => void"
+        description: Fires whenever a folder opens or closes, either from a row click, the keyboard, or the useFileTree hook.
+      - name: selected
+        type: string | null
+        description: Controlled value of the currently active row. Both files and folders set this on click. Pair with onSelectedChange.
+      - name: defaultSelected
+        type: string | null
+        default: "null"
+        description: Initial selected row when uncontrolled.
+      - name: onSelectedChange
+        type: "(next: string | null) => void"
+        description: Fires whenever a row is activated, regardless of kind.
+      - name: highlight
+        type: boolean
+        default: "false"
+        description: Enables roving focus and arrow-key navigation. When false, rows are not tabbable and the keyboard does nothing.
+      - name: highlighted
+        type: string | null
+        description: Controlled value of the keyboard-focused row. Pair with onHighlightedChange.
+      - name: defaultHighlighted
+        type: string | null
+        default: "null"
+        description: Initial focused row when uncontrolled. Set this to make the tree tab-focusable on first render.
+      - name: onHighlightedChange
+        type: "(next: string | null) => void"
+        description: Fires when the focused row changes.
+      - name: onActivate
+        type: "(value: string, kind: 'file' | 'folder') => void"
+        description: Fires when a row is clicked or Enter is pressed on a highlighted row. The kind argument lets the same handler distinguish opening a file from toggling a folder.
+      - name: guides
+        type: boolean
+        default: "false"
+        description: Draws a thin vertical guide from each open folder's chevron down through its children. Pure CSS, no extra DOM per row. Off by default to keep short trees uncluttered.
+  - name: FileTreeFolder
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: value
+        type: string
+        description: Stable identifier used by the root for expanded state, selection, and keyboard nav. Typically a path.
+      - name: renaming
+        type: boolean
+        default: "false"
+        description: Flips data-renaming on the row so descendants can style the inline rename state and the row skips activation on click.
+  - name: FileTreeFile
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: value
+        type: string
+        description: Stable identifier used by the root for selection and keyboard nav.
+      - name: renaming
+        type: boolean
+        default: "false"
+        description: Flips data-renaming on the row so descendants can style the inline rename state and the row skips activation on click.
+  - name: FileTreeFolderPanel
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: FileTreeRow
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: FileTreeIcon
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: FileTreeLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: FileTreeNew
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A composable file tree for chat surfaces that surface project files, lightweight web editors, and generated-app previews.
+
+## Scope
+
+Designed for v0 and Lovable grade trees, tens to low hundreds of visible rows. No virtualization, no async expansion, no drag and drop, no multi-select. For VSCode or Cursor grade trees that scroll through thousands of nodes, reach for [@pierre/trees](https://trees.software).
+
+## Anatomy
+
+The component is fully compound. You own the data and the recursion. Each row carries its own identifier and the root threads expanded, selected, and focused state through context. Icons are children of the row, not props.
+
+```tsx
+<FileTree defaultExpanded={["src"]}>
+  <FileTreeFolder value="src">
+    <FileTreeRow>
+      <FileTreeIcon>
+        <FolderIcon />
+      </FileTreeIcon>
+      <FileTreeLabel>src</FileTreeLabel>
+    </FileTreeRow>
+    <FileTreeFolderPanel>
+      <FileTreeFile value="src/App.tsx">
+        <FileTreeRow>
+          <FileTreeIcon>
+            <FileIcon />
+          </FileTreeIcon>
+          <FileTreeLabel>App.tsx</FileTreeLabel>
+        </FileTreeRow>
+      </FileTreeFile>
+    </FileTreeFolderPanel>
+  </FileTreeFolder>
+</FileTree>
+```
+
+Depth is tracked through a context that the panel bumps. Rows read it and apply the right indent without a depth prop. Recurse over your own data and the tree assembles itself.
+
+```tsx
+function renderNode(node) {
+  if (node.kind === "file") {
+    return (
+      <FileTreeFile key={node.path} value={node.path}>
+        <FileTreeRow>
+          <FileTreeIcon>
+            <FileIcon />
+          </FileTreeIcon>
+          <FileTreeLabel>{node.name}</FileTreeLabel>
+        </FileTreeRow>
+      </FileTreeFile>
+    );
+  }
+  return (
+    <FileTreeFolder key={node.path} value={node.path}>
+      <FileTreeRow>
+        <FileTreeIcon>
+          <FolderIcon />
+        </FileTreeIcon>
+        <FileTreeLabel>{node.name}</FileTreeLabel>
+      </FileTreeRow>
+      <FileTreeFolderPanel>{node.children.map(renderNode)}</FileTreeFolderPanel>
+    </FileTreeFolder>
+  );
+}
+```
+
+The chevron is rendered by `FileTreeRow` automatically for folder rows and rotates from a `data-expanded` attribute. Files reserve the same slot for visual alignment and render nothing inside it.
+
+## State
+
+Three independent pieces of state, each with a controlled and an uncontrolled flow.
+
+- `expanded` is a list of folder values that are open. Collapsed subtrees are not in the DOM, so toggling a folder near the root unmounts every descendant in one render. This is intentional, it sidesteps the perf cost of measuring nested heights and matches what the tree is sized for.
+- `selected` is a single value or null and represents the row that was clicked last. Files and folders both set it. The "open file in editor" concept is the app's, surfaced through `onActivate` and filtered by kind.
+- `highlighted` is the keyboard focus value. It exists only when `highlight` is true.
+
+All three follow the same pattern, pass a controlled prop together with the change handler, or pass the default prop and let the root own state.
+
+## Activation
+
+Each row click and each Enter on a highlighted row dispatches the same activate path. The row updates `selected`, moves `highlighted` when in highlight mode, and fires `onActivate(value, kind)`. Folder activation also toggles `expanded`.
+
+`onActivate` is the recommended hook for opening a file in an editor or recording a click on a folder. It runs once per activation, no matter the trigger, and the `kind` argument lets the handler distinguish the two.
+
+```tsx
+<FileTree
+  onActivate={(value, kind) => {
+    if (kind === "file") openInEditor(value);
+  }}
+>
+```
+
+If you also need to react to the change in `selected`, listen to `onSelectedChange`. The two coexist, use `onActivate` for the imperative side effect and `onSelectedChange` to mirror state.
+
+## Guides
+
+Set `guides` on the root to draw IDE-style vertical lines from each open folder's chevron through its children. The lines are a `::before` pseudo-element on `FileTreeFolderPanel`, positioned at the parent folder's chevron x-center via a CSS variable derived from depth. No extra DOM per row, no measurement. Off by default — drop it in when the tree is the central surface and the depth structure matters at a glance.
+
+```tsx
+<FileTree guides defaultExpanded={["src"]}>
+  ...
+</FileTree>
+```
+
+## Keyboard
+
+When `highlight` is true the root sets up roving focus across the visible rows.
+
+- ArrowUp and ArrowDown move the focus to the previous or next visible row.
+- ArrowRight expands a collapsed folder. On an open folder or a file, it moves to the next row.
+- ArrowLeft collapses an open folder. On a closed folder or a file, it moves to the parent row.
+- Home and End jump to the first or last row.
+- Enter and Space activate the focused row.
+
+Set `defaultHighlighted` to make the tree tab-focusable on first render. Without it the tree is not in the tab order until a row is clicked.
+
+Key handling skips inputs and textareas inside rows, so an inline rename input keeps its native cursor and selection behavior.
+
+## Renaming
+
+Renaming is not a separate part. Set `renaming` on the file or folder, then render whatever you want inside the row. Most apps swap the label for an input.
+
+```tsx
+<FileTreeFile value={file.path} renaming={editing === file.path}>
+  <FileTreeRow>
+    <FileTreeIcon>
+      <FileIcon />
+    </FileTreeIcon>
+    {editing === file.path ? (
+      <input
+        autoFocus
+        defaultValue={file.name}
+        onBlur={(e) => commit(file.path, e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit(file.path, e.currentTarget.value);
+          if (e.key === "Escape") cancel();
+        }}
+      />
+    ) : (
+      <FileTreeLabel>{file.name}</FileTreeLabel>
+    )}
+  </FileTreeRow>
+</FileTreeFile>
+```
+
+`renaming` sets `data-renaming` on the row and suppresses the row's own activation on click, so a click inside the input or on the row's chrome does not trip selection or folder toggling. The row is a `div` with `role="treeitem"`, not a button, so any focusable child including an input behaves normally.
+
+## Creating
+
+`FileTreeNew` is a sibling row used as the shell for an inline create flow. It reads the depth context so the input aligns with the surrounding rows and ships no behavior of its own, you attach the event listeners.
+
+```tsx
+{
+  creating && (
+    <FileTreeNew>
+      <span>
+        <FileIcon />
+      </span>
+      <input
+        autoFocus
+        placeholder="new file..."
+        onBlur={(e) => create(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") create(e.currentTarget.value);
+          if (e.key === "Escape") cancel();
+        }}
+      />
+    </FileTreeNew>
+  );
+}
+```
+
+Place it inside a `FileTreeFolderPanel` to create at that folder's depth, or at the root for a top-level entry.
+
+## Collapse all and expand all
+
+There is no dedicated part. The tree exposes its open state through the controlled API, so a toolbar button outside the tree is a one liner.
+
+```tsx
+const [expanded, setExpanded] = useState(["src"]);
+
+<button onClick={() => setExpanded([])}>Collapse all</button>
+<FileTree expanded={expanded} onExpandedChange={setExpanded}>
+```
+
+Expand all is the same shape, you already own the data so you already know every folder value.
+
+```tsx
+<button onClick={() => setExpanded(allFolderPaths(tree))}>Expand all</button>
+```
+
+For buttons rendered inside the tree, call `useFileTree` and read `setExpanded` from there.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### FileTree
+
+The root. Holds expanded, selected, and highlighted state, owns the keyboard handler, and exposes everything through context. Each piece of state has a controlled prop, a default prop, and a change handler. Sets `role="tree"` and `data-highlight` when keyboard nav is enabled.
+
+<Props name="FileTree" />
+
+### FileTreeFolder
+
+Wraps one folder. Provides the row context with `kind: "folder"`, the folder's value, its current open and selected and focused state, and the activation handler. Sets `data-expanded` on its element so descendant styles can react.
+
+<Props name="FileTreeFolder" />
+
+### FileTreeFile
+
+Wraps one file. Provides the row context with `kind: "file"`. Same shape as `FileTreeFolder` minus the folder semantics.
+
+<Props name="FileTreeFile" />
+
+### FileTreeFolderPanel
+
+The children container for a folder. Renders nothing when the folder is collapsed, which keeps collapsed subtrees out of the DOM. Bumps the depth context so descendants indent one level deeper. Sets `role="group"`.
+
+<Props name="FileTreeFolderPanel" />
+
+### FileTreeRow
+
+The visible row. A `div` with `role="treeitem"`, the click target, and the source of `data-value`, `data-kind`, `data-depth`, `data-expanded`, `data-selected`, `data-highlighted`, and `data-renaming`. Renders the chevron for folder rows and reserves the same slot for files so columns align across kinds.
+
+The row is not a button so it can hold any child, including an input for renaming. Roving `tabIndex` is applied when the parent tree has `highlight`.
+
+<Props name="FileTreeRow" />
+
+### FileTreeIcon
+
+Shared icon slot. Sits to the right of the chevron and to the left of the label. Used inside both `FileTreeRow` for the type icon and `FileTreeNew` for the create-input's leading icon. Inherits muted color and lights up to foreground when the surrounding row is selected or highlighted.
+
+<Props name="FileTreeIcon" />
+
+### FileTreeLabel
+
+Text content for a row. Truncates on narrow widths.
+
+<Props name="FileTreeLabel" />
+
+### FileTreeNew
+
+The create-new shell. Reads the depth context and renders at the current depth so an inline input lines up with sibling rows. Ships no behavior. Compose with `FileTreeIcon` for the leading icon and an `<input>` for the editable text. Place it inside a `FileTreeFolderPanel` for a child entry or at the root for a top-level entry.
+
+<Props name="FileTreeNew" />
+
+### useFileTree
+
+Hook for wiring controls that live inside the tree. Returns the same state and setters the root holds, so a button anywhere inside the tree can call `setExpanded`, `setSelected`, `setHighlighted`, or `toggleExpanded`. Must be called inside `<FileTree>`.
+
+```tsx
+function CollapseAll() {
+  const { setExpanded } = useFileTree();
+  return (
+    <button type="button" onClick={() => setExpanded([])}>
+      Collapse all
+    </button>
+  );
+}
+```

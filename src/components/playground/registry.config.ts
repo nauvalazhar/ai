@@ -766,6 +766,52 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "File Tree",
+        slug: "file-tree",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/file-tree/basic")),
+          },
+          {
+            name: "Recursive",
+            slug: "recursive",
+            Component: lazy(() => import("#/demos/file-tree/recursive")),
+          },
+          {
+            name: "Highlight",
+            slug: "highlight",
+            Component: lazy(() => import("#/demos/file-tree/highlight")),
+          },
+          {
+            name: "Guides",
+            slug: "guides",
+            Component: lazy(() => import("#/demos/file-tree/guides")),
+          },
+          {
+            name: "Controlled",
+            slug: "controlled",
+            Component: lazy(() => import("#/demos/file-tree/controlled")),
+          },
+          {
+            name: "Rename",
+            slug: "rename",
+            Component: lazy(() => import("#/demos/file-tree/rename")),
+          },
+          {
+            name: "Collapse All",
+            slug: "collapse-all",
+            Component: lazy(() => import("#/demos/file-tree/collapse-all")),
+          },
+          {
+            name: "Full",
+            slug: "full",
+            Component: lazy(() => import("#/demos/file-tree/full")),
+          },
+        ],
+      },
+      {
         name: "Source",
         slug: "source",
         demos: [

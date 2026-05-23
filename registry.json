@@ -320,6 +320,13 @@
       ]
     },
     {
+      "name": "file-tree",
+      "type": "component",
+      "files": [
+        { "name": "file-tree.tsx", "path": "src/components/ai/file-tree.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "generated-image",
       "type": "component",
       "files": [

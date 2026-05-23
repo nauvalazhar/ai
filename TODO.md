@@ -14,7 +14,8 @@
 - [x] exception
 - [x] environtment variables
 - [x] sandbox (code + output result, also covers https://tanstack.com/ai/latest/docs/code-mode/client-integration)
-- file tree (using trees)
+- [x] file tree
 - monaco editor
+- diff
 - dependency (package json info)
 - artifact (code + toolbar)
