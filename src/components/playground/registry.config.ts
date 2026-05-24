@@ -22,6 +22,17 @@ export const registry: Group[] = [
     title: "Components",
     components: [
       {
+        name: "Tanstack Chat",
+        slug: "tanstack-chat",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/tanstack-chat/basic")),
+          },
+        ],
+      },
+      {
         name: "Conversation",
         slug: "conversation",
         demos: [
@@ -551,6 +562,11 @@ export const registry: Group[] = [
             name: "Approval",
             slug: "approval",
             Component: lazy(() => import("#/demos/tool/approval")),
+          },
+          {
+            name: "Streaming Approval",
+            slug: "streaming-approval",
+            Component: lazy(() => import("#/demos/tool/streaming-approval")),
           },
           {
             name: "Multiple",

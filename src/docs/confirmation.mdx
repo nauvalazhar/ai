@@ -192,3 +192,28 @@ Headless trigger that flips the card to rejected. Same merge rules as `Confirmat
 A small row for the resolved state, sized to sit where the action row used to be. Pass a leading icon and a short line of text. Use it inside `ConfirmationApproved` or `ConfirmationRejected`.
 
 <Props name="ConfirmationStatus" />
+
+## TanStack AI
+
+TanStack tool-call parts carry an `approval` field of shape `{ id, needsApproval, approved? }`, and `useChat` exposes `addToolApprovalResponse({ id, approved })` to settle the request. Drive `Confirmation` in controlled mode from the part's `approval.approved` so the chat client stays the single source of truth: `undefined` maps to `pending`, `true` to `approved`, `false` to `rejected`. The accept and reject triggers fire `onStateChange`, and that callback is the one place the response gets sent.
+
+```tsx
+const state =
+  call.approval?.approved === true
+    ? "approved"
+    : call.approval?.approved === false
+      ? "rejected"
+      : "pending";
+
+<Confirmation
+  state={state}
+  onStateChange={(next) => {
+    if (next === "approved") addToolApprovalResponse({ id: call.approval.id, approved: true });
+    if (next === "rejected") addToolApprovalResponse({ id: call.approval.id, approved: false });
+  }}
+>
+  {/* …header, description, pending action row, approved and rejected status rows */}
+</Confirmation>
+```
+
+The full recipe lives in the `Tool` family under the **Streaming Approval** demo, which wires this against a mocked `useChat` so the playground works without a server.
