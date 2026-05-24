@@ -8,6 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 
 // Promotes fenced code-block meta (e.g. `title="src/utils.ts"`) onto the
@@ -37,7 +38,12 @@ function remarkCodeMeta() {
 
 const mdxPlugin = mdx({
   providerImportSource: '@mdx-js/react',
-  remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkCodeMeta],
+  remarkPlugins: [
+    remarkFrontmatter,
+    remarkMdxFrontmatter,
+    remarkGfm,
+    remarkCodeMeta,
+  ],
 })
 
 const originalTransform = mdxPlugin.transform as Function

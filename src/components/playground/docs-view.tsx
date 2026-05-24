@@ -80,6 +80,27 @@ export function DocsView({
         <CalloutContent>{children}</CalloutContent>
       </Callout>
     ),
+    table: (props: React.ComponentProps<"table">) => (
+      <div className="not-prose my-6 overflow-hidden rounded-outer ring ring-border">
+        <table className="w-full border-collapse text-sm" {...props} />
+      </div>
+    ),
+    thead: (props: React.ComponentProps<"thead">) => (
+      <thead className="bg-surface" {...props} />
+    ),
+    tbody: (props: React.ComponentProps<"tbody">) => <tbody {...props} />,
+    tr: (props: React.ComponentProps<"tr">) => (
+      <tr className="border-b border-border last:border-b-0" {...props} />
+    ),
+    th: (props: React.ComponentProps<"th">) => (
+      <th
+        className="px-4 py-3 text-left text-xs text-muted-foreground font-medium border-b border-border"
+        {...props}
+      />
+    ),
+    td: (props: React.ComponentProps<"td">) => (
+      <td className="px-4 py-3 text-foreground" {...props} />
+    ),
     CodeTabs,
     FrameworkCards,
   };
