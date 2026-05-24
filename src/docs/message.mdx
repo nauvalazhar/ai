@@ -91,6 +91,8 @@ The component for displaying text. Use one per text segment, and repeat it as ma
 - `plain` (default): typography only, no padding or background.
 - `bubble`: adds the chat-bubble look with a rounded background and padding. Override the color per-instance via `className`.
 
+For rich model output (headings, lists, fenced code), drop `Markdown` inside `MessageText`. It renders streaming-safe markdown and routes fenced code through `CodeBlock` so the kit stays cohesive.
+
 <Props name="MessageText" />
 
 ### MessageAction

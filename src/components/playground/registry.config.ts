@@ -125,6 +125,27 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Markdown",
+        slug: "markdown",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/markdown/basic")),
+          },
+          {
+            name: "Streaming",
+            slug: "streaming",
+            Component: lazy(() => import("#/demos/markdown/streaming")),
+          },
+          {
+            name: "With Code",
+            slug: "with-code",
+            Component: lazy(() => import("#/demos/markdown/with-code")),
+          },
+        ],
+      },
+      {
         name: "Code Block",
         slug: "code-block",
         demos: [

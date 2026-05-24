@@ -48,6 +48,7 @@
     "react-player": "^3.4.0",
     "react-shiki": "^0.9.3",
     "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
     "remark-mdx-frontmatter": "^5.2.0",
     "shiki": "^4.1.0",
     "tailwind-merge": "^3.5.0",
@@ -57,6 +58,10 @@
   "devDependencies": {
     "@nauvalazhar/ai": "workspace:*",
     "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/ai": "^0.21.3",
+    "@tanstack/ai-client": "^0.11.7",
+    "@tanstack/ai-react": "^0.11.7",
+    "@tanstack/ai-react-ui": "^0.8.1",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",

@@ -1,0 +1,75 @@
+---
+parts:
+  - name: Markdown
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: children
+        type: string
+        description: The markdown source to render. Safe to update incrementally while a model is streaming.
+      - name: components
+        type: Components
+        description: Override the default renderers from `react-markdown`. Use this to swap in a syntax highlighter for code blocks or to project markdown elements onto custom kit primitives.
+---
+
+Renders GitHub-flavored markdown safely while content is still arriving from a stream.
+
+## Requirements
+
+`Markdown` styles its output with the Tailwind Typography plugin so headings, lists, tables, blockquotes, and inline code render with sensible defaults. The registry adds `@tailwindcss/typography` to the project's `package.json`, but the plugin still needs to be enabled in the global stylesheet. Add this line once, alongside the Tailwind import:
+
+```css
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+```
+
+The component then maps prose colors, borders, and code chip styles onto the kit's tokens, so the output picks up the active theme without further configuration.
+
+## Anatomy
+
+`Markdown` is a sibling to `Message`, not part of it, so callers only pay the renderer cost when they actually render markdown. Drop it inside `MessageText` for assistant replies, or anywhere a string of model output needs to render.
+
+```tsx
+<Message type="incoming">
+  <MessageAvatar>AI</MessageAvatar>
+  <MessageContent>
+    <MessageText>
+      <Markdown>{reply}</Markdown>
+    </MessageText>
+  </MessageContent>
+</Message>
+```
+
+## Streaming
+
+`Markdown` accepts any partial source. Headings, lists, tables, and inline code commit as soon as the parser can resolve them. Fenced code blocks are a special case: when the closing fence has not arrived yet, the component synthesizes one so the block stays mounted with the same layout it will keep once streaming finishes. No flicker, no jumping fences.
+
+## Code blocks
+
+By default, fenced code renders through aikit's `CodeBlock`, with the fence language shown in the header. The body is a plain `pre` so the kit ships without a syntax highlighter dependency. Bring your own highlighter by overriding the `pre` component:
+
+```tsx
+<Markdown
+  components={{
+    pre({ children }) {
+      // children is the <code className="language-x"> element
+      return <CodeBlock>...</CodeBlock>;
+    },
+  }}
+>
+  {source}
+</Markdown>
+```
+
+The `with-code` demo wires a highlighter end to end.
+
+## API
+
+Reference for the component, including its available props and behavior.
+
+### Markdown
+
+Root container. Wraps `react-markdown` with `remark-gfm` enabled for tables, task lists, strikethrough, and autolinks. Sets `data-slot="markdown"` and applies a scoped prose style off the kit's tokens so headings, paragraphs, lists, tables, blockquotes, and links land with sensible defaults. Pass `components` to replace the renderer for any markdown element.
+
+<Props name="Markdown" />

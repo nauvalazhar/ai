@@ -246,6 +246,21 @@
       ]
     },
     {
+      "name": "markdown",
+      "type": "component",
+      "dependencies": {
+        "npm": {
+          "react-markdown": "^10.1.0",
+          "remark-gfm": "^4.0.1",
+          "@tailwindcss/typography": "^0.5.16"
+        },
+        "items": ["code-block"]
+      },
+      "files": [
+        { "name": "markdown.tsx", "path": "src/components/ai/markdown.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "composer",
       "type": "component",
       "files": [
