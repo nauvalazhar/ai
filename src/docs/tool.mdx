@@ -46,6 +46,17 @@ parts:
     passThrough:
       type: React.ComponentProps<"div">
       to: <div>
+  - name: ToolArgument
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: value
+        type: string
+        description: The raw arguments string. May be incomplete while the model is still streaming tokens. Empty input renders nothing so the panel does not jump as the first character lands.
+      - name: state
+        type: '"streaming" | "complete"'
+        description: Drives the pulse on the last value while tokens are still arriving. Leave undefined for a static, already-complete payload.
 ---
 
 A status-aware collapsible row for a tool invocation. The kit owns the disclosure, the state visualization, and the section layout. The caller owns every detail that goes inside.
@@ -154,3 +165,13 @@ A scrollable monospaced container for raw text or JSON. Capped at a reasonable h
 Destructive-tinted slot for the failure message. Hidden unless the ancestor `Tool` is in the error state, so it is safe to leave in the tree at all times. The body is free-form: a single line, a paragraph, a retry button.
 
 <Props name="ToolError" />
+
+### ToolArgument
+
+A compact key/value viewer for a tool call's raw `arguments` JSON string. Backed by a partial parser, so it renders best-effort rows while the model is still typing tokens and keeps every key it has already locked in.
+
+Pass `state="streaming"` while the buffer is still growing. The last value pulses to signal the cursor. Switch to `state="complete"` when the final token lands and the pulse settles. Empty input renders nothing, so the panel does not jump as the first character arrives. Unparseable input falls back to a plain monospace block of the raw text, also pulsing while streaming.
+
+Reach for `ToolBlock` instead when the input is already a finished payload and you just want to dump it.
+
+<Props name="ToolArgument" />

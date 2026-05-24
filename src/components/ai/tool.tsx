@@ -1,4 +1,5 @@
 import { Collapsible } from "@base-ui/react/collapsible";
+import { parse } from "partial-json";
 import { cn } from "#/lib/utils";
 
 type ToolState = "pending" | "approval" | "running" | "success" | "error";
@@ -205,5 +206,111 @@ export function ToolError({
       )}
       {...props}
     />
+  );
+}
+
+type ToolArgumentProps = Omit<React.ComponentProps<"div">, "children"> & {
+  value: string;
+  state?: "streaming" | "complete";
+};
+
+function safeParse(value: string): unknown {
+  if (!value.trim()) return undefined;
+  try {
+    return parse(value);
+  } catch {
+    return undefined;
+  }
+}
+
+function formatValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "null";
+  if (typeof value === "object")
+    return JSON.stringify(value, null, 2);
+  return String(value);
+}
+
+export function ToolArgument({
+  value,
+  state,
+  className,
+  ...props
+}: ToolArgumentProps) {
+  const parsed = safeParse(value);
+  const isObject =
+    parsed !== null &&
+    typeof parsed === "object" &&
+    !Array.isArray(parsed);
+  const entries = isObject ? Object.entries(parsed as Record<string, unknown>) : [];
+  const isStreaming = state === "streaming";
+
+  return (
+    <div
+      data-slot="tool-argument"
+      data-state={state}
+      className={cn(
+        "rounded bg-surface-elevated ring ring-border overflow-hidden",
+        "text-sm font-mono",
+        className,
+      )}
+      {...props}
+    >
+      {isObject && entries.length > 0 && (
+        <div className="flex flex-col">
+          {entries.map(([key, val], index) => {
+            const isLast = index === entries.length - 1;
+            const formatted = formatValue(val);
+            const multiline = formatted.includes("\n");
+            return (
+              <div
+                key={key}
+                data-slot="tool-argument-row"
+                className="grid grid-cols-[max-content_1fr] items-start gap-3 px-3 py-1.5 border-t border-border first:border-t-0"
+              >
+                <span
+                  data-slot="tool-argument-key"
+                  className="text-muted-foreground"
+                >
+                  {key}
+                </span>
+                <span
+                  data-slot="tool-argument-value"
+                  className={cn(
+                    "min-w-0 text-foreground wrap-break-word",
+                    multiline ? "whitespace-pre" : "whitespace-pre-wrap",
+                    isStreaming && isLast && "animate-pulse",
+                  )}
+                >
+                  {formatted}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {!isObject && parsed !== undefined && (
+        <pre
+          data-slot="tool-argument-raw"
+          className={cn(
+            "max-h-64 overflow-auto p-3 whitespace-pre-wrap wrap-break-word",
+            isStreaming && "animate-pulse",
+          )}
+        >
+          {formatValue(parsed)}
+        </pre>
+      )}
+      {parsed === undefined && value.trim() && (
+        <pre
+          data-slot="tool-argument-raw"
+          className={cn(
+            "max-h-64 overflow-auto p-3 whitespace-pre-wrap wrap-break-word",
+            isStreaming && "animate-pulse",
+          )}
+        >
+          {value}
+        </pre>
+      )}
+    </div>
   );
 }

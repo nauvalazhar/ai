@@ -476,6 +476,11 @@
     {
       "name": "tool",
       "type": "component",
+      "dependencies": {
+        "npm": {
+          "partial-json": "^0.1.7"
+        }
+      },
       "files": [
         { "name": "tool.tsx", "path": "src/components/ai/tool.tsx", "target": "components" }
       ]

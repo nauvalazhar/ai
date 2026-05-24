@@ -557,6 +557,11 @@ export const registry: Group[] = [
             slug: "multiple",
             Component: lazy(() => import("#/demos/tool/multiple")),
           },
+          {
+            name: "Streaming Arguments",
+            slug: "streaming-arguments",
+            Component: lazy(() => import("#/demos/tool/streaming-arguments")),
+          },
         ],
       },
       {
