@@ -4,14 +4,18 @@ import { cn } from "#/lib/utils";
 
 export const generatedImageVariants = cva(
   cn(
-    "relative w-full overflow-hidden rounded-outer bg-surface-elevated text-foreground",
-    "ring ring-border",
+    "group/generated-image relative w-full overflow-hidden rounded-outer bg-surface-elevated text-foreground",
+    "border border-border",
+    "data-[state=error]:ring-2",
+    "data-[state=error]:ring-destructive/40",
+    "data-[state=error]:border-destructive/60",
     "[&_[data-slot=generated-image-content]]:absolute",
     "[&_[data-slot=generated-image-content]]:inset-0",
     "[&_[data-slot=generated-image-content]]:size-full",
     "[&_[data-slot=generated-image-content]]:object-cover",
     "[&_[data-slot=generated-image-content]]:transition-opacity",
     "[&_[data-slot=generated-image-content]]:duration-500",
+    "[&[data-state=queued]_[data-slot=generated-image-content]]:opacity-0",
     "[&[data-state=generating]_[data-slot=generated-image-content]]:opacity-0",
     "[&[data-state=error]_[data-slot=generated-image-content]]:opacity-30",
   ),
@@ -30,11 +34,11 @@ export const generatedImageVariants = cva(
 
 type GeneratedImageProps = useRender.ComponentProps<"div"> &
   VariantProps<typeof generatedImageVariants> & {
-    state?: "generating" | "ready" | "error";
+    state?: "queued" | "generating" | "complete" | "error";
   };
 
 export function GeneratedImage({
-  state = "ready",
+  state = "complete",
   aspectRatio,
   className,
   render,
@@ -52,6 +56,22 @@ export function GeneratedImage({
   });
 }
 
+export function GeneratedImageHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="generated-image-header"
+      className={cn(
+        "absolute top-4 left-5 z-10 flex flex-col gap-0.5",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function GeneratedImageTitle({
   className,
   ...props
@@ -60,7 +80,9 @@ export function GeneratedImageTitle({
     <div
       data-slot="generated-image-title"
       className={cn(
-        "absolute top-4 left-5 z-10 text-sm font-medium text-white",
+        "text-sm font-medium text-foreground",
+        "in-data-[state=generating]:text-white",
+        "in-data-[state=complete]:text-white",
         className,
       )}
       {...props}
@@ -71,6 +93,8 @@ export function GeneratedImageTitle({
 export const generatedImageOverlayVariants = cva(
   cn(
     "pointer-events-none absolute inset-x-0 transition-opacity duration-300",
+    "in-data-[state=queued]:opacity-0",
+    "in-data-[state=queued]:transition-none",
     "in-data-[state=generating]:opacity-0",
     "in-data-[state=generating]:transition-none",
   ),
@@ -107,6 +131,9 @@ export function GeneratedImageOverlay({
 export const generatedImageActionVariants = cva(
   cn(
     "absolute z-10 inline-flex items-center gap-1 transition-opacity duration-300",
+    "in-data-[state=queued]:pointer-events-none",
+    "in-data-[state=queued]:opacity-0",
+    "in-data-[state=queued]:transition-none",
     "in-data-[state=generating]:pointer-events-none",
     "in-data-[state=generating]:opacity-0",
     "in-data-[state=generating]:transition-none",
@@ -153,7 +180,8 @@ export function GeneratedImageLoading({
       aria-hidden
       className={cn(
         "pointer-events-none absolute inset-0 transition-opacity duration-300",
-        "in-data-[state=ready]:opacity-0",
+        "in-data-[state=queued]:opacity-0",
+        "in-data-[state=complete]:opacity-0",
         "in-data-[state=error]:opacity-0",
         "in-data-[state=generating]:transition-none",
         "bg-[oklch(0.2_0_0)]",
@@ -175,5 +203,53 @@ export function GeneratedImageLoading({
         }}
       />
     </div>
+  );
+}
+
+export function GeneratedImagePlaceholder({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="generated-image-placeholder"
+      className={cn(
+        "hidden group-data-[state=queued]/generated-image:contents",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function GeneratedImageProgress({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="generated-image-progress"
+      className={cn(
+        "hidden group-data-[state=generating]/generated-image:contents",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function GeneratedImageError({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="generated-image-error"
+      className={cn(
+        "hidden group-data-[state=error]/generated-image:contents",
+        className,
+      )}
+      {...props}
+    />
   );
 }

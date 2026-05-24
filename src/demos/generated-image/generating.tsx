@@ -4,13 +4,14 @@ import { Button } from "#/components/ai/button";
 import {
   GeneratedImage,
   GeneratedImageAction,
+  GeneratedImageHeader,
   GeneratedImageLoading,
   GeneratedImageOverlay,
   GeneratedImageTitle,
 } from "#/components/ai/generated-image";
 
 export default function Generating() {
-  const [state, setState] = useState<"generating" | "ready">("ready");
+  const [state, setState] = useState<"generating" | "complete">("complete");
   const [seed, setSeed] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -24,7 +25,7 @@ export default function Generating() {
     if (timerRef.current) clearTimeout(timerRef.current);
     setSeed((s) => s + 1);
     setState("generating");
-    timerRef.current = setTimeout(() => setState("ready"), 2500);
+    timerRef.current = setTimeout(() => setState("complete"), 2500);
   }
 
   const generating = state === "generating";
@@ -32,9 +33,11 @@ export default function Generating() {
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col gap-3">
       <GeneratedImage state={state}>
-        <GeneratedImageTitle>
-          {generating ? "Creating image" : "Generated Image"}
-        </GeneratedImageTitle>
+        <GeneratedImageHeader>
+          <GeneratedImageTitle>
+            {generating ? "Creating image" : "Generated Image"}
+          </GeneratedImageTitle>
+        </GeneratedImageHeader>
         <img
           data-slot="generated-image-content"
           src={`https://picsum.photos/seed/aikit-gen-${seed}/640`}

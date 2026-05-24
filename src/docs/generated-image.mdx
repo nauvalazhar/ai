@@ -6,9 +6,9 @@ parts:
       to: <div>
     props:
       - name: state
-        type: '"generating" | "ready" | "error"'
-        default: '"ready"'
-        description: Drives the visible layers. In `generating`, the loading layer is opaque and the image, overlay, and action are hidden. In `ready`, the image, overlay, and action are visible. In `error`, the image is dimmed and the loading layer is hidden, so the author can render a fallback message in the same frame.
+        type: '"queued" | "generating" | "complete" | "error"'
+        default: '"complete"'
+        description: Drives the visible layers. In `queued`, the placeholder slot is visible and the image, overlay, and action are hidden. In `generating`, the loading layer is opaque and the progress slot sits on top, while the image, overlay, and action are hidden. In `complete`, the image, overlay, and action are visible. In `error`, the image is dimmed, the loading layer is hidden, and the error slot is visible, so a fallback message reads in the same frame.
       - name: aspectRatio
         type: '"square" | "video" | "portrait" | "auto"'
         default: '"square"'
@@ -16,6 +16,10 @@ parts:
       - name: render
         type: ReactElement
         description: Render the root as another element, like a link or a button, when the whole surface should navigate or trigger an action.
+  - name: GeneratedImageHeader
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
   - name: GeneratedImageTitle
     passThrough:
       type: React.ComponentProps<"div">
@@ -42,6 +46,18 @@ parts:
     passThrough:
       type: React.ComponentProps<"div">
       to: <div>
+  - name: GeneratedImagePlaceholder
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: GeneratedImageProgress
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: GeneratedImageError
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
 ---
 
 A surface for a model-generated image.
@@ -51,7 +67,7 @@ A surface for a model-generated image.
 The component is agnostic about the image. It does not fetch or decode the file. Bring any image, a plain `<img>`, a framework-optimized image, or a project-specific one. Tag it with `data-slot="generated-image-content"` and the root sizes it to fill the frame and drives its opacity from the root state.
 
 ```tsx
-<GeneratedImage state="ready">
+<GeneratedImage state="complete">
   <img
     data-slot="generated-image-content"
     src="..."
@@ -73,7 +89,7 @@ The component is agnostic about the image. It does not fetch or decode the file.
 </GeneratedImage>
 ```
 
-Drive the request by flipping `state`. The loading layer snaps in instantly when the state turns to generating, so swapping the image source in the same render does not flash the new image before the loader covers it. When the state returns to ready, the loader fades out and the image, overlay, and action fade in.
+Drive the request by flipping `state`. The loading layer snaps in instantly when the state turns to generating, so swapping the image source in the same render does not flash the new image before the loader covers it. When the state turns to complete, the loader fades out and the image, overlay, and action fade in. Use `queued` while the request is waiting upstream, and `error` to keep the dimmed image alongside a fallback message.
 
 ```tsx
 <GeneratedImage state={state}>
@@ -99,7 +115,7 @@ Drive the request by flipping `state`. The loading layer snaps in instantly when
 For a wider canvas, pair `aspectRatio="video"` with a bottom overlay so the buttons sit at the lower edge against the dark gradient.
 
 ```tsx
-<GeneratedImage state="ready" aspectRatio="video">
+<GeneratedImage state="complete" aspectRatio="video">
   <img data-slot="generated-image-content" src="..." alt="..." />
   <GeneratedImageLoading />
   <GeneratedImageOverlay position="bottom" />
@@ -119,15 +135,21 @@ Reference for each part of the component, including its available props and beha
 
 The root. Holds the frame, the aspect ratio, and the state. Sets `data-state` so descendants react to the current phase, and tags the content slot so a project image component fills the frame without restyling.
 
-The state is the single switch for the whole tree. `generating` shows the loader on top and hides the image, the overlay, and the action. `ready` shows the image and the overlay group and hides the loader. `error` keeps the image dimmed and hides the loader, so the author can render a fallback message inside the frame.
+The state is the single switch for the whole tree. `queued` hides the image and the overlay group and reveals the placeholder slot. `generating` shows the loader on top and hides the image, the overlay, and the action, with the progress slot riding above the loader. `complete` shows the image and the overlay group and hides the loader. `error` keeps the image dimmed, hides the loader, and reveals the error slot, so a fallback message reads in the same frame.
 
 The transition is asymmetric on purpose. Moving into `generating` is instant, so the loader covers the image before a new source has a chance to paint. Moving out of `generating` is smooth, so the image and the overlay group fade in together.
 
 <Props name="GeneratedImage" />
 
+### GeneratedImageHeader
+
+The positioning wrapper for top-left labels. Anchors its children to the top left of the frame and stacks them in a column. Use it as the home for a persistent `GeneratedImageTitle`, and as the parent for the state visibility slots, so a placeholder, progress, or error label joins the same stack when the matching state turns on.
+
+<Props name="GeneratedImageHeader" />
+
 ### GeneratedImageTitle
 
-A small label anchored to the top left. Use it for the in-flight status, a short prompt summary, or a persistent caption. It is visible across states, so the author decides when to show it.
+The label style. Lives inside a `GeneratedImageHeader` or inside one of the state slots and picks its color from the root state. White when the loader or a finished image sits behind it, foreground tone when the empty surface or a dimmed error frame sits behind it.
 
 <Props name="GeneratedImageTitle" />
 
@@ -163,6 +185,24 @@ The group styles its descendants to read against the gradient, so a plain `<Butt
 
 The dot field that fills the frame while the model is working. A dark canvas with a soft, breathing dot grid, masked so the dots brighten toward the center and fade at the edges. It is the same in light and dark themes, since the surface stands in for a canvas about to be painted on.
 
-The loader snaps in when the state turns to generating and fades out when the state turns to ready. There is no input to wire on the loader itself, the root state drives it.
+The loader snaps in when the state turns to generating and fades out when the state turns to complete. There is no input to wire on the loader itself, the root state drives it.
 
 <Props name="GeneratedImageLoading" />
+
+### GeneratedImagePlaceholder
+
+The visibility slot for the queued state. Render whatever should sit on the canvas while the request is in line, and the slot reveals its children only when the root state is queued. The slot does not position anything on its own, so wrap it in a `GeneratedImageHeader` (or another positioned context) and the children join that layout as flex items.
+
+<Props name="GeneratedImagePlaceholder" />
+
+### GeneratedImageProgress
+
+The visibility slot for the generating state. Use it for a short status line, a model name, or a progress count, and let the loader carry the canvas behind it. Children join the surrounding layout only while the root state is generating.
+
+<Props name="GeneratedImageProgress" />
+
+### GeneratedImageError
+
+The visibility slot for the error state. Render a short reason and any retry affordance, and the children appear only while the root state is error. Pair it with a `GeneratedImageAction` at a bottom corner so the retry sits inside the frame.
+
+<Props name="GeneratedImageError" />

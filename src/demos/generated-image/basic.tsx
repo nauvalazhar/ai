@@ -10,7 +10,7 @@ import {
 export default function Basic() {
   return (
     <div className="mx-auto w-full max-w-sm">
-      <GeneratedImage state="ready">
+      <GeneratedImage state="complete">
         <img
           data-slot="generated-image-content"
           src="https://picsum.photos/seed/aikit-gen/640"

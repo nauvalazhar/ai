@@ -10,7 +10,7 @@ import {
 export default function OverlayBottom() {
   return (
     <div className="mx-auto w-full max-w-md">
-      <GeneratedImage state="ready" aspectRatio="video">
+      <GeneratedImage state="complete" aspectRatio="video">
         <img
           data-slot="generated-image-content"
           src="https://picsum.photos/seed/aikit-wide/960"
