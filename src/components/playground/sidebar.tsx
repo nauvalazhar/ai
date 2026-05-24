@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import type { ComponentType, SVGProps } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { Collapsible } from "@base-ui/react/collapsible";
 import {
   BookOpenIcon,
-  ChevronRight,
   DownloadIcon,
   Folder,
   FolderOpen,
   SidebarCloseIcon,
 } from "lucide-react";
-import { cn } from "#/lib/utils";
-import { registry } from "./registry.config";
-import { installationFrameworks } from "./registry";
 import {
   SiGithub,
   SiNextdotjs,
@@ -21,6 +16,20 @@ import {
   SiShadcnui,
   SiVite,
 } from "react-icons/si";
+import { cn } from "#/lib/utils";
+import { registry } from "./registry.config";
+import { installationFrameworks } from "./registry";
+import { Button } from "../ai/button";
+import { useSidebarStore } from "./sidebar-store";
+import { Chip } from "../ai/chip";
+import { ScrollArea } from "../ai/scroll-area";
+import { ThemeToggle } from "./theme-toggle";
+import {
+  SidebarGroup,
+  SidebarItem,
+  SidebarSection,
+  SidebarSubItem,
+} from "./sidebar-nav";
 
 function TanStackIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -45,11 +54,6 @@ const frameworkIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   shadcn: SiShadcnui,
   manual: SiReact,
 };
-import { Button } from "../ai/button";
-import { useSidebarStore } from "./sidebar-store";
-import { Chip } from "../ai/chip";
-import { ScrollArea } from "../ai/scroll-area";
-import { ThemeToggle } from "./theme-toggle";
 
 export function Sidebar() {
   const toggle = useSidebarStore((s) => s.toggle);
@@ -138,216 +142,123 @@ export function Sidebar() {
         />
       </div>
       <ScrollArea render={<nav />} className="flex-1 overflow-y-auto mt-2">
-        <section className="mb-3">
-          <div className="px-6 py-1 text-xs font-medium text-muted-foreground">
-            Get Started
-          </div>
-          <ul className={cn("px-4")}>
-            <li className="mb-0.5">
+        <SidebarSection title="Get Started">
+          <SidebarItem
+            icon={
+              <BookOpenIcon className="size-4 shrink-0 text-muted-foreground" />
+            }
+            render={<Link to="/introduction" onClick={closeOnMobile} />}
+          >
+            Introduction
+          </SidebarItem>
+          <SidebarGroup
+            icon={
+              <DownloadIcon className="size-4 shrink-0 text-muted-foreground" />
+            }
+            label="Installation"
+            open={installationOpen}
+            onOpenChange={setInstallationOpen}
+            render={
               <Link
-                to="/introduction"
-                onClick={closeOnMobile}
-                className={cn(
-                  "flex items-center gap-2 pl-5.5 pr-2 py-1 rounded text-sm",
-                  "text-muted-foreground hover:bg-accent hover:text-foreground",
-                  "data-[status=active]:bg-accent data-[status=active]:text-foreground",
-                  "outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  "transition-colors duration-150",
-                )}
-              >
-                <BookOpenIcon className="size-4 shrink-0 text-muted-foreground" />
-                <span className="truncate">Introduction</span>
-              </Link>
-            </li>
-            <li className="mb-0.5">
-              <Collapsible.Root
-                className="group"
-                open={installationOpen}
-                onOpenChange={setInstallationOpen}
-              >
-                <div
-                  className={cn(
-                    "flex items-center rounded text-sm",
-                    "hover:bg-accent",
-                  )}
+                to="/installation/{-$framework}"
+                params={{ framework: undefined }}
+                onClick={() => {
+                  setInstallationOpen(true);
+                  closeOnMobile();
+                }}
+              />
+            }
+          >
+            {installationFrameworks.map((fw) => {
+              const Icon = frameworkIcons[fw.slug];
+              return (
+                <SidebarSubItem
+                  key={fw.slug}
+                  icon={Icon ? <Icon className="size-3.5 shrink-0" /> : null}
+                  render={
+                    <Link
+                      to="/installation/{-$framework}"
+                      params={{ framework: fw.slug }}
+                      onClick={closeOnMobile}
+                    />
+                  }
                 >
-                  <Collapsible.Trigger
-                    className="p-1 text-muted-foreground hover:text-foreground rounded outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    aria-label={installationOpen ? "Collapse" : "Expand"}
-                  >
-                    <ChevronRight className="size-3.5 transition-transform group-data-open:rotate-90" />
-                  </Collapsible.Trigger>
-                  <Link
-                    to="/installation/{-$framework}"
-                    params={{ framework: undefined }}
-                    onClick={() => {
-                      setInstallationOpen(true);
-                      closeOnMobile();
-                    }}
-                    className={cn(
-                      "flex items-center gap-2 flex-1 min-w-0 py-1 pr-2",
-                      "text-muted-foreground hover:text-foreground",
-                      "data-[status=active]:text-foreground",
-                      "outline-none focus-visible:ring-2 focus-visible:ring-primary rounded",
-                      "transition-colors duration-150",
-                    )}
-                  >
-                    <DownloadIcon className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="truncate">Installation</span>
-                  </Link>
-                </div>
-
-                <Collapsible.Panel
-                  className={cn(
-                    "overflow-hidden h-(--collapsible-panel-height)",
-                    "transition-[height] duration-150 ease-out",
-                    "data-starting-style:h-0 data-ending-style:h-0",
-                  )}
-                >
-                  <ul className="ml-2.5 pl-1.5 border-l border-border mt-0.5 space-y-0.5">
-                    {installationFrameworks.map((fw) => {
-                      const Icon = frameworkIcons[fw.slug];
-                      return (
-                        <li key={fw.slug}>
-                          <Link
-                            to="/installation/{-$framework}"
-                            params={{ framework: fw.slug }}
-                            onClick={closeOnMobile}
-                            className={cn(
-                              "flex items-center gap-2 px-1.5 py-1 rounded text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
-                              "data-[status=active]:bg-accent data-[status=active]:text-foreground",
-                              "transition-colors duration-150",
-                              "outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                            )}
-                          >
-                            {Icon ? (
-                              <Icon className="size-3.5 shrink-0" />
-                            ) : null}
-                            <span className="truncate">{fw.label}</span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </Collapsible.Panel>
-              </Collapsible.Root>
-            </li>
-          </ul>
-        </section>
+                  {fw.label}
+                </SidebarSubItem>
+              );
+            })}
+          </SidebarGroup>
+        </SidebarSection>
         {isEmpty ? (
           <p className="px-6 py-2 text-xs text-muted-foreground">
             No components yet.
           </p>
         ) : (
           registry.map((group) => (
-            <section key={group.title} className="mb-3">
-              <div className="px-6 py-1 text-xs font-medium text-muted-foreground">
-                {group.title}
-              </div>
-              <ul className="px-4">
-                {group.components
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((component) => {
-                    const isExpanded = expanded.has(component.slug);
-                    const isActiveBranch = activeComponent === component.slug;
-
-                    return (
-                      <li key={component.slug} className="mb-0.5">
-                        <Collapsible.Root
-                          className="group"
-                          open={isExpanded}
-                          onOpenChange={(open) =>
-                            setExpanded((prev) => {
-                              const next = new Set(prev);
-                              if (open) next.add(component.slug);
-                              else next.delete(component.slug);
-                              return next;
-                            })
+            <SidebarSection key={group.title} title={group.title}>
+              {group.components
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((component) => {
+                  const isExpanded = expanded.has(component.slug);
+                  const isActiveBranch = activeComponent === component.slug;
+                  return (
+                    <SidebarGroup
+                      key={component.slug}
+                      label={component.name}
+                      open={isExpanded}
+                      onOpenChange={(open) =>
+                        setExpanded((prev) => {
+                          const next = new Set(prev);
+                          if (open) next.add(component.slug);
+                          else next.delete(component.slug);
+                          return next;
+                        })
+                      }
+                      isActive={isActiveBranch && !activeDemo}
+                      icon={(open) =>
+                        open ? (
+                          <FolderOpen className="size-4 shrink-0 text-muted-foreground" />
+                        ) : (
+                          <Folder className="size-4 shrink-0 text-muted-foreground" />
+                        )
+                      }
+                      render={
+                        <Link
+                          to="/$component"
+                          params={{ component: component.slug }}
+                          onClick={() => {
+                            setExpanded((prev) =>
+                              prev.has(component.slug)
+                                ? prev
+                                : new Set([...prev, component.slug]),
+                            );
+                            closeOnMobile();
+                          }}
+                        />
+                      }
+                    >
+                      {component.demos.map((demo) => (
+                        <SidebarSubItem
+                          key={demo.slug}
+                          icon={<SiReact className="size-3.5 shrink-0" />}
+                          render={
+                            <Link
+                              to="/$component/$demo"
+                              params={{
+                                component: component.slug,
+                                demo: demo.slug,
+                              }}
+                              onClick={closeOnMobile}
+                            />
                           }
                         >
-                          <div
-                            className={cn(
-                              "flex items-center rounded text-sm",
-                              "hover:bg-accent",
-                              isActiveBranch &&
-                                !activeDemo &&
-                                "bg-accent text-foreground",
-                            )}
-                          >
-                            <Collapsible.Trigger
-                              className="p-1 text-muted-foreground hover:text-foreground rounded outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                              aria-label={isExpanded ? "Collapse" : "Expand"}
-                            >
-                              <ChevronRight className="size-3.5 transition-transform group-data-open:rotate-90" />
-                            </Collapsible.Trigger>
-                            <Link
-                              to="/$component"
-                              params={{ component: component.slug }}
-                              onClick={() => {
-                                setExpanded((prev) =>
-                                  prev.has(component.slug)
-                                    ? prev
-                                    : new Set([...prev, component.slug]),
-                                );
-                                closeOnMobile();
-                              }}
-                              className={cn(
-                                "flex items-center gap-2 flex-1 min-w-0 py-1 pr-2",
-                                "outline-none focus-visible:ring-2 focus-visible:ring-primary rounded",
-                                "transition-colors duration-150",
-                                isActiveBranch
-                                  ? "text-foreground"
-                                  : "text-muted-foreground hover:text-foreground",
-                              )}
-                            >
-                              {isExpanded ? (
-                                <FolderOpen className="size-4 shrink-0 text-muted-foreground" />
-                              ) : (
-                                <Folder className="size-4 shrink-0 text-muted-foreground" />
-                              )}
-                              <span className="truncate">{component.name}</span>
-                            </Link>
-                          </div>
-
-                          <Collapsible.Panel
-                            className={cn(
-                              "overflow-hidden h-(--collapsible-panel-height)",
-                              "transition-[height] duration-150 ease-out",
-                              "data-starting-style:h-0 data-ending-style:h-0",
-                            )}
-                          >
-                            <ul className="ml-2.5 pl-1.5 border-l border-border mt-0.5 space-y-0.5">
-                              {component.demos.map((demo) => (
-                                <li key={demo.slug}>
-                                  <Link
-                                    to="/$component/$demo"
-                                    params={{
-                                      component: component.slug,
-                                      demo: demo.slug,
-                                    }}
-                                    onClick={closeOnMobile}
-                                    className={cn(
-                                      "flex items-center gap-2 px-1.5 py-1 rounded text-sm text-muted-foreground hover:bg-accent hover:text-foreground",
-                                      "data-[status=active]:bg-accent data-[status=active]:text-foreground",
-                                      "transition-colors duration-150",
-                                      "outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                                    )}
-                                  >
-                                    <SiReact className="size-3.5 shrink-0" />
-                                    <span className="truncate">
-                                      {demo.name}
-                                    </span>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </Collapsible.Panel>
-                        </Collapsible.Root>
-                      </li>
-                    );
-                  })}
-              </ul>
-            </section>
+                          {demo.name}
+                        </SidebarSubItem>
+                      ))}
+                    </SidebarGroup>
+                  );
+                })}
+            </SidebarSection>
           ))
         )}
       </ScrollArea>
@@ -373,7 +284,6 @@ export function Sidebar() {
           </a>
         </p>
       </footer>
-      {/* <ThemeToggle /> */}
     </>
   );
 }
