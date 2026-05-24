@@ -1,4 +1,4 @@
-import ShikiHighlighter from "react-shiki/web";
+import ShikiHighlighter from "#/lib/shiki";
 import { Chip } from "#/components/ai/chip";
 import {
   Sandbox,

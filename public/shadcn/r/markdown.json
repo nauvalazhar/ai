@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "markdown",
+  "type": "registry:ui",
+  "dependencies": [
+    "react-markdown@^10.1.0",
+    "remark-gfm@^4.0.1",
+    "@tailwindcss/typography@^0.5.16"
+  ],
+  "registryDependencies": [
+    "https://ai.nauv.al/shadcn/r/init.json",
+    "https://ai.nauv.al/shadcn/r/code-block.json"
+  ],
+  "files": [
+    {
+      "path": "ai/markdown.tsx",
+      "type": "registry:ui",
+      "target": "@components/ai/markdown.tsx",
+      "content": "import { isValidElement, type ReactNode } from \"react\";\nimport ReactMarkdown, { type Components } from \"react-markdown\";\nimport remarkGfm from \"remark-gfm\";\nimport {\n  CodeBlock,\n  CodeBlockContent,\n  CodeBlockHeader,\n  CodeBlockTitle,\n} from \"@/components/ai/code-block\";\nimport { cn } from \"@/lib/utils\";\n\ntype MarkdownProps = React.ComponentProps<\"div\"> & {\n  children: string;\n  components?: Components;\n};\n\ntype CodeProps = {\n  className?: string;\n  children?: ReactNode;\n};\n\nconst defaultComponents: Components = {\n  pre({ children }) {\n    if (!isValidElement<CodeProps>(children)) return <pre>{children}</pre>;\n\n    const { className, children: code } = children.props;\n    const language = className?.match(/language-(\\w+)/)?.[1] ?? \"text\";\n    const source = String(code ?? \"\").replace(/\\n$/, \"\");\n\n    return (\n      <CodeBlock className=\"not-prose my-3\">\n        <CodeBlockHeader>\n          <CodeBlockTitle>{language}</CodeBlockTitle>\n        </CodeBlockHeader>\n        <CodeBlockContent>\n          <pre className=\"whitespace-pre-wrap wrap-break-word\">{source}</pre>\n        </CodeBlockContent>\n      </CodeBlock>\n    );\n  },\n};\n\n// Streaming markdown can land mid-fence. If we have an odd number of ``` markers\n// the renderer otherwise dumps the remainder as plain text and the layout shifts\n// the moment the closing fence arrives. Synthesizing a closing fence keeps the\n// block stable until the real one lands.\nfunction closeIncompleteFence(source: string) {\n  const fences = source.match(/```/g);\n  if (fences && fences.length % 2 === 1) return `${source}\\n\\`\\`\\``;\n  return source;\n}\n\nexport function Markdown({\n  children,\n  components,\n  className,\n  ...props\n}: MarkdownProps) {\n  const merged = components\n    ? { ...defaultComponents, ...components }\n    : defaultComponents;\n\n  return (\n    <div\n      data-slot=\"markdown\"\n      className={cn(\n        \"prose prose-sm dark:prose-invert max-w-none min-w-0\",\n        className,\n      )}\n      {...props}\n    >\n      <ReactMarkdown remarkPlugins={[remarkGfm]} components={merged}>\n        {closeIncompleteFence(children)}\n      </ReactMarkdown>\n    </div>\n  );\n}"
+    }
+  ]
+}

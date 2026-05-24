@@ -1,6 +1,6 @@
 import { LoaderIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
-import ShikiHighlighter from "react-shiki/web";
+import ShikiHighlighter from "#/lib/shiki";
 import { Button } from "#/components/ai/button";
 import { Chip } from "#/components/ai/chip";
 import {

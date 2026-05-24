@@ -1,5 +1,5 @@
 import { DatabaseIcon } from "lucide-react";
-import ShikiHighlighter from "react-shiki/web";
+import ShikiHighlighter from "#/lib/shiki";
 import {
   Tool,
   ToolContent,

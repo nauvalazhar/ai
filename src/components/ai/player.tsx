@@ -1,9 +1,13 @@
 "use client";
 
 import { useRender } from "@base-ui/react/use-render";
-import ReactPlayer from "react-player";
+import { createReactPlayer } from "react-player/ReactPlayer";
+import HtmlPlayer from "react-player/HtmlPlayer";
+import { canPlay } from "react-player/patterns";
+import type { PlayerEntry } from "react-player/players";
 import {
   createContext,
+  lazy,
   use,
   useCallback,
   useEffect,
@@ -13,6 +17,32 @@ import {
   type ComponentProps,
 } from "react";
 import { cn } from "#/lib/utils";
+
+const htmlPlayer: PlayerEntry = {
+  key: "html",
+  name: "html",
+  canPlay: canPlay.html,
+  canEnablePIP: () => true,
+  player: HtmlPlayer,
+};
+
+const ReactPlayer = createReactPlayer(
+  [
+    {
+      key: "youtube",
+      name: "YouTube",
+      canPlay: canPlay.youtube,
+      player: lazy(
+        () =>
+          import("youtube-video-element/react") as unknown as Promise<{
+            default: React.ComponentType<unknown>;
+          }>,
+      ),
+    } as PlayerEntry,
+    htmlPlayer,
+  ],
+  htmlPlayer,
+);
 
 type PlayerContextValue = {
   currentTime: number;

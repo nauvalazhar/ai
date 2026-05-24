@@ -40,6 +40,10 @@
       "type": "registry:ui"
     },
     {
+      "name": "markdown",
+      "type": "registry:ui"
+    },
+    {
       "name": "composer",
       "type": "registry:ui"
     },
@@ -52,6 +56,10 @@
       "type": "registry:ui"
     },
     {
+      "name": "console",
+      "type": "registry:ui"
+    },
+    {
       "name": "conversation",
       "type": "registry:ui"
     },
@@ -60,7 +68,19 @@
       "type": "registry:ui"
     },
     {
+      "name": "env",
+      "type": "registry:ui"
+    },
+    {
+      "name": "exception",
+      "type": "registry:ui"
+    },
+    {
       "name": "feedback-bar",
+      "type": "registry:ui"
+    },
+    {
+      "name": "file-tree",
       "type": "registry:ui"
     },
     {
@@ -96,11 +116,19 @@
       "type": "registry:ui"
     },
     {
+      "name": "sandbox",
+      "type": "registry:ui"
+    },
+    {
       "name": "scroll-area",
       "type": "registry:ui"
     },
     {
       "name": "select",
+      "type": "registry:ui"
+    },
+    {
+      "name": "selection",
       "type": "registry:ui"
     },
     {
@@ -129,6 +157,18 @@
     },
     {
       "name": "tool",
+      "type": "registry:ui"
+    },
+    {
+      "name": "player",
+      "type": "registry:ui"
+    },
+    {
+      "name": "transcript",
+      "type": "registry:ui"
+    },
+    {
+      "name": "web-preview",
       "type": "registry:ui"
     },
     {

@@ -26,6 +26,8 @@
       "color-destructive": "var(--color-destructive)",
       "color-destructive-foreground": "var(--color-destructive-foreground)",
       "color-accent": "var(--color-accent)",
+      "color-diff-added": "var(--color-diff-added)",
+      "color-diff-removed": "var(--color-diff-removed)",
       "radius": "var(--radius)",
       "radius-outer": "calc(var(--radius) + calc(var(--spacing) * 1))"
     },
@@ -46,7 +48,9 @@
       "color-secondary-foreground": "oklch(0.205 0.0022 259.23)",
       "color-destructive": "oklch(0.55 0.2055 24.2)",
       "color-destructive-foreground": "oklch(1 0 0)",
-      "color-accent": "oklch(0.94 0.0022 259.23)"
+      "color-accent": "oklch(0.94 0.0022 259.23)",
+      "color-diff-added": "oklch(0.6 0.17 145)",
+      "color-diff-removed": "oklch(0.6 0.22 25)"
     },
     "dark": {
       "color-foreground": "oklch(0.982 0 0)",
@@ -63,7 +67,9 @@
       "color-secondary-foreground": "oklch(0.982 0 0)",
       "color-destructive": "oklch(0.6 0.2055 24.2)",
       "color-destructive-foreground": "oklch(1 0 0)",
-      "color-accent": "oklch(0.2664 0.0022 259.23)"
+      "color-accent": "oklch(0.2664 0.0022 259.23)",
+      "color-diff-added": "oklch(0.72 0.18 145)",
+      "color-diff-removed": "oklch(0.7 0.22 25)"
     }
   },
   "css": {
@@ -88,6 +94,16 @@
         "opacity": "0"
       },
       "40%": {
+        "opacity": "1"
+      }
+    },
+    "@keyframes player-waveform-loading": {
+      "0%, 100%": {
+        "transform": "scaleY(0.25)",
+        "opacity": "0.55"
+      },
+      "50%": {
+        "transform": "scaleY(1)",
         "opacity": "1"
       }
     },

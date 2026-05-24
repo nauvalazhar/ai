@@ -1,6 +1,6 @@
 import { isValidElement, type ReactNode } from "react";
 import type { Components } from "react-markdown";
-import ShikiHighlighter from "react-shiki/web";
+import ShikiHighlighter from "#/lib/shiki";
 import {
   CodeBlock,
   CodeBlockContent,

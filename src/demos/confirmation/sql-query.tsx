@@ -1,5 +1,5 @@
 import { CheckIcon, DatabaseIcon, XIcon } from "lucide-react";
-import ShikiHighlighter from "react-shiki/web";
+import ShikiHighlighter from "#/lib/shiki";
 import { Button } from "#/components/ai/button";
 import {
   Confirmation,
