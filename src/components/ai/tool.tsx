@@ -1,7 +1,7 @@
 import { Collapsible } from "@base-ui/react/collapsible";
 import { cn } from "#/lib/utils";
 
-type ToolState = "running" | "success" | "error";
+type ToolState = "pending" | "approval" | "running" | "success" | "error";
 
 type ToolProps = Collapsible.Root.Props & {
   state?: ToolState;
@@ -13,7 +13,10 @@ export function Tool({ state, className, ...props }: ToolProps) {
       data-slot="tool"
       data-state={state}
       className={cn(
-        "group/tool flex flex-col rounded-outer bg-surface ring ring-border",
+        "group/tool flex flex-col rounded-outer bg-surface border border-border",
+        "data-[state=approval]:ring-2",
+        "data-[state=approval]:ring-primary/40",
+        "data-[state=approval]:border-primary/60",
         "data-[state=error]:ring-destructive/30",
         className,
       )}
@@ -35,6 +38,7 @@ export function ToolTrigger({
         "rounded-outer px-4 py-3 text-muted-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "transition-colors",
+        "group-data-[state=pending]/tool:animate-pulse",
         "group-data-[state=error]/tool:text-destructive group-data-[state=error]/tool:hover:text-destructive",
         className,
       )}
@@ -149,7 +153,7 @@ export function ToolContent({
       )}
       {...props}
     >
-      <div className="flex flex-col gap-2 px-4 pt-1.5 pb-2.5">{children}</div>
+      <div className="flex flex-col gap-2 px-4 pt-1.5 pb-3">{children}</div>
     </Collapsible.Panel>
   );
 }

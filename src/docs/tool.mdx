@@ -8,8 +8,8 @@ parts:
         href: https://base-ui.com/react/components/collapsible#root
     props:
       - name: state
-        type: '"running" | "success" | "error"'
-        description: Lifecycle state for the call. Mirrored onto `data-state` so the icon, trigger color, and error slot can react. Leave it undefined for a neutral past call.
+        type: '"pending" | "approval" | "running" | "success" | "error"'
+        description: Lifecycle state for the call. Mirrored onto `data-state` so the trigger pulse, approval ring, spinner, and error slot can react. Leave it undefined for a neutral past call.
   - name: ToolTrigger
     passThrough:
       type: Collapsible.Trigger.Props
@@ -54,7 +54,7 @@ A status-aware collapsible row for a tool invocation. The kit owns the disclosur
 
 A tool call is one trigger row plus an expandable body. The row shows a status icon, the tool name, and an optional one-line summary. The body holds any combination of labeled sections, raw blocks, code, markdown, or an error.
 
-The component has no view of the runtime. `state` is a three-value enum the caller passes in: `running` while args stream or the call executes, `success` when output arrives, `error` when it fails. The kit mirrors it onto `data-state`, which drives the icon, tints the trigger, and reveals `ToolError`.
+The component has no view of the runtime. `state` is a five-value enum the caller passes in: `pending` while arguments are still streaming in, `approval` while the call is waiting on a user decision, `running` while execution is underway, `success` when output arrives, `error` when it fails. The kit mirrors it onto `data-state`, which drives the trigger pulse, the approval ring, the spinner icon, the destructive tint, and `ToolError`.
 
 `ToolBlock` is a thin scrollable monospace container for raw text or JSON. Reach for `CodeBlock` instead when the body deserves a header and copy action.
 
@@ -76,6 +76,24 @@ The component has no view of the runtime. `state` is a three-value enum the call
   </ToolContent>
 </Tool>
 ```
+
+## Mapping TanStack AI tool-call states
+
+TanStack AI surfaces a six-value `ToolCallState` on each tool-call part plus a separate three-value `ToolResultState` on the matching result. Several of those values are visually indistinguishable in a chat thread, so the kit collapses them into five. Read the table left to right when you wire a `renderPart` switch.
+
+| TanStack source                          | `state`    |
+| ---------------------------------------- | ---------- |
+| `tool-call.state = "awaiting-input"`     | `pending`  |
+| `tool-call.state = "input-streaming"`    | `pending`  |
+| `tool-call.state = "input-complete"`     | `pending`  |
+| `tool-call.state = "approval-requested"` | `approval` |
+| `tool-call.state = "approval-responded"` | `running`  |
+| `tool-result.state = "streaming"`        | `running`  |
+| `tool-call.state = "complete"`           | `success`  |
+| `tool-result.state = "complete"`         | `success`  |
+| `tool-result.state = "error"`            | `error`    |
+
+The component never sees a TanStack type. The mapping lives in the caller's `renderPart` switch, alongside the rest of the bridge code.
 
 ## API
 
