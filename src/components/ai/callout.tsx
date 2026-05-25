@@ -13,7 +13,7 @@ export const calloutVariants = cva(
     variants: {
       tone: {
         info: "bg-surface ring-border",
-        warning: "bg-amber/5 ring-amber-500/30",
+        warning: "bg-warning/5 ring-warning/30",
         danger: "bg-destructive/5 ring-destructive/40",
       },
     },
@@ -53,7 +53,7 @@ export function CalloutIcon({
       className={cn(
         "mt-0.5 inline-flex size-4 shrink-0 items-center justify-center",
         "text-muted-foreground",
-        "group-data-[tone=warning]/callout:text-amber-500",
+        "group-data-[tone=warning]/callout:text-warning",
         "group-data-[tone=danger]/callout:text-destructive",
         "[&>svg]:size-4",
         className,

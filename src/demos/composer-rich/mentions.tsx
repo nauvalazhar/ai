@@ -55,7 +55,7 @@ function renderChip(item: ComposerItem<{ kind: FileKind }>) {
   return (
     <span
       data-kind={kind}
-      className="inline-flex items-center align-middle data-[kind=style]:text-primary fle data-[kind=doc]:text-primary data-[kind=image]:text-emerald-500"
+      className="inline-flex items-center align-middle data-[kind=style]:text-primary fle data-[kind=doc]:text-primary data-[kind=image]:text-success"
     >
       <span aria-hidden className="mr-1 inline-block [&>svg]:size-3.5">
         {item.icon}

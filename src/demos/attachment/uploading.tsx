@@ -155,7 +155,7 @@ export default function Uploading() {
         <Attachment progress={row.done ? undefined : row.progress}>
           <AttachmentMedia
             className={
-              row.done ? "bg-emerald-500/15 text-emerald-600" : undefined
+              row.done ? "bg-success/15 text-success" : undefined
             }
           >
             <AttachmentIcon>

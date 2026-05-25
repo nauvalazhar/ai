@@ -145,7 +145,7 @@ export function ConsoleList({
 const levelStyles: Record<ConsoleLevel, string> = {
   log: "text-foreground/70",
   info: "text-muted-foreground",
-  warn: "text-amber-500",
+  warn: "text-warning",
   error: "text-red-500",
   debug: "text-blue-500",
 };

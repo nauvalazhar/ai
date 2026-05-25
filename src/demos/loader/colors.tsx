@@ -19,10 +19,10 @@ export default function Colors() {
         Synthesizing
       </Loader>
 
-      <Loader dots className="text-emerald-500">
+      <Loader dots className="text-success">
         Sprouting
       </Loader>
-      <Loader dots className="text-orange-500">
+      <Loader dots className="text-warning">
         Flambéing
       </Loader>
     </div>

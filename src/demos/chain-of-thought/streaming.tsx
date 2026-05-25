@@ -66,9 +66,9 @@ export default function Streaming() {
                     {isCurrent ? (
                       <span
                         aria-hidden
-                        className="relative inline-flex size-2 rounded-full bg-orange-500"
+                        className="relative inline-flex size-2 rounded-full bg-inflight"
                       >
-                        <span className="absolute inset-0 rounded-full bg-orange-500 opacity-75 animate-ping" />
+                        <span className="absolute inset-0 rounded-full bg-inflight opacity-75 animate-ping" />
                       </span>
                     ) : (
                       <CheckCircle2Icon aria-hidden />
