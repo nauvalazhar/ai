@@ -2,7 +2,6 @@ import { LoaderIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 import ShikiHighlighter from "#/lib/shiki";
 import { Button } from "#/components/ai/button";
-import { Chip } from "#/components/ai/chip";
 import {
   Exception,
   ExceptionContent,
@@ -26,6 +25,7 @@ import {
   SandboxTitle,
   SandboxTrigger,
 } from "#/components/ai/sandbox";
+import { Status } from "#/components/ai/status";
 
 type Status = "idle" | "running" | "success" | "error";
 
@@ -60,24 +60,16 @@ export default function Run() {
           <SandboxTrigger>
             <SandboxTitle>average.py</SandboxTitle>
             {status === "idle" && (
-              <Chip size="sm" className="text-muted-foreground">
-                idle
-              </Chip>
+              <Status state="neutral" size="sm">idle</Status>
             )}
             {status === "running" && (
-              <Chip size="sm" className="text-amber-500">
-                running
-              </Chip>
+              <Status state="inflight" size="sm" pulse>running</Status>
             )}
             {status === "success" && (
-              <Chip size="sm" className="text-emerald-500">
-                success
-              </Chip>
+              <Status state="active" size="sm">success</Status>
             )}
             {status === "error" && (
-              <Chip size="sm" className="text-destructive">
-                error
-              </Chip>
+              <Status state="error" size="sm">error</Status>
             )}
           </SandboxTrigger>
           <SandboxAction>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ShikiHighlighter from "#/lib/shiki";
-import { Chip } from "#/components/ai/chip";
 import {
   Console,
   ConsoleContent,
@@ -11,7 +10,6 @@ import {
 } from "#/components/ai/console";
 import {
   Sandbox,
-  SandboxAction,
   SandboxContent,
   SandboxHeader,
   SandboxPanel,
@@ -21,6 +19,7 @@ import {
   SandboxTitle,
   SandboxTrigger,
 } from "#/components/ai/sandbox";
+import { Status } from "#/components/ai/status";
 
 const code = `for (const region of regions) {
   const { ok, ms } = await ping(region);
@@ -65,17 +64,14 @@ export default function Streaming() {
         <SandboxHeader>
           <SandboxTrigger>
             <SandboxTitle>probe.ts</SandboxTitle>
-          </SandboxTrigger>
-          <SandboxAction>
-            <Chip
+            <Status
+              state={done ? "active" : "inflight"}
               size="sm"
-              className={
-                done ? "text-emerald-500" : "text-muted-foreground"
-              }
+              pulse={!done}
             >
               {done ? "success" : "running"}
-            </Chip>
-          </SandboxAction>
+            </Status>
+          </SandboxTrigger>
         </SandboxHeader>
         <SandboxContent>
           <SandboxTabs defaultValue="output">

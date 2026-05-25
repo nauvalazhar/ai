@@ -1,5 +1,4 @@
 import ShikiHighlighter from "#/lib/shiki";
-import { Chip } from "#/components/ai/chip";
 import {
   Sandbox,
   SandboxContent,
@@ -11,6 +10,7 @@ import {
   SandboxTitle,
   SandboxTrigger,
 } from "#/components/ai/sandbox";
+import { Status } from "#/components/ai/status";
 
 const code = `def average(values):
     return sum(values) / len(values)
@@ -27,9 +27,7 @@ export default function Basic() {
         <SandboxHeader>
           <SandboxTrigger>
             <SandboxTitle>average.py</SandboxTitle>
-            <Chip size="sm" className="text-emerald-500">
-              success
-            </Chip>
+            <Status state="active" size="sm">success</Status>
           </SandboxTrigger>
         </SandboxHeader>
         <SandboxContent>

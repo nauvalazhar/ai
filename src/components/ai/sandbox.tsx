@@ -14,8 +14,13 @@ export function Sandbox({ state, className, ...props }: SandboxProps) {
       data-slot="sandbox"
       data-state={state}
       className={cn(
-        "group/sandbox flex flex-col rounded-outer bg-surface ring ring-border overflow-hidden",
-        "data-[state=error]:ring-destructive/30",
+        "group/sandbox flex flex-col rounded-outer bg-surface border border-border overflow-hidden",
+        "data-[state=running]:border-inflight/60",
+        "data-[state=running]:ring-2",
+        "data-[state=running]:ring-inflight/40",
+        "data-[state=error]:border-destructive/60",
+        "data-[state=error]:ring-2",
+        "data-[state=error]:ring-destructive/40",
         className,
       )}
       {...props}
