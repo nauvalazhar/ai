@@ -30,6 +30,11 @@ export const registry: Group[] = [
             slug: "basic",
             Component: lazy(() => import("#/demos/tanstack-chat/basic")),
           },
+          {
+            name: "Full",
+            slug: "full",
+            Component: lazy(() => import("#/demos/tanstack-chat/full")),
+          },
         ],
       },
       {
