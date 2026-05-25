@@ -21,7 +21,7 @@ export function ActionTrigger({
       data-slot="action-trigger"
       className={cn(
         "inline-flex items-center self-start gap-2 cursor-pointer select-none text-left bg-transparent",
-        "px-2 py-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent",
+        "-mx-2 px-2 py-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "transition-colors",
         className,
@@ -100,7 +100,7 @@ export function ActionContent({
       )}
       {...props}
     >
-      <div className="pl-2.5 py-2 text-muted-foreground">{children}</div>
+      <div className="py-2 text-muted-foreground">{children}</div>
     </Collapsible.Panel>
   );
 }
