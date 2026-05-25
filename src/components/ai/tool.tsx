@@ -18,7 +18,12 @@ export function Tool({ state, className, ...props }: ToolProps) {
         "data-[state=approval]:ring-2",
         "data-[state=approval]:ring-primary/40",
         "data-[state=approval]:border-primary/60",
-        "data-[state=error]:ring-destructive/30",
+        "data-[state=running]:border-inflight/60",
+        "data-[state=running]:ring-2",
+        "data-[state=running]:ring-inflight/40",
+        "data-[state=error]:border-destructive/60",
+        "data-[state=error]:ring-2",
+        "data-[state=error]:ring-destructive/40",
         className,
       )}
       {...props}
@@ -226,8 +231,7 @@ function safeParse(value: string): unknown {
 function formatValue(value: unknown): string {
   if (typeof value === "string") return value;
   if (value === null || value === undefined) return "null";
-  if (typeof value === "object")
-    return JSON.stringify(value, null, 2);
+  if (typeof value === "object") return JSON.stringify(value, null, 2);
   return String(value);
 }
 
@@ -239,10 +243,10 @@ export function ToolArgument({
 }: ToolArgumentProps) {
   const parsed = safeParse(value);
   const isObject =
-    parsed !== null &&
-    typeof parsed === "object" &&
-    !Array.isArray(parsed);
-  const entries = isObject ? Object.entries(parsed as Record<string, unknown>) : [];
+    parsed !== null && typeof parsed === "object" && !Array.isArray(parsed);
+  const entries = isObject
+    ? Object.entries(parsed as Record<string, unknown>)
+    : [];
   const isStreaming = state === "streaming";
 
   return (
