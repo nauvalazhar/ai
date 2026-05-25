@@ -508,6 +508,13 @@
       ]
     },
     {
+      "name": "usage-meter",
+      "type": "component",
+      "files": [
+        { "name": "usage-meter.tsx", "path": "src/components/ai/usage-meter.tsx", "target": "components" }
+      ]
+    },
+    {
       "name": "web-preview",
       "type": "component",
       "files": [

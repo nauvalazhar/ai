@@ -667,6 +667,32 @@ export const registry: Group[] = [
         ],
       },
       {
+        name: "Usage Meter",
+        slug: "usage-meter",
+        demos: [
+          {
+            name: "Basic",
+            slug: "basic",
+            Component: lazy(() => import("#/demos/usage-meter/basic")),
+          },
+          {
+            name: "With Bar",
+            slug: "with-bar",
+            Component: lazy(() => import("#/demos/usage-meter/with-bar")),
+          },
+          {
+            name: "Per Message",
+            slug: "per-message",
+            Component: lazy(() => import("#/demos/usage-meter/per-message")),
+          },
+          {
+            name: "Streaming",
+            slug: "streaming",
+            Component: lazy(() => import("#/demos/usage-meter/streaming")),
+          },
+        ],
+      },
+      {
         name: "Transcript",
         slug: "transcript",
         demos: [

@@ -1,0 +1,152 @@
+---
+parts:
+  - name: UsageMeter
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+    props:
+      - name: size
+        type: '"default" | "sm"'
+        default: '"default"'
+        description: '`default` sits in a session footer or a status row. `sm` shrinks the text and tightens the gap for a per-message footer.'
+  - name: UsageStat
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: UsageStatLabel
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: UsageStatValue
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: AnimatedNumber
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: value
+        type: number
+        description: The current value. Each change tweens from the previous value to the new one.
+      - name: duration
+        type: number
+        default: "300"
+        description: Tween duration in milliseconds.
+      - name: format
+        type: "(value: number) => ReactNode"
+        default: "(n) => Math.round(n).toLocaleString()"
+        description: Maps the interpolated value to the text content drawn each frame. Use it to add a currency prefix, fix decimal places, or apply a custom locale.
+  - name: UsageBar
+    passThrough:
+      type: Meter.Root.Props
+      docsUrl:
+        label: Base UI Meter.Root
+        href: https://base-ui.com/react/components/meter#root
+    props:
+      - name: value
+        type: number
+        description: Current usage. Clamped to the `[0, max]` range before the fill is drawn.
+      - name: max
+        type: number
+        description: The capacity the bar fills against, like a context window size.
+      - name: children
+        type: ReactNode
+        description: Optional label row drawn above the bar track. Renders nothing when omitted.
+---
+
+A row of token, cost, and capacity readouts for chat surfaces.
+
+## Anatomy
+
+Drop a meter wherever the call site wants to surface usage. A session footer with totals, a per-message footer with the cost of one call, or a status row that pairs a context-window bar with a few stats. The meter wraps when space runs out and stays unobtrusive on dark or light surfaces.
+
+```tsx
+<UsageMeter>
+  <UsageStat>
+    <UsageStatLabel>Input</UsageStatLabel>
+    <UsageStatValue>1,284</UsageStatValue>
+  </UsageStat>
+  <UsageStat>
+    <UsageStatLabel>Output</UsageStatLabel>
+    <UsageStatValue>612</UsageStatValue>
+  </UsageStat>
+  <UsageStat>
+    <UsageStatLabel>Cost</UsageStatLabel>
+    <UsageStatValue>$0.0042</UsageStatValue>
+  </UsageStat>
+</UsageMeter>
+```
+
+For a context-window readout, mix in a `UsageBar`. Pass the label row as children, the bar handles clamping and the over-capacity color shift.
+
+```tsx
+<UsageMeter>
+  <UsageBar value={117_400} max={128_000}>
+    <span>Context</span>
+    <span>117,400 / 128,000</span>
+  </UsageBar>
+</UsageMeter>
+```
+
+## Formatting
+
+The meter never formats values. Pass already-formatted strings to `UsageStatValue` and the bar's label children. The kit leaves the choice of locale, decimal places, and currency to the call site so the same component works for tokens, requests, dollars, or any other counter.
+
+## Streaming values
+
+For counters that update mid-stream, drop an `AnimatedNumber` inside `UsageStatValue` or a bar's label. The number tweens from its previous value to the new one each time the prop changes, so a token meter wired to a streaming hook reads as a continuous counter rather than a flicker of discrete updates. Pass a `format` callback to control the rendered text on every frame.
+
+```tsx
+<UsageStatValue>
+  <AnimatedNumber value={tokens} />
+</UsageStatValue>
+
+<UsageStatValue>
+  <AnimatedNumber value={cost} format={(n) => `$${n.toFixed(4)}`} />
+</UsageStatValue>
+```
+
+## AI integrations
+
+Use `size="sm"` to drop the meter into a message footer next to `MessageText`. The smaller size keeps the meter from inflating the bubble, and the wrap behavior keeps a long stat row from pushing the message wider than its neighbors. See the `per-message` demo for the pattern.
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### UsageMeter
+
+Root row. Lays the stats and bars out inline with a wrap, and seeds the density for descendants via the `size` prop. The `sm` size tightens the gap, drops to `text-xs`, and thins the bar track so it sits comfortably inside a message footer.
+
+<Props name="UsageMeter" />
+
+### UsageStat
+
+A label and value pair. Composes its own children so the call site decides the order, the formatting, and whether to add an icon or a tooltip. Pair with `UsageStatLabel` and `UsageStatValue` for the default tone treatment.
+
+<Props name="UsageStat" />
+
+### UsageStatLabel
+
+The descriptor side of a stat. Muted by default. Override with `className` when a stat needs to stand out.
+
+<Props name="UsageStatLabel" />
+
+### UsageStatValue
+
+The number side of a stat. Foreground tone, medium weight, and tabular numerals so values stay aligned across rows that animate.
+
+<Props name="UsageStatValue" />
+
+### AnimatedNumber
+
+Tweens between numeric values with an ease-out cubic curve. Drop it inside `UsageStatValue` or a bar's label to give a streaming counter a continuous feel. Renders a `<span>` with tabular numerals so the digits stay aligned mid-tween. The `format` callback runs on every frame, so currency, decimal places, and locale all stay on the caller.
+
+<Props name="AnimatedNumber" />
+
+### UsageBar
+
+A horizontal capacity bar built on Base UI's `Meter`. The fill width is clamped to the `[0, max]` range, so a value of zero shows an empty track and a value at or above `max` shows a full bar. The bar exposes a `data-state` attribute that flips to `over` when the fill reaches eighty percent of capacity, swapping the fill from the primary accent to the destructive tone for an at-a-glance warning. Children render as a label row above the track. The element carries `role="meter"` and the matching `aria-value*` attributes for assistive tech, and forwards any other Base UI `Meter.Root` prop (`aria-label`, `aria-valuetext`, `format`, etc.).
+
+<Props name="UsageBar" />
