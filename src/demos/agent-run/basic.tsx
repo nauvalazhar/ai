@@ -11,12 +11,12 @@ import {
   AgentRunContent,
   AgentRunHeader,
   AgentRunMeta,
-  AgentRunStatus,
   AgentRunStep,
   AgentRunText,
   AgentRunTitle,
 } from "#/components/ai/agent-run";
 import { Chip } from "#/components/ai/chip";
+import { Status } from "#/components/ai/status";
 
 export default function Basic() {
   return (
@@ -24,7 +24,7 @@ export default function Basic() {
       <AgentRun state="completed" defaultOpen>
         <AgentRunHeader>
           <AgentRunTitle>Explore codebase</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="active" size="sm">Completed</Status>
           <AgentRunMeta>
             <span>3 steps</span>
             <span>·</span>

@@ -11,12 +11,12 @@ import {
   AgentRunContent,
   AgentRunHeader,
   AgentRunMeta,
-  AgentRunStatus,
   AgentRunStep,
   AgentRunText,
   AgentRunTitle,
 } from "#/components/ai/agent-run";
 import { Chip } from "#/components/ai/chip";
+import { Status } from "#/components/ai/status";
 
 export default function States() {
   return (
@@ -24,7 +24,7 @@ export default function States() {
       <AgentRun state="running" defaultOpen>
         <AgentRunHeader>
           <AgentRunTitle>Reading the source files</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="inflight" size="sm" pulse>Running</Status>
           <AgentRunMeta>
             <span>2 of 4 steps</span>
             <span>·</span>
@@ -64,7 +64,7 @@ export default function States() {
       <AgentRun state="completed" defaultOpen={false}>
         <AgentRunHeader>
           <AgentRunTitle>Draft the new component</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="active" size="sm">Completed</Status>
           <AgentRunMeta>
             <span>5 steps</span>
             <span>·</span>
@@ -84,7 +84,7 @@ export default function States() {
       <AgentRun state="failed" defaultOpen>
         <AgentRunHeader>
           <AgentRunTitle>Run the test suite</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="error" size="sm">Failed</Status>
           <AgentRunMeta>
             <span>1 of 3 steps</span>
             <span>·</span>
@@ -104,7 +104,7 @@ export default function States() {
       <AgentRun state="stopped" defaultOpen={false}>
         <AgentRunHeader>
           <AgentRunTitle>Refactor the docs</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="neutral" size="sm">Stopped</Status>
           <AgentRunMeta>
             <span>stopped at step 2</span>
           </AgentRunMeta>

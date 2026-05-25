@@ -14,10 +14,12 @@ export function AgentRun({ state, className, ...props }: AgentRunProps) {
       data-state={state}
       className={cn(
         "group/run flex flex-col rounded-outer bg-surface border border-border",
-        "data-[state=running]:border-amber-500/60",
+        "data-[state=running]:border-inflight/60",
         "data-[state=running]:ring-2",
-        "data-[state=running]:ring-amber-500/40",
-        "data-[state=failed]:border-destructive/40",
+        "data-[state=running]:ring-inflight/40",
+        "data-[state=failed]:border-destructive/60",
+        "data-[state=failed]:ring-2",
+        "data-[state=failed]:ring-destructive/40",
         className,
       )}
       {...props}
@@ -73,76 +75,11 @@ export function AgentRunTitle({
       data-slot="agent-run-title"
       className={cn(
         "min-w-0 truncate font-medium text-foreground",
-        "group-data-[state=running]/run:text-amber-500",
         "group-data-[state=failed]/run:text-destructive",
         className,
       )}
       {...props}
     />
-  );
-}
-
-const STATUS_LABEL: Record<AgentRunState, string> = {
-  running: "Running",
-  completed: "Completed",
-  failed: "Failed",
-  stopped: "Stopped",
-};
-
-type AgentRunStatusProps = Omit<React.ComponentProps<"span">, "children"> & {
-  children?: React.ReactNode;
-};
-
-export function AgentRunStatus({
-  className,
-  children,
-  ...props
-}: AgentRunStatusProps) {
-  return (
-    <span
-      data-slot="agent-run-status"
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded px-1.5 py-0.5 text-xs font-medium",
-        "ring ring-border bg-surface-elevated text-muted-foreground",
-        "group-data-[state=running]/run:bg-primary/10",
-        "group-data-[state=running]/run:ring-amber-500/30",
-        "group-data-[state=running]/run:text-amber-500",
-        "group-data-[state=completed]/run:text-foreground",
-        "group-data-[state=failed]/run:bg-destructive/10",
-        "group-data-[state=failed]/run:ring-destructive/30",
-        "group-data-[state=failed]/run:text-destructive",
-        className,
-      )}
-      {...props}
-    >
-      <span
-        aria-hidden
-        className={cn(
-          "size-1.5 rounded-full bg-current",
-          "group-data-[state=running]/run:animate-pulse",
-        )}
-      />
-      {children ?? <AgentRunStatusLabel />}
-    </span>
-  );
-}
-
-function AgentRunStatusLabel() {
-  return (
-    <>
-      <span className="hidden group-data-[state=running]/run:inline">
-        {STATUS_LABEL.running}
-      </span>
-      <span className="hidden group-data-[state=completed]/run:inline">
-        {STATUS_LABEL.completed}
-      </span>
-      <span className="hidden group-data-[state=failed]/run:inline">
-        {STATUS_LABEL.failed}
-      </span>
-      <span className="hidden group-data-[state=stopped]/run:inline">
-        {STATUS_LABEL.stopped}
-      </span>
-    </>
   );
 }
 

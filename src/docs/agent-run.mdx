@@ -9,7 +9,7 @@ parts:
     props:
       - name: state
         type: '"running" | "completed" | "failed" | "stopped"'
-        description: Drives the visual state of the header, status chip, and border. Stays neutral if omitted.
+        description: Drives the visual state of the header, title color, and border. Stays neutral if omitted.
   - name: AgentRunHeader
     passThrough:
       type: Collapsible.Trigger.Props
@@ -20,14 +20,6 @@ parts:
     passThrough:
       type: React.ComponentProps<"span">
       to: <span>
-  - name: AgentRunStatus
-    passThrough:
-      type: React.ComponentProps<"span">
-      to: <span>
-    props:
-      - name: children
-        type: ReactNode
-        description: Replaces the default state label. Leave empty to let the chip auto-render the matching label for the run's state.
   - name: AgentRunMeta
     passThrough:
       type: React.ComponentProps<"div">
@@ -48,11 +40,11 @@ parts:
       to: <div>
 ---
 
-A container for a single agentic run. Wraps a title, a status chip, run metadata, and a body of mixed content like text, actions, and tools.
+A container for a single agentic run. Wraps a title, a status pill, run metadata, and a body of mixed content like text, actions, and tools.
 
 ## Anatomy
 
-A collapsible card with a header row and a body. The header carries the run's title, a status chip that picks its label from the run's state, and a meta slot for things like step count, elapsed time, or a usage meter. The body is a stack of steps, where each step holds anything from a paragraph of summary to an action row to a full tool call.
+A collapsible card with a header row and a body. The header carries the run's title, a `Status` pill that reflects the run's progress, and a meta slot for things like step count, elapsed time, or a usage meter. The body is a stack of steps, where each step holds anything from a paragraph of summary to an action row to a full tool call.
 
 Reach for it when a sequence of work deserves to read as one unit, like a sub-agent invocation or a multi-step agent loop. For a single tool call use `Tool`. For a single action row use `Action`. For the model's reasoning use `ChainOfThought` or `Reasoning`.
 
@@ -60,7 +52,7 @@ Reach for it when a sequence of work deserves to read as one unit, like a sub-ag
 <AgentRun state="completed" defaultOpen>
   <AgentRunHeader>
     <AgentRunTitle>Explore codebase</AgentRunTitle>
-    <AgentRunStatus />
+    <Status state="active" size="sm">Completed</Status>
     <AgentRunMeta>
       <span>3 steps</span>
       <span>·</span>
@@ -93,13 +85,13 @@ Reference for each part of the component, including its available props and beha
 
 ### AgentRun
 
-The outer collapsible card. The `state` prop sets `data-state` on the root and ripples to every part through CSS, so the title, status chip, and border all reflect the run's progress without extra wiring.
+The outer collapsible card. The `state` prop sets `data-state` on the root and ripples to every part through CSS, so the title and border reflect the run's progress without extra wiring.
 
 <Props name="AgentRun" />
 
 ### AgentRunHeader
 
-Clickable header. Lays out as a row with a leading chevron that rotates from right to down when opened, followed by the title, status chip, and meta slot. Place the title first, then a status chip, then the meta on the right.
+Clickable header. Lays out as a row with a leading chevron that rotates from right to down when opened, followed by the title, a `Status` pill, and the meta slot. Place the title first, then the status, then the meta on the right. Map the run's state to a tone at the call site, for example `running → inflight` (with `pulse`), `completed → active`, `failed → error`, `stopped → neutral`.
 
 <Props name="AgentRunHeader" />
 
@@ -108,12 +100,6 @@ Clickable header. Lays out as a row with a leading chevron that rotates from rig
 The run's name. Tints to the primary color while the run is running and to the destructive color on failure, so the header reads the run's state at a glance.
 
 <Props name="AgentRunTitle" />
-
-### AgentRunStatus
-
-A small chip that auto-styles based on the run's state. Renders a label like Running, Completed, Failed, or Stopped without any props. Pass children to override the label when you need a custom string.
-
-<Props name="AgentRunStatus" />
 
 ### AgentRunMeta
 

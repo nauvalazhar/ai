@@ -16,12 +16,12 @@ import {
   AgentRunContent,
   AgentRunHeader,
   AgentRunMeta,
-  AgentRunStatus,
   AgentRunStep,
   AgentRunText,
   AgentRunTitle,
 } from "#/components/ai/agent-run";
 import { Chip } from "#/components/ai/chip";
+import { Status } from "#/components/ai/status";
 
 type Step =
   | { kind: "text"; body: React.ReactNode }
@@ -112,7 +112,9 @@ export default function Streaming() {
           <AgentRunTitle>
             {done ? "Explored codebase" : "Exploring codebase"}
           </AgentRunTitle>
-          <AgentRunStatus />
+          <Status state={done ? "active" : "inflight"} size="sm" pulse={!done}>
+            {done ? "Completed" : "Running"}
+          </Status>
           <AgentRunMeta>
             <span className="tabular-nums">
               {Math.min(shown, STEPS.length)} of {STEPS.length} steps

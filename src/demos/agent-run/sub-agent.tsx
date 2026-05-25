@@ -16,12 +16,12 @@ import {
   AgentRunContent,
   AgentRunHeader,
   AgentRunMeta,
-  AgentRunStatus,
   AgentRunStep,
   AgentRunText,
   AgentRunTitle,
 } from "#/components/ai/agent-run";
 import { Chip } from "#/components/ai/chip";
+import { Status } from "#/components/ai/status";
 import {
   Tool,
   ToolBlock,
@@ -56,7 +56,7 @@ export default function SubAgent() {
       <AgentRun state="completed" defaultOpen>
         <AgentRunHeader>
           <AgentRunTitle>Explore codebase</AgentRunTitle>
-          <AgentRunStatus />
+          <Status state="active" size="sm">Completed</Status>
           <AgentRunMeta>
             <span>6 steps</span>
             <span>·</span>
