@@ -27,6 +27,10 @@
 
   --color-diff-added: oklch(0.6 0.17 145);
   --color-diff-removed: oklch(0.6 0.22 25);
+
+  --color-warning: oklch(0.77 0.19 70);
+  --color-success: oklch(0.7 0.17 162);
+  --color-inflight: oklch(0.6 0.25 293);
 }
 
 .dark {
@@ -55,6 +59,10 @@
 
   --color-diff-added: oklch(0.72 0.18 145);
   --color-diff-removed: oklch(0.7 0.22 25);
+
+  --color-warning: oklch(0.82 0.17 70);
+  --color-success: oklch(0.78 0.16 162);
+  --color-inflight: oklch(0.72 0.22 293);
 }
 
 @theme {
@@ -85,6 +93,10 @@
 
   --color-diff-added: var(--color-diff-added);
   --color-diff-removed: var(--color-diff-removed);
+
+  --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
+  --color-inflight: var(--color-inflight);
 
   --radius: var(--radius);
   --radius-outer: calc(var(--radius) + calc(var(--spacing) * 1));
