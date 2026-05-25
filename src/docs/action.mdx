@@ -34,9 +34,18 @@ parts:
 
 A single collapsible row for one action.
 
+## Action vs Tool
+
+`Action` and `Tool` both render an action the model took. They differ in how much technical detail they expose.
+
+- Reach for `Action` when the row should read like a short verb on a target. "Read package.json", "Searched the repo for data-slot", "Ran the test suite". The body opens to a sentence or two of summary. This is the friendlier surface, and it is the right pick for most end-user chat apps where the user does not care about the raw tool call.
+- Reach for `Tool` when the row should expose the technical contract: the tool name, the input arguments, the raw output, the running and error states, and any approval flow. This is the developer-facing surface, and it is the right pick for agentic IDEs, dev tools, or debugging views where the user needs to see exactly what was called.
+
+A common pattern is to use `Action` for the high level rows the user sees by default and reserve `Tool` for the calls where the input or output actually matters.
+
 ## Anatomy
 
-A header that names what the model did, with optional detail tucked behind a chevron. Reach for it when one action deserves its own block, like a single file read or a single command run. For a sequence of actions, use `Task`. For the model's thinking pass, use `Reasoning`.
+A header that names what the model did, with optional detail tucked behind a chevron. Reach for it when one action deserves its own block, like a single file read or a single command run. For a sequence of actions, use `Task`. For the model's thinking pass, use `Reasoning`. For a full agentic run that mixes commentary with actions and tools, use `AgentRun`.
 
 The header pairs an icon, a verb, and an optional `Chip` for the target. The body opens to anything from a one-line summary to a `CodeBlock` of the output.
 

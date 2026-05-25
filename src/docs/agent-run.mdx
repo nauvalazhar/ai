@@ -1,0 +1,140 @@
+---
+parts:
+  - name: AgentRun
+    passThrough:
+      type: Collapsible.Root.Props
+      docsUrl:
+        label: Base UI Collapsible.Root
+        href: https://base-ui.com/react/components/collapsible#root
+    props:
+      - name: state
+        type: '"running" | "completed" | "failed" | "stopped"'
+        description: Drives the visual state of the header, status chip, and border. Stays neutral if omitted.
+  - name: AgentRunHeader
+    passThrough:
+      type: Collapsible.Trigger.Props
+      docsUrl:
+        label: Base UI Collapsible.Trigger
+        href: https://base-ui.com/react/components/collapsible#trigger
+  - name: AgentRunTitle
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+  - name: AgentRunStatus
+    passThrough:
+      type: React.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: children
+        type: ReactNode
+        description: Replaces the default state label. Leave empty to let the chip auto-render the matching label for the run's state.
+  - name: AgentRunMeta
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AgentRunContent
+    passThrough:
+      type: Collapsible.Panel.Props
+      docsUrl:
+        label: Base UI Collapsible.Panel
+        href: https://base-ui.com/react/components/collapsible#panel
+  - name: AgentRunStep
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+  - name: AgentRunText
+    passThrough:
+      type: React.ComponentProps<"div">
+      to: <div>
+---
+
+A container for a single agentic run. Wraps a title, a status chip, run metadata, and a body of mixed content like text, actions, and tools.
+
+## Anatomy
+
+A collapsible card with a header row and a body. The header carries the run's title, a status chip that picks its label from the run's state, and a meta slot for things like step count, elapsed time, or a usage meter. The body is a stack of steps, where each step holds anything from a paragraph of summary to an action row to a full tool call.
+
+Reach for it when a sequence of work deserves to read as one unit, like a sub-agent invocation or a multi-step agent loop. For a single tool call use `Tool`. For a single action row use `Action`. For the model's reasoning use `ChainOfThought` or `Reasoning`.
+
+```tsx
+<AgentRun state="completed" defaultOpen>
+  <AgentRunHeader>
+    <AgentRunTitle>Explore codebase</AgentRunTitle>
+    <AgentRunStatus />
+    <AgentRunMeta>
+      <span>3 steps</span>
+      <span>·</span>
+      <span>4.2s</span>
+    </AgentRunMeta>
+  </AgentRunHeader>
+  <AgentRunContent>
+    <AgentRunStep>
+      <AgentRunText>
+        Looking through the project to map out where things live.
+      </AgentRunText>
+    </AgentRunStep>
+    <AgentRunStep>
+      <Action>
+        <ActionTrigger>
+          <ActionIcon><FolderTreeIcon /></ActionIcon>
+          <ActionLabel>List</ActionLabel>
+          <Chip size="sm">src/components/ai</Chip>
+        </ActionTrigger>
+        <ActionContent>Found 41 components.</ActionContent>
+      </Action>
+    </AgentRunStep>
+  </AgentRunContent>
+</AgentRun>
+```
+
+## API
+
+Reference for each part of the component, including its available props and behavior.
+
+### AgentRun
+
+The outer collapsible card. The `state` prop sets `data-state` on the root and ripples to every part through CSS, so the title, status chip, and border all reflect the run's progress without extra wiring.
+
+<Props name="AgentRun" />
+
+### AgentRunHeader
+
+Clickable header. Lays out as a row with a leading chevron that rotates from right to down when opened, followed by the title, status chip, and meta slot. Place the title first, then a status chip, then the meta on the right.
+
+<Props name="AgentRunHeader" />
+
+### AgentRunTitle
+
+The run's name. Tints to the primary color while the run is running and to the destructive color on failure, so the header reads the run's state at a glance.
+
+<Props name="AgentRunTitle" />
+
+### AgentRunStatus
+
+A small chip that auto-styles based on the run's state. Renders a label like Running, Completed, Failed, or Stopped without any props. Pass children to override the label when you need a custom string.
+
+<Props name="AgentRunStatus" />
+
+### AgentRunMeta
+
+A right-aligned slot for run metadata. Holds short text like step counts, elapsed time, or a `UsageMeter` for token and cost stats. Lay items out with separators in between so the row reads as a tight summary.
+
+<Props name="AgentRunMeta" />
+
+### AgentRunContent
+
+The expanding body. Animates height open and close. Holds a stack of `AgentRunStep` rows separated by a top border so the header reads as the run's lid.
+
+<Props name="AgentRunContent" />
+
+### AgentRunStep
+
+A single step in the run. The step is a plain slot, so it accepts anything: an `AgentRunText` block of model commentary, an `Action` row for a high level read or write, or a `Tool` block for a technical call. Mix freely so the run reads the same way it executed.
+
+<Props name="AgentRunStep" />
+
+### AgentRunText
+
+A text block inside a step. Defaults to the muted commentary voice the model uses to narrate what it is doing. Inline `code` styles itself against the elevated surface so file paths and identifiers read clearly. Override the color with `className` for a final answer block or a destructive failure note.
+
+<Props name="AgentRunText" />
