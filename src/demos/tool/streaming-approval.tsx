@@ -42,8 +42,8 @@ import {
   ToolSubtitle,
   ToolTrigger,
 } from "#/components/ai/tool";
-import { createMockAdapter } from "../tanstack-chat/_mock/adapter";
-import { withApprovalScript } from "../tanstack-chat/_mock/scripts";
+import { createMockAdapter } from "../tanstack-ai/_mock/adapter";
+import { withApprovalScript } from "../tanstack-ai/_mock/scripts";
 
 type Part = MessagePart;
 type ToolCallPart = Extract<Part, { type: "tool-call" }>;

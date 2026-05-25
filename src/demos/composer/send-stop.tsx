@@ -23,8 +23,8 @@ import {
 } from "#/components/ai/conversation";
 import { Loader } from "#/components/ai/loader";
 import { Message, MessageContent, MessageText } from "#/components/ai/message";
-import { createMockAdapter } from "../tanstack-chat/_mock/adapter";
-import { basicScript } from "../tanstack-chat/_mock/scripts";
+import { createMockAdapter } from "../tanstack-ai/_mock/adapter";
+import { basicScript } from "../tanstack-ai/_mock/scripts";
 
 function isBusy(status: ChatClientState) {
   return status === "streaming" || status === "submitted";

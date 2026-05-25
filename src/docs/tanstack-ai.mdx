@@ -1,0 +1,188 @@
+---
+parts: []
+---
+
+## Why this integration
+
+TanStack AI ships a `useChat` hook that returns a stream of typed `UIMessage.parts`: text, reasoning, tool calls, results, images, structured output. The kit ships the React component for each of those.
+
+Plug the two together with a single switch statement and the chat surface handles streaming, reasoning, tool approval, generated images, and result blocks without writing the UI from scratch.
+
+There is no wrapper package. The two demos in this section are the canonical bridge files. Copy one and own it.
+
+## Install
+
+Add the TanStack AI runtime to your app.
+
+<CodeTabs>
+```bash title="bun"
+bun add @tanstack/ai-react @tanstack/ai-client
+```
+
+```bash title="npm"
+npm install @tanstack/ai-react @tanstack/ai-client
+```
+
+```bash title="pnpm"
+pnpm add @tanstack/ai-react @tanstack/ai-client
+```
+
+```bash title="yarn"
+yarn add @tanstack/ai-react @tanstack/ai-client
+```
+
+</CodeTabs>
+
+Then add the kit components the bridge will render. The Basic demo touches these:
+
+```bash
+npx @nauvalazhar/ai@latest add conversation message reasoning tool code-block loader
+```
+
+The Full demo also touches `markdown`, `confirmation`, and `generated-image`.
+
+## The bridge
+
+A `UIMessage` is a role and an array of typed parts. Every part type maps to one kit component. The whole integration is a `switch (part.type)` inside the message body.
+
+```tsx title="render-part.tsx"
+import type { MessagePart } from "@tanstack/ai-client";
+import { MessageText } from "@/components/ai/message";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ai/reasoning";
+import {
+  Tool,
+  ToolArgument,
+  ToolContent,
+  ToolName,
+  ToolTrigger,
+} from "@/components/ai/tool";
+
+export function renderPart(part: MessagePart) {
+  switch (part.type) {
+    case "text":
+      return <MessageText>{part.content}</MessageText>;
+
+    case "thinking":
+      return (
+        <Reasoning>
+          <ReasoningTrigger>Thinking</ReasoningTrigger>
+          <ReasoningContent>{part.content}</ReasoningContent>
+        </Reasoning>
+      );
+
+    case "tool-call":
+      return (
+        <Tool defaultOpen>
+          <ToolTrigger>
+            <ToolName>{part.name}</ToolName>
+          </ToolTrigger>
+          <ToolContent>
+            <ToolArgument value={part.arguments} />
+          </ToolContent>
+        </Tool>
+      );
+  }
+}
+```
+
+That switch is the whole API. Add a case for every part type your model emits. The full union also includes `tool-result`, `structured-output`, and `image`, `audio`, `video`, `document` for multimodal input.
+
+## Wire useChat
+
+Drive the conversation with TanStack's `useChat`. Map over `messages` and call the bridge for each part. The connection is your transport. The demos pass a mock adapter so the conversation runs offline.
+
+```tsx title="chat.tsx"
+import { useChat } from "@tanstack/ai-react";
+import {
+  Conversation,
+  ConversationContent,
+} from "@/components/ai/conversation";
+import { Message, MessageContent } from "@/components/ai/message";
+import { renderPart } from "./render-part";
+
+export function Chat({ connection }) {
+  const { messages, sendMessage } = useChat({ connection });
+
+  return (
+    <Conversation>
+      <ConversationContent>
+        {messages.map((m) => (
+          <Message
+            key={m.id}
+            type={m.role === "user" ? "outgoing" : "incoming"}
+          >
+            <MessageContent>
+              {m.parts.map((part, i) => (
+                <div key={i} className="contents">
+                  {renderPart(part)}
+                </div>
+              ))}
+            </MessageContent>
+          </Message>
+        ))}
+      </ConversationContent>
+    </Conversation>
+  );
+}
+```
+
+Swap the mock for your real transport when you ship.
+
+## Tool state
+
+A tool call is two parts that share an id: a `tool-call` and a `tool-result`. Find the matching result before deciding what state to draw, then hand the state to `Tool`. The component restyles itself.
+
+```tsx
+function mapToolState(call, result) {
+  if (call.approval?.needsApproval && call.approval.approved === undefined) {
+    return "approval";
+  }
+  if (result?.state === "error") return "error";
+  if (result?.state === "complete") return "success";
+  if (result?.state === "streaming") return "running";
+  return "pending";
+}
+```
+
+The same idea works for `GeneratedImage` and any other component that takes a `state` prop. Map the part shape to the visual state at the call site.
+
+## Tool approval
+
+When a tool sets `approval.needsApproval`, render a `Confirmation` inside the tool's content. Wire its `onStateChange` to `addToolApprovalResponse` and the agent resumes the moment the user accepts.
+
+```tsx
+const { addToolApprovalResponse } = useChat({ connection });
+
+<Confirmation
+  onStateChange={(next) => {
+    if (next === "approved") {
+      addToolApprovalResponse({ id: approval.id, approved: true });
+    }
+    if (next === "rejected") {
+      addToolApprovalResponse({ id: approval.id, approved: false });
+    }
+  }}
+>
+  <ConfirmationHeader>
+    <ConfirmationTitle>Write to notes/packing.md?</ConfirmationTitle>
+  </ConfirmationHeader>
+  <ConfirmationPending>
+    <ConfirmationAction>
+      <ConfirmationReject render={<Button variant="ghost">Cancel</Button>} />
+      <ConfirmationAccept render={<Button>Write</Button>} />
+    </ConfirmationAction>
+  </ConfirmationPending>
+</Confirmation>;
+```
+
+The Full demo wires this exact flow against a file-write tool.
+
+## Where to go next
+
+The two demos are the reference. The Basic demo renders text, reasoning, and an auto-approved weather tool. The Full demo adds streaming markdown, a generated cover image with state transitions, and the approval flow above.
+
+Pick the closer one, copy it into your app, swap the mock adapter for your real connection, and edit the switch as your model grows new part types.

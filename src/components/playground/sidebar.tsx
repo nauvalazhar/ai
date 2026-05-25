@@ -94,7 +94,24 @@ export function Sidebar() {
     );
   }, [activeComponent]);
 
-  const isEmpty = registry.every((g) => g.components.length === 0);
+  const integrationsGroup = registry.find((g) => g.title === "Integrations");
+  const otherGroups = registry.filter((g) => g.title !== "Integrations");
+  const isEmpty = otherGroups.every((g) => g.components.length === 0);
+
+  function toggleExpanded(slug: string, open: boolean) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (open) next.add(slug);
+      else next.delete(slug);
+      return next;
+    });
+  }
+
+  function ensureExpanded(slug: string) {
+    setExpanded((prev) =>
+      prev.has(slug) ? prev : new Set([...prev, slug]),
+    );
+  }
 
   return (
     <>
@@ -189,12 +206,61 @@ export function Sidebar() {
             })}
           </SidebarGroup>
         </SidebarSection>
+        {integrationsGroup && integrationsGroup.components.length > 0 ? (
+          <SidebarSection title="Integrations">
+            {integrationsGroup.components.map((component) => {
+              const isExpanded = expanded.has(component.slug);
+              const isActiveBranch = activeComponent === component.slug;
+              return (
+                <SidebarGroup
+                  key={component.slug}
+                  label={component.name}
+                  open={isExpanded}
+                  onOpenChange={(open) => toggleExpanded(component.slug, open)}
+                  isActive={isActiveBranch && !activeDemo}
+                  icon={
+                    <TanStackIcon className="size-4 shrink-0 text-muted-foreground" />
+                  }
+                  render={
+                    <Link
+                      to="/$component"
+                      params={{ component: component.slug }}
+                      onClick={() => {
+                        ensureExpanded(component.slug);
+                        closeOnMobile();
+                      }}
+                    />
+                  }
+                >
+                  {component.demos.map((demo) => (
+                    <SidebarSubItem
+                      key={demo.slug}
+                      icon={<SiReact className="size-3.5 shrink-0" />}
+                      render={
+                        <Link
+                          to="/$component/$demo"
+                          params={{
+                            component: component.slug,
+                            demo: demo.slug,
+                          }}
+                          onClick={closeOnMobile}
+                        />
+                      }
+                    >
+                      {demo.name}
+                    </SidebarSubItem>
+                  ))}
+                </SidebarGroup>
+              );
+            })}
+          </SidebarSection>
+        ) : null}
         {isEmpty ? (
           <p className="px-6 py-2 text-xs text-muted-foreground">
             No components yet.
           </p>
         ) : (
-          registry.map((group) => (
+          otherGroups.map((group) => (
             <SidebarSection key={group.title} title={group.title}>
               {group.components
                 .sort((a, b) => a.name.localeCompare(b.name))
@@ -207,12 +273,7 @@ export function Sidebar() {
                       label={component.name}
                       open={isExpanded}
                       onOpenChange={(open) =>
-                        setExpanded((prev) => {
-                          const next = new Set(prev);
-                          if (open) next.add(component.slug);
-                          else next.delete(component.slug);
-                          return next;
-                        })
+                        toggleExpanded(component.slug, open)
                       }
                       isActive={isActiveBranch && !activeDemo}
                       icon={(open) =>
@@ -227,11 +288,7 @@ export function Sidebar() {
                           to="/$component"
                           params={{ component: component.slug }}
                           onClick={() => {
-                            setExpanded((prev) =>
-                              prev.has(component.slug)
-                                ? prev
-                                : new Set([...prev, component.slug]),
-                            );
+                            ensureExpanded(component.slug);
                             closeOnMobile();
                           }}
                         />
