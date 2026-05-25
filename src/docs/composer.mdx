@@ -230,3 +230,33 @@ function CustomSubmit() {
   );
 }
 ```
+
+The same hook is what turns the submit button into a stop button while a model is replying. Chat SDKs like TanStack AI, Vercel AI, or your own client expose a status flag and an abort handle. Branch on the status: when the stream is in flight, render a stop button that calls the abort, otherwise render the send button wired to `submit`. The stop branch ignores the empty guard so the user can always bail out of a long response.
+
+```tsx
+function SendOrStop({ status, onStop }: { status: "idle" | "streaming"; onStop: () => void }) {
+  const { isEmpty, disabled, submit } = useComposer();
+
+  if (status === "streaming") {
+    return (
+      <Button iconOnly type="button" aria-label="Stop" onClick={onStop}>
+        <SquareIcon />
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      iconOnly
+      type="button"
+      aria-label="Send"
+      disabled={isEmpty || disabled}
+      onClick={submit}
+    >
+      <ArrowUpIcon />
+    </Button>
+  );
+}
+```
+
+The **Send Stop** demo wires this against a mocked TanStack AI client so the playground works without a server.

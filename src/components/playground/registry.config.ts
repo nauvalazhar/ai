@@ -439,6 +439,11 @@ export const registry: Group[] = [
             slug: "controlled",
             Component: lazy(() => import("#/demos/composer/controlled")),
           },
+          {
+            name: "Send Stop",
+            slug: "send-stop",
+            Component: lazy(() => import("#/demos/composer/send-stop")),
+          },
         ],
       },
       {
