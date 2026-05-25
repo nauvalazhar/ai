@@ -46,6 +46,10 @@ parts:
     passThrough:
       type: React.ComponentProps<"div">
       to: <div>
+    props:
+      - name: interim
+        type: boolean
+        description: Mark the text as an in-progress transcription token. Adds `data-interim` and renders the text in italic with a softer color so it reads as not-yet-confirmed. Drop the flag when the transcription engine promotes it to a final.
   - name: TranscriptWord
     passThrough:
       type: useRender.ComponentProps<"span">
@@ -148,6 +152,12 @@ Label for who is speaking. A small text block above or beside the line. Omit it 
 ### TranscriptText
 
 The line itself. Muted by default, switches to the foreground color when the parent item is active so the eye can scan the current line at a glance.
+
+For live transcription, pass `interim` while the text is still arriving from the recognizer. The line renders in italic with a softer color so the user can tell it might still rewrite, then settles to a normal line once `interim` flips off.
+
+```tsx
+<TranscriptText interim={token.kind === "interim"}>{token.text}</TranscriptText>
+```
 
 <Props name="TranscriptText" />
 

@@ -220,15 +220,18 @@ export function TranscriptSpeaker({
 }
 
 export function TranscriptText({
+  interim,
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & { interim?: boolean }) {
   return (
     <div
       data-slot="transcript-text"
+      data-interim={interim ? "" : undefined}
       className={cn(
         "min-w-0 text-sm leading-relaxed text-muted-foreground",
         "in-data-active:text-foreground",
+        "data-interim:text-muted-foreground/60 data-interim:italic",
         className,
       )}
       {...props}

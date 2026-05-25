@@ -773,6 +773,11 @@ export const registry: Group[] = [
             slug: "waveform",
             Component: lazy(() => import("#/demos/transcript/waveform")),
           },
+          {
+            name: "Live",
+            slug: "live",
+            Component: lazy(() => import("#/demos/transcript/live")),
+          },
         ],
       },
       {
