@@ -1,0 +1,114 @@
+---
+parts:
+  - name: Status
+    passThrough:
+      type: useRender.ComponentProps<"span">
+      to: <span>
+    props:
+      - name: state
+        type: '"neutral" | "pending" | "inflight" | "warning" | "active" | "error"'
+        description: The tone the pill reflects. Drives the dot color and the label tint.
+      - name: size
+        type: '"default" | "sm"'
+        description: Pill size. `default` reads as a header chip; `sm` slots into a dense row alongside a title or meta.
+      - name: pulse
+        type: boolean
+        description: Opt the dot into a ping animation. Independent of `state`, so any tone can pulse.
+      - name: children
+        type: ReactNode
+        description: Optional label rendered next to the dot. Leave empty for a dot-only pill.
+---
+
+A small pill with a colored dot and an optional label. One component for every state badge in the kit. The dot, color, and pulse are baked into the six tones. The caller owns the label and the mapping from their domain state.
+
+## Anatomy
+
+A single component. The dot sits on the left, the label is whatever children you pass. Six tones make up the visual vocabulary.
+
+```tsx
+<Status state="neutral">Idle</Status>
+<Status state="pending">Queued</Status>
+<Status state="inflight">Running</Status>
+<Status state="warning">Degraded</Status>
+<Status state="active">Ready</Status>
+<Status state="error">Failed</Status>
+```
+
+Use `inflight` for any state where the system is actively doing work. Use `pending` for waiting states that are not pulling weight, like a queued job or a held-back tool call awaiting approval. Use `warning` for a state that is concerning but not broken — a slow region, a degraded provider, a quota close to the cap.
+
+## Pulse
+
+Pair `pulse` with any tone to add a ping on the dot. It is independent of the state so you can mix the two — pulse the dot for an active run, hold it static for a completed one, or pulse a `warning` to flag a degraded provider that is still drifting.
+
+```tsx
+<Status state="inflight" pulse>Running</Status>
+<Status state="warning" pulse>Throttling</Status>
+<Status state="active">Ready</Status>
+```
+
+The label is optional. A bare `<Status state="inflight" />` keeps the footprint tight when the surrounding UI already names what is happening.
+
+## Sizes
+
+The `sm` size matches the `Chip` height and is the right pick when the pill sits inside a header row alongside a title and a meta slot. The default size reads as a standalone header chip.
+
+```tsx
+<Status state="inflight" size="sm">Running</Status>
+```
+
+## Mapping a domain state
+
+The six tones are intentionally generic so one component covers every state badge the kit ships. Each call site keeps its own vocabulary and maps to a tone at the boundary.
+
+```tsx
+const TONE = {
+  disconnected: "neutral",
+  connecting: "inflight",
+  connected: "active",
+  error: "error",
+} as const;
+
+<Status
+  state={TONE[connectionStatus]}
+  pulse={connectionStatus === "connecting"}
+>
+  {label}
+</Status>
+```
+
+The same shape works for a sandbox run (`idle → neutral`, `running → inflight`, `success → active`, `error → error`), an agent run (`running → inflight`, `completed → active`, `failed → error`, `stopped → neutral`), or any other four-or-five-state lifecycle. The component only knows the five visual tones.
+
+## With a popover
+
+The pill works as a `PopoverTrigger` for surfaces where a degraded state needs more room for context like an error code, a retry count, or a last-attempt timestamp. The pill stays compact and only opens the detail when the user asks for it.
+
+```tsx
+<Popover>
+  <PopoverTrigger
+    render={
+      <Status
+        state="error"
+        render={(props) => <button type="button" {...props} />}
+      >
+        Connection failed
+      </Status>
+    }
+  />
+  <PopoverPopup>
+    <PopoverTitle>Connection failed</PopoverTitle>
+    <PopoverDescription>{reason}</PopoverDescription>
+  </PopoverPopup>
+</Popover>
+```
+
+## Status vs Chip
+
+Use `Status` when the pill reflects a live state and may animate or change color over the lifetime of a session. Use `Chip` for static metadata like a file path, a model name, or a tag count. The two share the chip footprint at the `sm` size so they line up cleanly when they appear side by side.
+
+## API
+
+### Status
+
+Renders a pill-shaped span with a colored dot. The `state` prop drives the dot color and the label tint. Add `pulse` to opt the dot into a ping animation, independent of state. Forwards every other prop to the underlying element, so the pill accepts `onClick` and any aria attribute the call site needs. Pair with `useRender` to swap the element type when nesting inside a `PopoverTrigger` or a link.
+
+<Props name="Status" />
