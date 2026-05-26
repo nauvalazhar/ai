@@ -1,21 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  deleteCookie,
+  getCookie,
+  setCookie,
+} from "@tanstack/react-start/server";
 
 const COOKIE = "anthropic_api_key";
 
-function attrs(request: Request) {
-  const secure = new URL(request.url).protocol === "https:" ? "Secure; " : "";
-  return `HttpOnly; ${secure}SameSite=Lax; Path=/`;
+function options(request: Request) {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    path: "/",
+    secure: new URL(request.url).protocol === "https:",
+  };
 }
 
 export const Route = createFileRoute("/api/tanstack-ai-key")({
   server: {
     handlers: {
-      GET: ({ request }) => {
-        const has = (request.headers.get("cookie") ?? "")
-          .split(";")
-          .some((p) => p.trim().startsWith(`${COOKIE}=`));
-        return Response.json({ hasKey: has });
-      },
+      GET: () => Response.json({ hasKey: Boolean(getCookie(COOKIE)) }),
       POST: async ({ request }) => {
         const { apiKey } = (await request.json()) as { apiKey?: string };
         if (!apiKey || !apiKey.startsWith("sk-ant-")) {
@@ -36,20 +40,13 @@ export const Route = createFileRoute("/api/tanstack-ai-key")({
           return new Response(msg, { status: 400 });
         }
 
-        return new Response(null, {
-          status: 204,
-          headers: {
-            "Set-Cookie": `${COOKIE}=${encodeURIComponent(apiKey)}; ${attrs(request)}; Max-Age=2592000`,
-          },
-        });
+        setCookie(COOKIE, apiKey, { ...options(request), maxAge: 2592000 });
+        return new Response(null, { status: 204 });
       },
-      DELETE: ({ request }) =>
-        new Response(null, {
-          status: 204,
-          headers: {
-            "Set-Cookie": `${COOKIE}=; ${attrs(request)}; Max-Age=0`,
-          },
-        }),
+      DELETE: ({ request }) => {
+        deleteCookie(COOKIE, options(request));
+        return new Response(null, { status: 204 });
+      },
     },
   },
 });
