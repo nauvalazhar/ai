@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ExplorerRouteImport } from './routes/_explorer'
 import { Route as ExplorerIndexRouteImport } from './routes/_explorer.index'
+import { Route as ApiTanstackAiKeyRouteImport } from './routes/api.tanstack-ai-key'
+import { Route as ApiTanstackAiChatRouteImport } from './routes/api.tanstack-ai-chat'
 import { Route as ExplorerIntroductionRouteImport } from './routes/_explorer.introduction'
 import { Route as ExplorerComponentIndexRouteImport } from './routes/_explorer.$component.index'
 import { Route as DemoComponentDemoRouteImport } from './routes/demo.$component.$demo'
@@ -25,6 +27,16 @@ const ExplorerIndexRoute = ExplorerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ExplorerRoute,
+} as any)
+const ApiTanstackAiKeyRoute = ApiTanstackAiKeyRouteImport.update({
+  id: '/api/tanstack-ai-key',
+  path: '/api/tanstack-ai-key',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTanstackAiChatRoute = ApiTanstackAiChatRouteImport.update({
+  id: '/api/tanstack-ai-chat',
+  path: '/api/tanstack-ai-chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ExplorerIntroductionRoute = ExplorerIntroductionRouteImport.update({
   id: '/introduction',
@@ -56,6 +68,8 @@ const ExplorerComponentDemoRoute = ExplorerComponentDemoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ExplorerIndexRoute
   '/introduction': typeof ExplorerIntroductionRoute
+  '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
+  '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
   '/$component/$demo': typeof ExplorerComponentDemoRoute
   '/installation/{-$framework}': typeof ExplorerInstallationChar123FrameworkChar125Route
   '/demo/$component/$demo': typeof DemoComponentDemoRoute
@@ -63,6 +77,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/introduction': typeof ExplorerIntroductionRoute
+  '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
+  '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
   '/': typeof ExplorerIndexRoute
   '/$component/$demo': typeof ExplorerComponentDemoRoute
   '/installation/{-$framework}': typeof ExplorerInstallationChar123FrameworkChar125Route
@@ -73,6 +89,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_explorer': typeof ExplorerRouteWithChildren
   '/_explorer/introduction': typeof ExplorerIntroductionRoute
+  '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
+  '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
   '/_explorer/': typeof ExplorerIndexRoute
   '/_explorer/$component/$demo': typeof ExplorerComponentDemoRoute
   '/_explorer/installation/{-$framework}': typeof ExplorerInstallationChar123FrameworkChar125Route
@@ -84,6 +102,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/introduction'
+    | '/api/tanstack-ai-chat'
+    | '/api/tanstack-ai-key'
     | '/$component/$demo'
     | '/installation/{-$framework}'
     | '/demo/$component/$demo'
@@ -91,6 +111,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/introduction'
+    | '/api/tanstack-ai-chat'
+    | '/api/tanstack-ai-key'
     | '/'
     | '/$component/$demo'
     | '/installation/{-$framework}'
@@ -100,6 +122,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_explorer'
     | '/_explorer/introduction'
+    | '/api/tanstack-ai-chat'
+    | '/api/tanstack-ai-key'
     | '/_explorer/'
     | '/_explorer/$component/$demo'
     | '/_explorer/installation/{-$framework}'
@@ -109,6 +133,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   ExplorerRoute: typeof ExplorerRouteWithChildren
+  ApiTanstackAiChatRoute: typeof ApiTanstackAiChatRoute
+  ApiTanstackAiKeyRoute: typeof ApiTanstackAiKeyRoute
   DemoComponentDemoRoute: typeof DemoComponentDemoRoute
 }
 
@@ -127,6 +153,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof ExplorerIndexRouteImport
       parentRoute: typeof ExplorerRoute
+    }
+    '/api/tanstack-ai-key': {
+      id: '/api/tanstack-ai-key'
+      path: '/api/tanstack-ai-key'
+      fullPath: '/api/tanstack-ai-key'
+      preLoaderRoute: typeof ApiTanstackAiKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tanstack-ai-chat': {
+      id: '/api/tanstack-ai-chat'
+      path: '/api/tanstack-ai-chat'
+      fullPath: '/api/tanstack-ai-chat'
+      preLoaderRoute: typeof ApiTanstackAiChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_explorer/introduction': {
       id: '/_explorer/introduction'
@@ -189,6 +229,8 @@ const ExplorerRouteWithChildren = ExplorerRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   ExplorerRoute: ExplorerRouteWithChildren,
+  ApiTanstackAiChatRoute: ApiTanstackAiChatRoute,
+  ApiTanstackAiKeyRoute: ApiTanstackAiKeyRoute,
   DemoComponentDemoRoute: DemoComponentDemoRoute,
 }
 export const routeTree = rootRouteImport

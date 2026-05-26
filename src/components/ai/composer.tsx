@@ -64,9 +64,11 @@ export function Composer({
   disabled = false,
   className,
   children,
+  onHeightChange,
   ...props
 }: React.ComponentProps<"div"> & {
   disabled?: boolean;
+  onHeightChange?: (height: number) => void;
 }) {
   const rootId = useId();
   const [isEmpty, setIsEmpty] = useState(true);
@@ -74,6 +76,8 @@ export function Composer({
   const [extState, setExtState] = useState<unknown>(null);
   const submitFnRef = useRef<(() => void) | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const onHeightChangeRef = useRef(onHeightChange);
+  onHeightChangeRef.current = onHeightChange;
 
   const registerSubmit = useCallback((fn: () => void) => {
     submitFnRef.current = fn;
@@ -84,6 +88,22 @@ export function Composer({
 
   const triggerSubmit = useCallback(() => {
     submitFnRef.current?.();
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let last = -1;
+    const emit = () => {
+      const next = el.offsetHeight;
+      if (next === last) return;
+      last = next;
+      onHeightChangeRef.current?.(next);
+    };
+    emit();
+    const ro = new ResizeObserver(emit);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const ctxValue = useMemo<ComposerContextValue>(

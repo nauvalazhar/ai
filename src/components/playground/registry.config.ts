@@ -26,14 +26,19 @@ export const registry: Group[] = [
         slug: "tanstack-ai",
         demos: [
           {
-            name: "Basic",
-            slug: "basic",
-            Component: lazy(() => import("#/demos/tanstack-ai/basic")),
+            name: "Mock Basic",
+            slug: "mock-basic",
+            Component: lazy(() => import("#/demos/tanstack-ai/mock-basic")),
           },
           {
-            name: "Full",
-            slug: "full",
-            Component: lazy(() => import("#/demos/tanstack-ai/full")),
+            name: "Mock Full",
+            slug: "mock-full",
+            Component: lazy(() => import("#/demos/tanstack-ai/mock-full")),
+          },
+          {
+            name: "Real",
+            slug: "real",
+            Component: lazy(() => import("#/demos/tanstack-ai/real")),
           },
         ],
       },
