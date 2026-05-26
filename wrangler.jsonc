@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ai-kit",
+  "compatibility_flags": ["nodejs_compat", "enable_nodejs_fs_module"],
   "routes": [
     {
       "pattern": "ai.nauv.al",
