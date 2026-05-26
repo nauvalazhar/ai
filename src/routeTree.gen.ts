@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShowcaseRouteImport } from './routes/showcase'
 import { Route as ExplorerRouteImport } from './routes/_explorer'
 import { Route as ExplorerIndexRouteImport } from './routes/_explorer.index'
 import { Route as ApiTanstackAiKeyRouteImport } from './routes/api.tanstack-ai-key'
@@ -19,6 +20,11 @@ import { Route as DemoComponentDemoRouteImport } from './routes/demo.$component.
 import { Route as ExplorerInstallationChar123FrameworkChar125RouteImport } from './routes/_explorer.installation.{-$framework}'
 import { Route as ExplorerComponentDemoRouteImport } from './routes/_explorer.$component.$demo'
 
+const ShowcaseRoute = ShowcaseRouteImport.update({
+  id: '/showcase',
+  path: '/showcase',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExplorerRoute = ExplorerRouteImport.update({
   id: '/_explorer',
   getParentRoute: () => rootRouteImport,
@@ -67,6 +73,7 @@ const ExplorerComponentDemoRoute = ExplorerComponentDemoRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof ExplorerIndexRoute
+  '/showcase': typeof ShowcaseRoute
   '/introduction': typeof ExplorerIntroductionRoute
   '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
   '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/$component/': typeof ExplorerComponentIndexRoute
 }
 export interface FileRoutesByTo {
+  '/showcase': typeof ShowcaseRoute
   '/introduction': typeof ExplorerIntroductionRoute
   '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
   '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
@@ -88,6 +96,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_explorer': typeof ExplorerRouteWithChildren
+  '/showcase': typeof ShowcaseRoute
   '/_explorer/introduction': typeof ExplorerIntroductionRoute
   '/api/tanstack-ai-chat': typeof ApiTanstackAiChatRoute
   '/api/tanstack-ai-key': typeof ApiTanstackAiKeyRoute
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/showcase'
     | '/introduction'
     | '/api/tanstack-ai-chat'
     | '/api/tanstack-ai-key'
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/$component/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/showcase'
     | '/introduction'
     | '/api/tanstack-ai-chat'
     | '/api/tanstack-ai-key'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_explorer'
+    | '/showcase'
     | '/_explorer/introduction'
     | '/api/tanstack-ai-chat'
     | '/api/tanstack-ai-key'
@@ -133,6 +145,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   ExplorerRoute: typeof ExplorerRouteWithChildren
+  ShowcaseRoute: typeof ShowcaseRoute
   ApiTanstackAiChatRoute: typeof ApiTanstackAiChatRoute
   ApiTanstackAiKeyRoute: typeof ApiTanstackAiKeyRoute
   DemoComponentDemoRoute: typeof DemoComponentDemoRoute
@@ -140,6 +153,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/showcase': {
+      id: '/showcase'
+      path: '/showcase'
+      fullPath: '/showcase'
+      preLoaderRoute: typeof ShowcaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_explorer': {
       id: '/_explorer'
       path: ''
@@ -229,6 +249,7 @@ const ExplorerRouteWithChildren = ExplorerRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   ExplorerRoute: ExplorerRouteWithChildren,
+  ShowcaseRoute: ShowcaseRoute,
   ApiTanstackAiChatRoute: ApiTanstackAiChatRoute,
   ApiTanstackAiKeyRoute: ApiTanstackAiKeyRoute,
   DemoComponentDemoRoute: DemoComponentDemoRoute,

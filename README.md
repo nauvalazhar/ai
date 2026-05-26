@@ -4,6 +4,8 @@ React components for building AI chat interfaces. Messages, streaming, prompt, r
 
 Each component is a thin, themeable wrapper you own. Drop the source into your project, restyle with tokens or Tailwind, and compose freely.
 
+![Components showcase](./public/showcase.png)
+
 ## Documentation
 
 Full docs, live demos, and copy-paste source at [ai.nauv.al](https://ai.nauv.al).
